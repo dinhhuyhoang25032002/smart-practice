@@ -32,6 +32,7 @@ type dataTab = {
 
 export type IndexItemProps = {
   nameItem: string;
+  _id: string
 };
 type dataListProps = {
   header?: string;
@@ -69,6 +70,8 @@ export class ContentLesson {
   dataList2?: dataListProps;
   codeSample?: string;
 }
+export type ContentLessonMerge = ContentLesson & { _id: string }
+
 
 export type Lesson = {
   content: Array<ContentLesson>,

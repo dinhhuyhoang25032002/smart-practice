@@ -6,6 +6,8 @@ import { Model } from "mongoose"
 import { StatusLesson, UserRole } from 'src/constant/constant';
 import { STARTTIME_MODEL, StartTime } from 'src/schema/starttime.schema';
 import { StartTimeDto } from 'src/starttime/class/StartTime.dto';
+import { COURSE_MODEL, Course } from 'src/schema/course.schema';
+import { LessonDto } from './class/Lesson.dto';
 @Injectable()
 export class LessonService {
     constructor(
@@ -13,6 +15,8 @@ export class LessonService {
         private readonly lessonModel: Model<Lesson> & SoftDeleteModel<Lesson>,
         @InjectModel(STARTTIME_MODEL)
         private readonly startTimeModel: Model<StartTime> & SoftDeleteModel<StartTime>,
+        @InjectModel(COURSE_MODEL)
+        private readonly courseModel: Model<Course> & SoftDeleteModel<Course>,
     ) { }
     async handleGetLessonById(lessonId: string, userId: string, role: string, seo: boolean) {
         if (seo) {
@@ -22,7 +26,7 @@ export class LessonService {
         if (role === UserRole.TEACHER) {
             return this.lessonModel.findById(lessonId);
         }
-        
+
         if (role === UserRole.STUDENT) {
             const startTimeData = await this.startTimeModel.findOne({
                 lessonId,
@@ -71,5 +75,23 @@ export class LessonService {
         }
 
         return new ForbiddenException("Không được phép truy cập")
+    }
+
+    async handleCreateLesson(contentLesson: LessonDto) {
+        const { course } = contentLesson;
+
+        const courseData = await this.courseModel.findById(course).exec();
+        if (!courseData) {
+            return { message: 'Không tồn tại khóa học để thêm.' };
+        }
+
+        const lessonCreated = await new this.lessonModel(contentLesson).save();
+        const listLessons = courseData.toObject().lessons;
+        const lessonId = lessonCreated.id;
+        if (!listLessons.includes(lessonId)) {
+            listLessons.push(lessonId);
+            await courseData?.save();
+        }
+        return { message: 'Đã cập nhật bài học mới' };
     }
 }

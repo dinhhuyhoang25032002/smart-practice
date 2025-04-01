@@ -70,7 +70,7 @@ export default function SectionLesson({
   };
 
   return (
-    <div className="flex flex-col justify-center items-center w-full px-5 xs:px-0">
+    <div className="flex flex-col justify-center items-center w-full ">
       {/* header */}
       {header ? (
         <div className="mb-5 flex flex-col lg:gap-5 gap-4 w-full my-4 ">
@@ -86,7 +86,7 @@ export default function SectionLesson({
         <div
           className={
             contentText || dataPlus
-              ? "flex items-center justify-around flex-col-reverse lg:flex-row w-full gap-4 mb-4"
+              ? "flex items-center justify-around flex-col lg:flex-row w-full gap-4 mb-4"
               : "flex items-center justify-center w-full mb-8"
           }
         >
@@ -136,7 +136,7 @@ export default function SectionLesson({
             </div>
           )}
 
-          {dataImage ? (
+          {dataImage && (
             <div
               className={
                 contentText || dataPlus
@@ -159,57 +159,57 @@ export default function SectionLesson({
                 {dataImage.title}
               </span>
             </div>
-          ) : null}
+          ) }
         </div>
       ) : null}
 
       {/* dataList & dataList2 */}
       {dataList || dataList2 ? (
-        <div className="flex flex-col items-center justify-center mb-4">
-          {dataList ? (
+        <div className="flex flex-col items-center justify-center mb-4 w-full">
+          {dataList && (
             <div className="mb-4 flex flex-col gap-4  w-full ">
               {/* <hr className="w-full  border-2 border-red-600 mb-2" /> */}
               <span className="lg:text-2xl font-semibold text-xl">
                 {dataList.header}
               </span>
             </div>
-          ) : null}
+          ) }
           {dataList || dataList2 ? (
-            <div className=" flex justify-around w-full flex-col lg:flex-row gap-0">
+            <div className=" flex justify-around w-full flex-col lg:flex-row gap-0 lg:gap-5">
               {dataList ? (
                 <ul>
                   {dataList.data?.map((item, index) => {
                     return (
                       <li
                         key={index}
-                        className="flex items-center gap-3 py-4 xs:py-2 xs:gap-1 text-justify"
+                        className="flex items-center gap-2 py-4  text-justify"
                       >
-                        <div className="lg:w-10 lg:h-10 w-8 h-8 rounded-full bg-blue-600 flex justify-center items-center text-white">
+                        <div className="xl:w-10  xl:h-10 w-8 h-8 rounded-full bg-blue-600 flex justify-center items-center text-white">
                           <IoMdCheckmark />
                         </div>
-                        <span className="w-[90%] sm:w-full">{item}</span>
+                        <span className="">{item}</span>
                       </li>
                     );
                   })}
                 </ul>
               ) : null}
-              {dataList2 ? (
+              {dataList2 && (
                 <ul>
                   {dataList2?.data?.map((item, index) => {
                     return (
                       <li
                         key={index}
-                        className="flex items-center xs:gap-1 gap-3 xs:py-2 py-4"
+                        className="flex items-center  gap-2  py-4"
                       >
-                        <div className="lg:w-10 lg:h-10 w-8 h-8  rounded-full bg-blue-600 flex justify-center items-center text-white">
+                        <div className="xl:w-10 xl:h-10 w-8 h-8  rounded-full bg-blue-600 flex justify-center items-center text-white">
                           <IoMdCheckmark />
                         </div>
-                        <span className="w-[90%] sm:w-full">{item}</span>
+                        <span className=" ">{item}</span>
                       </li>
                     );
                   })}
                 </ul>
-              ) : null}
+              ) }
             </div>
           ) : null}
         </div>
@@ -433,10 +433,10 @@ export default function SectionLesson({
 
       {/* dataVideo */}
       {dataVideo ? (
-        <div className="w-full flex justify-center items-center  sm:my-10 my-4 flex-col">
+        <div className="w-full flex justify-center items-center  sm:my-10 my-4 flex-col lg:px-10">
           <iframe
             width="560"
-            className="rounded w-full h-[200px]"
+            className="rounded w-full  aspect-video"
             height="315"
             src={dataVideo.url}
             title="YouTube video player"

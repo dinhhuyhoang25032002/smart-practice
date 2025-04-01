@@ -1,5 +1,5 @@
 import z from "zod";
-import isMobilePhone from 'validator/es/lib/isMobilePhone';
+// import isMobilePhone from 'validator/es/lib/isMobilePhone';
 import { REGEX } from '@/constant/constant';
 
 // auth
@@ -29,17 +29,17 @@ export const LoginBody = z.object({
 export type LoginBodyType = z.TypeOf<typeof LoginBody>
 
 //contact
-export const ContactBody = z.object({
-  email: z.string().email("Email không hợp lệ"),
-  name: z.string().min(5, 'Hãy điền tên đầy đủ').max(100),
-  phone: z.string().refine((phone: string) => isMobilePhone(phone, 'vi-VN'), {
-    message: 'Số điện thoại không hợp lệ',
-  }),
-  topic: z.string().max(200, "Tiêu đề quá dài"),
-  content: z.string()
-}).strict()
+// export const ContactBody = z.object({
+//   email: z.string().email("Email không hợp lệ"),
+//   name: z.string().min(5, 'Hãy điền tên đầy đủ').max(100),
+//   phone: z.string().refine((phone: string) => isMobilePhone(phone, 'vi-VN'), {
+//     message: 'Số điện thoại không hợp lệ',
+//   }),
+//   topic: z.string().max(200, "Tiêu đề quá dài"),
+//   content: z.string()
+// }).strict()
 
-export type ContactBodyType = z.TypeOf<typeof ContactBody>
+// export type ContactBodyType = z.TypeOf<typeof ContactBody>
 
 // submit user info
 export const SubmitUserInfoBody = z.object({

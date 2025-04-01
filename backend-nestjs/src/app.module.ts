@@ -15,6 +15,8 @@ import { ResultModule } from './result/result.module';
 import { DeadlineModule } from './deadline/deadline.module';
 import { AccessTokenStrategy } from 'src/auth/strategy/accessToken.strategy';
 import { RefreshTokenStrategy } from 'src/auth/strategy/refreshToken.strategy';
+import { SuperviceModule } from './supervise/supervice.module';
+import { TimeviewModule } from './timeview/timeview.module';
 
 @Module({
   imports: [
@@ -41,7 +43,7 @@ import { RefreshTokenStrategy } from 'src/auth/strategy/refreshToken.strategy';
           return connection;
         }
       }
-    ), UserModule, AuthModule, CourseModule, EvaluateModule, LessonModule, StarttimeModule, ResultModule, DeadlineModule
+    ), SuperviceModule, UserModule, AuthModule, CourseModule, EvaluateModule, LessonModule, StarttimeModule, ResultModule, DeadlineModule, TimeviewModule
   ],
   controllers: [AppController,],
   providers: [AppService, AccessTokenStrategy, RefreshTokenStrategy],

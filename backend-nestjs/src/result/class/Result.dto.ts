@@ -8,7 +8,6 @@ export class ResultDto {
     @IsNotEmpty()
     lessonId: string;
 
-
     @ApiProperty({ type: 'string', format: 'binary' })
     file: any;//file
 }

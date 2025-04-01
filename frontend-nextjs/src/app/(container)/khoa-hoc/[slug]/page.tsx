@@ -7,13 +7,13 @@ import { useSWRPrivate } from "@/hooks/useSWRCustom";
 import { useSearchParams } from "next/navigation";
 import FormSendResult from "@/components/course/section/FormSendResult";
 import { use } from "react";
-import {
-  type ContentLesson,
-  type CourseIsActive,
-  type ArrLessons,
-  type IndexItemProps,
+import type {
+  ContentLesson,
+  CourseIsActive, ContentLessonMerge,
+  ArrLessons,
+  IndexItemProps,
   Lesson,
-  type ForbiddenException,
+  ForbiddenException,
 } from "@/types/CustomType";
 import { useState } from "react";
 import { BsCameraVideo } from "react-icons/bs";
@@ -25,6 +25,8 @@ import Loading from "@/app/loading";
 import NotFound from "@/app/not-found";
 import CommingSoon from "@/components/custom/CommingSoon";
 import { Button } from "@/components/ui/button";
+import { fetchPrivateData } from "@/utils/fetcher/fetch-api";
+import { Headers } from "@/constant/constant";
 
 export default function CourseContent({
   params,
@@ -37,7 +39,8 @@ export default function CourseContent({
   const slug = param.slug;
 
   const [isOpenMenu, setOpenMenu] = useState(true);
-  const [isContinue, setContinue] = useState(false);
+
+  // const [isContinue, setContinue] = useState(false);
   const {
     isLoading: isLoadingLesson,
     error: errorLesson,
@@ -56,15 +59,12 @@ export default function CourseContent({
     error: errorCourse,
     data: dataCourse,
   } = useSWRPrivate<CourseIsActive>(`course/${slug}?isActive=${true}`);
-  console.log(dataLesson);
 
-  if (isLoadingLesson || isLoadingCourse) return <Loading />;
-  if (dataLesson?.status === 403 && dataLesson?.name === "ForbiddenException") {
-    return <ForbiddenResourceError />;
-  }
-  if (errorLesson || errorCourse) return <NotFound />;
+
+
 
   const indexItem: IndexItemProps[] = dataLesson?.indexItem || [];
+  const [idMappingContent, setMappingContent] = useState("")
   const nameLesson = dataLesson?.name;
   const contentCourse: ContentLesson[] = dataLesson?.content || [];
   const arrayLessons: ArrLessons[] = dataCourse?.lessons || [];
@@ -76,15 +76,85 @@ export default function CourseContent({
     })
   );
 
+  const contentCourseArray: ContentLessonMerge[] = contentCourse.map((item, index) => ({
+    ...item,
+    _id: indexItem[index]._id
+  }))
+  if (isLoadingLesson || isLoadingCourse) return <Loading />;
+  if (dataLesson?.status === 403 && dataLesson?.name === "ForbiddenException") {
+    return <ForbiddenResourceError />;
+  }
+  if (errorLesson || errorCourse) return <NotFound />;
+  const handleSubmitTime = async (sectionId: string, index: number, isNext?: boolean) => {
+
+    if (isNext) {
+      setMappingContent(sectionId)
+      console.log(index);
+
+
+      await fetchPrivateData("timeview", {
+        method: "POST",
+        headers: Headers,
+        body: JSON.stringify({
+          lessonId: id,
+          sectionId: indexItem[index]._id,
+          endTimeView: Date.now().toString()
+        })
+      })
+      await fetchPrivateData("timeview", {
+        method: "POST",
+        headers: Headers,
+        body: JSON.stringify({
+          lessonId: id,
+          sectionId: indexItem[index + 1]._id,
+          startTimeView: Date.now().toString()
+        })
+      })
+      return;
+    }
+    setMappingContent(sectionId)
+    if (index === 0) {
+
+      await fetchPrivateData("timeview", {
+        body: JSON.stringify({
+          lessonId: id,
+          sectionId,
+          startTimeView: Date.now().toString()
+        }),
+        method: "POST",
+        headers: Headers
+      });
+      return;
+    }
+
+    await fetchPrivateData("timeview", {
+      body: JSON.stringify({
+        lessonId: id,
+        sectionId: indexItem[index - 1]._id,
+        endTimeView: Date.now().toString()
+      }),
+      method: "POST",
+      headers: Headers
+    });
+
+    await fetchPrivateData("timeview", {
+      body: JSON.stringify({
+        lessonId: id,
+        sectionId,
+        startTimeView: Date.now().toString()
+      }),
+      method: "POST",
+      headers: Headers
+    });
+  }
   return (
     <MainLayout authPage={true}>
-      <div className={`flex w-full relative sm:bg-red-500 ${isOpenMenu ? "justify-end " : ""}`}>
+      <div className={`flex w-full relative   ${isOpenMenu ? "justify-end " : ""}`}>
         <div
-          className={`w-[75%]  h-screen z-20 bg-white overflow-y-auto transition-all ease-out duration-200 ${
-            isOpenMenu
-              ? "translate-x-0 fixed inset-0 "
-              : "-translate-x-full pointer-events-none "
-          }`}
+          className={`w-[75%] sm:w-[70%] h-screen z-20 bg-white overflow-y-auto transition-all ease-out duration-200 ${isOpenMenu
+            ? "translate-x-0 fixed inset-0 "
+            : "-translate-x-full pointer-events-none "
+            }`}
         >
           <nav className="flex flex-col">
             <div className="mb-5 flex flex-col gap-5 ">
@@ -118,11 +188,12 @@ export default function CourseContent({
               {indexItem?.map((item, index) => {
                 return (
                   <li
-                    key={index}
+                    key={item._id}
                     className="py-2 hover:bg-[#eee] rounded-sm pl-3 "
                   >
                     <Link
-                      href={`#${index}`}
+                      href={`#${item._id}`}
+                      onClick={() => handleSubmitTime(item._id, index)}
                       className="flex items-center gap-1 font-normal text-sm "
                     >
                       <BsCameraVideo />
@@ -156,9 +227,8 @@ export default function CourseContent({
         </div>
 
         <div
-          className={` flex flex-col  justify-center transition-all ease-out duration-200 items-center  ${
-            isOpenMenu ? "xl:w-[79%] w-full " : "w-full z-10 absolute right-0 top-0"
-          }`}
+          className={` flex flex-col  justify-center transition-all ease-out duration-200 items-center  ${isOpenMenu ? "xl:w-[79%] w-full " : "w-full z-10 absolute right-0 top-0"
+            }`}
         >
           <div className=" flex w-full xs:p-3 px-5 py-3 bg-[#eee] justify-between items-center flex-row-reverse ">
             <Button
@@ -182,143 +252,166 @@ export default function CourseContent({
           <div
             className={
               isOpenMenu
-                ? "w-full px-0 flex flex-col items-center justify-center"
-                : "w-full px-0 flex flex-col items-center justify-center xs:px-5"
+                ? "w-full px-5 flex flex-col items-center justify-center sm:px-8"
+                : "w-full px-5 flex flex-col items-center justify-center sm:px-8"
             }
           >
-            {contentCourse && contentCourse.length !== 0 ? (
+            {contentCourse && contentCourse.length !== 0 && (
               <div className="w-full flex flex-col items-center justify-center">
-                {isContinue === false && (
-                  <div className="px-5  pt-8 w-full xs:space-y-5">
-                    {MapArrayLesson?.filter(
-                      (item) => item.name === nameLesson
-                    )?.map((item) => (
-                      <span
-                        key={item._id}
-                        className="font-semibold block uppercase text-lg w-full text-center "
-                      >
-                        Bài {item.index}: {item.name}
-                      </span>
-                    ))}
 
-                    <ul>
-                      {indexItem?.map((item, index) => {
-                        return (
-                          <li
-                            key={index}
-                            className="py-3 hover:bg-[#eee] rounded-sm pl-0 xs:py-2 xs:px-0"
-                          >
-                            <Link
-                              href={`#${index}`}
-                              className="flex items-center gap-1 text-base font-semibold "
-                            >
-                              <BsCameraVideo /> {item.nameItem}
-                            </Link>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                )}
+                <div className="  pt-8 w-full xs:space-y-5">
+                  {MapArrayLesson?.filter(
+                    (item) => item.name === nameLesson
+                  )?.map((item) => (
+                    <span
+                      key={item._id}
+                      className="font-semibold block uppercase text-lg w-full text-center "
+                    >
+                      Bài {item.index}: {item.name}
+                    </span>
+                  ))}
 
-                {contentCourse?.map((item, index) => {
-                  if (index < 3) {
-                    return isContinue === false ? (
-                      <div className="w-full" key={index} id={`${index}`}>
-                        <SectionLesson
-                          header={indexItem[index]}
-                          dataImage={item.dataImage}
-                          contentText={item.contentText}
-                          dataVideo={item.dataVideo}
-                          dataTab={item.dataTab}
-                          dataSlides={item.dataSlides}
-                          dataList2={item.dataList2}
-                          dataMerge={item.dataMerge}
-                          dataList={item.dataList}
-                          codeSample={item.codeSample}
-                          dataPlus={item.dataPlus}
-                        />
-                      </div>
-                    ) : null;
-                  }
-                  if (index === 3) {
-                    return isContinue === false ? (
-                      <div className="w-full" key={index} id={`${index}`}>
-                        <SectionLesson
-                          header={indexItem[index]}
-                          dataImage={item.dataImage}
-                          contentText={item.contentText}
-                          dataVideo={item.dataVideo}
-                          dataTab={item.dataTab}
-                          dataSlides={item.dataSlides}
-                          dataList2={item.dataList2}
-                          dataMerge={item.dataMerge}
-                          dataList={item.dataList}
-                          codeSample={item.codeSample}
-                          dataPlus={item.dataPlus}
-                        />
-                        <div className="py-5 w-full flex justify-center items-center ">
+                  <ul>
+                    {indexItem?.map((item, index) => {
+                      return (
+                        <li
+                          key={item._id}
+                          className="  "
+                        >
                           <Link
-                            href={`#${index + 1}`}
-                            className="bg-blue-700 xs:w-2/3  w-1/3 px-14 py-4 rounded text-white text-lg flex justify-center items-center"
-                            onClick={() => setContinue(true)}
+                            href={`#${item._id}`}
+                            onClick={() => handleSubmitTime(item._id, index)}
+                            className="flex items-center gap-1 text-base font-semibold p-3 hover:bg-[#eee] rounded-sm "
                           >
-                            Continue
+                            <BsCameraVideo /> {item.nameItem}
                           </Link>
-                        </div>
-                      </div>
-                    ) : null;
-                  }
-                  if (index === 4) {
-                    return isContinue === true ? (
-                      <div className="w-full" key={index} id={`${index}`}>
-                        <div className=" w-full flex justify-center items-center">
-                          <Button
-                            className="bg-blue-700 xs:w-2/3  w-1/3 px-14 rounded py-4 text-white text-lg flex justify-center items-center sm:mb-10 mb-4"
-                            onClick={() => setContinue(false)}
-                          >
-                            Back
-                          </Button>
-                        </div>
-                        <SectionLesson
-                          header={indexItem[index]}
-                          dataImage={item.dataImage}
-                          contentText={item.contentText}
-                          dataVideo={item.dataVideo}
-                          dataTab={item.dataTab}
-                          dataSlides={item.dataSlides}
-                          dataList2={item.dataList2}
-                          dataMerge={item.dataMerge}
-                          dataList={item.dataList}
-                          codeSample={item.codeSample}
-                          dataPlus={item.dataPlus}
-                        />
-                      </div>
-                    ) : null;
-                  } else {
-                    return isContinue === true ? (
-                      <div className="w-full" key={index} id={`${index}`}>
-                        <SectionLesson
-                          header={indexItem[index]}
-                          dataImage={item.dataImage}
-                          contentText={item.contentText}
-                          dataVideo={item.dataVideo}
-                          dataTab={item.dataTab}
-                          dataSlides={item.dataSlides}
-                          dataList2={item.dataList2}
-                          dataMerge={item.dataMerge}
-                          dataList={item.dataList}
-                          codeSample={item.codeSample}
-                          dataPlus={item.dataPlus}
-                        />
-                      </div>
-                    ) : null;
-                  }
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+
+
+                {contentCourseArray?.map((item, index) => {
+
+                  return idMappingContent && item._id === idMappingContent && (
+
+                    (<div key={item._id} id={`${item._id}`} className="w-full flex flex-col justify-center items-center">
+                      <SectionLesson
+                        header={indexItem[index]}
+                        dataImage={item.dataImage}
+                        contentText={item.contentText}
+                        dataVideo={item.dataVideo}
+                        dataTab={item.dataTab}
+                        dataSlides={item.dataSlides}
+                        dataList2={item.dataList2}
+                        dataMerge={item.dataMerge}
+                        dataList={item.dataList}
+                        codeSample={item.codeSample}
+                        dataPlus={item.dataPlus}
+                      />
+
+                      <Button
+                        onClick={() => handleSubmitTime(indexItem[index + 1]._id, index, true)}
+                      >Next</Button>
+
+                    </div>)
+                  )
+                  // if (index < 3) {
+                  //   return isContinue === false && (
+                  //     <div className="w-full" key={index} id={`${item._id}`}>
+                  //       <SectionLesson
+                  //         header={indexItem[index]}
+                  //         dataImage={item.dataImage}
+                  //         contentText={item.contentText}
+                  //         dataVideo={item.dataVideo}
+                  //         dataTab={item.dataTab}
+                  //         dataSlides={item.dataSlides}
+                  //         dataList2={item.dataList2}
+                  //         dataMerge={item.dataMerge}
+                  //         dataList={item.dataList}
+                  //         codeSample={item.codeSample}
+                  //         dataPlus={item.dataPlus}
+                  //       />
+                  //     </div>
+                  //   );
+                  // }
+                  // if (index === 3) {
+                  //   return isContinue === false && (
+                  //     <div className="w-full" key={index} id={`${item._id}`}>
+                  //       <SectionLesson
+                  //         header={indexItem[index]}
+                  //         dataImage={item.dataImage}
+                  //         contentText={item.contentText}
+                  //         dataVideo={item.dataVideo}
+                  //         dataTab={item.dataTab}
+                  //         dataSlides={item.dataSlides}
+                  //         dataList2={item.dataList2}
+                  //         dataMerge={item.dataMerge}
+                  //         dataList={item.dataList}
+                  //         codeSample={item.codeSample}
+                  //         dataPlus={item.dataPlus}
+                  //       />
+
+                  //     </div>
+                  //   );
+                  // }
+                  // if (index === 4) {
+                  //   return isContinue === true && (
+                  //     <div className="w-full" key={index} id={`${item._id}`}>
+                  //       <div className=" w-full flex justify-center items-center">
+                  //         <Button
+                  //           className="bg-blue-700 xs:w-2/3  w-1/3 px-14 rounded py-4 text-white text-lg flex justify-center items-center sm:mb-10 mb-4"
+                  //           onClick={() => setContinue(false)}
+                  //         >
+                  //           Back
+                  //         </Button>
+                  //       </div>
+                  //       <SectionLesson
+                  //         header={indexItem[index]}
+                  //         dataImage={item.dataImage}
+                  //         contentText={item.contentText}
+                  //         dataVideo={item.dataVideo}
+                  //         dataTab={item.dataTab}
+                  //         dataSlides={item.dataSlides}
+                  //         dataList2={item.dataList2}
+                  //         dataMerge={item.dataMerge}
+                  //         dataList={item.dataList}
+                  //         codeSample={item.codeSample}
+                  //         dataPlus={item.dataPlus}
+                  //       />
+                  //     </div>
+                  //   );
+                  // } else {
+                  //   return isContinue === true && (
+                  //     <div className="w-full" key={index} id={`${item._id}`}>
+                  //       <SectionLesson
+                  //         header={indexItem[index]}
+                  //         dataImage={item.dataImage}
+                  //         contentText={item.contentText}
+                  //         dataVideo={item.dataVideo}
+                  //         dataTab={item.dataTab}
+                  //         dataSlides={item.dataSlides}
+                  //         dataList2={item.dataList2}
+                  //         dataMerge={item.dataMerge}
+                  //         dataList={item.dataList}
+                  //         codeSample={item.codeSample}
+                  //         dataPlus={item.dataPlus}
+                  //       />
+                  //     </div>
+                  //   );
+                  // }
                 })}
+
+                {!idMappingContent && (<div>
+                  <Button >Getting startted!
+                  </Button>
+                </div>)}
               </div>
-            ) : null}
-            {isContinue === true ? (
-              <div className="w-full px-5 flex flex-col space-y-5 pb-5">
+            )}
+            {
+              // idMappingContent === indexItem[indexItem.length]?._id &&
+              (<div className="w-full px-5 flex flex-col space-y-5 pb-5">
                 <hr className="w-full  border-2 border-red-600" />
                 <span className="text-2xl font-semibold">Báo cáo kết quả</span>
                 <div className="flex justify-center items-center w-full ">
@@ -326,8 +419,10 @@ export default function CourseContent({
                     <FormSendResult />
                   </div>
                 </div>
-              </div>
-            ) : null}
+              </div>)
+            }
+
+
           </div>
         </div>
       </div>

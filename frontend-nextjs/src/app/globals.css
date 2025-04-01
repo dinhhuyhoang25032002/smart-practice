@@ -1,10 +1,12 @@
 @import "slick-carousel/slick/slick.css";
 @import "slick-carousel/slick/slick-theme.css";
 @import "tailwindcss";
+
 @plugin "tailwindcss-animate";
 @plugin 'tailwindcss-motion';
 
 @custom-variant dark (&:is(.dark *));
+
 @theme {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);

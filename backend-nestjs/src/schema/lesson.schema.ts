@@ -32,7 +32,9 @@ type dataTab = {
 };
 export type Item = {
   nameItem: string;
+  itemId: ObjectId
 };
+
 export type dataListProps = {
   header?: string;
   data?: Array<string>;
@@ -57,7 +59,7 @@ export type dataMergeProps = {
   image?: string;
 };
 
-export class ContentLesson {
+export type ContentLesson = {
   dataSlides?: dataSlide;
   contentText?: Array<string>;
   dataPlus?: dataPlus;
@@ -68,6 +70,14 @@ export class ContentLesson {
   dataList?: dataListProps;
   dataList2?: dataListProps;
   codeSample?: string
+  isActive?: boolean
+}
+
+
+@Schema()
+class ItemSchema extends Document {
+  @Prop({ required: true })
+  nameItem: string;
 }
 
 @Schema({ timestamps: true })
@@ -82,8 +92,8 @@ export class Lesson extends Document {
   @Prop({ type: Array<ContentLesson>, required: true })
   content: ContentLesson[];
 
-  @Prop({ type: Array<Item>, required: true })
-  indexItem: Item[];
+  @Prop({ type: [ItemSchema], required: true })
+  indexItem: ItemSchema[];
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true })
   course: ObjectId;
