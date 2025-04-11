@@ -105,12 +105,12 @@ export default function SectionLesson({
                         return (
                           <li
                             key={index}
-                            className="flex items-center gap-2 lg:py-4 py-2"
+                            className="inline-flex items-center gap-2 lg:py-4 py-2"
                           >
                             <div className="lg:w-10 lg:h-10 w-8 h-8 rounded-full bg-blue-600 flex justify-center items-center text-white">
                               {index + 1}
                             </div>
-                            <span className="w-[90%] text-justify">{item}</span>
+                            <p className="text-justify w-[88%]">{item}</p>
                           </li>
                         );
                       })
@@ -159,7 +159,7 @@ export default function SectionLesson({
                 {dataImage.title}
               </span>
             </div>
-          ) }
+          )}
         </div>
       ) : null}
 
@@ -173,10 +173,10 @@ export default function SectionLesson({
                 {dataList.header}
               </span>
             </div>
-          ) }
+          )}
           {dataList || dataList2 ? (
             <div className=" flex justify-around w-full flex-col lg:flex-row gap-0 lg:gap-5">
-              {dataList ? (
+              {dataList && (
                 <ul>
                   {dataList.data?.map((item, index) => {
                     return (
@@ -184,15 +184,15 @@ export default function SectionLesson({
                         key={index}
                         className="flex items-center gap-2 py-4  text-justify"
                       >
-                        <div className="xl:w-10  xl:h-10 w-8 h-8 rounded-full bg-blue-600 flex justify-center items-center text-white">
+                        <div className="xl:w-10 xl:h-10 w-8 h-8 rounded-full bg-blue-600 flex justify-center items-center text-white">
                           <IoMdCheckmark />
                         </div>
-                        <span className="">{item}</span>
+                        <span className="text-justify w-[87%]">{item}</span>
                       </li>
                     );
                   })}
                 </ul>
-              ) : null}
+              )}
               {dataList2 && (
                 <ul>
                   {dataList2?.data?.map((item, index) => {
@@ -204,12 +204,12 @@ export default function SectionLesson({
                         <div className="xl:w-10 xl:h-10 w-8 h-8  rounded-full bg-blue-600 flex justify-center items-center text-white">
                           <IoMdCheckmark />
                         </div>
-                        <span className=" ">{item}</span>
+                        <span className="text-justify w-[87%]">{item}</span>
                       </li>
                     );
                   })}
                 </ul>
-              ) }
+              )}
             </div>
           ) : null}
         </div>
@@ -247,7 +247,7 @@ export default function SectionLesson({
               })}
             </div>
             <div className="sm:w-[45%]  w-full">
-              {dataMerge.image ? (
+              {dataMerge.image && (
                 <Image
                   src={dataMerge.image}
                   alt="data-merge"
@@ -255,7 +255,7 @@ export default function SectionLesson({
                   height={500}
                   className="w-full sm:h-52 h-44 object-center object-contain"
                 />
-              ) : null}
+              )}
             </div>
           </div>
         </div>
@@ -264,11 +264,11 @@ export default function SectionLesson({
       {/* dataTab */}
       {dataTab ? (
         <div className="flex justify-center flex-col items-center w-full ">
-          {dataTab.header ? (
+          {dataTab.header && (
             <span className="sm:flex hidden justify-center items-center w-full text-xl font-semibold sm:mb-8 mb-4">
               {dataTab.header}
             </span>
-          ) : null}
+          )}
 
           {dataTab && dataTab?.data?.length <= 2 ? (
             <Tabs
@@ -350,21 +350,21 @@ export default function SectionLesson({
 
       {/* dataSlides */}
       {dataSlides ? (
-        <div className="flex flex-col w-full items-center   ">
-          {dataSlides.title ? (
+        <div className="flex flex-col w-full items-center ">
+          {dataSlides.title && (
             <span className="text-xl font-semibold"> {dataSlides.title} </span>
-          ) : null}
+          )}
 
-          <div className="w-full flex justify-center items-center  gap-4">
+          <div className="w-full flex justify-center items-center gap-4 flex-col lg:flex-row">
             <Button
               aria-label="previous-button"
-              className=" px-5 py-5 rounded-full bg-black w-fit h-fit hidden sm:flex"
+              className="px-5 py-5 rounded-full bg-black w-fit h-fit hidden lg:flex"
               onClick={previous}
             >
               <FaAngleLeft className="text-2xl text-white" />
             </Button>
 
-            <div className="w-[80%]">
+            <div className="w-full lg:w-[80%] ">
               <Slider {...newSettings} ref={sliderRef}>
                 {dataSlides?.data?.map((item, index) => {
                   return (
@@ -397,24 +397,24 @@ export default function SectionLesson({
               </Slider>
             </div>
 
-            {/* <div className="hidden xs:flex justify-around items-center xs:w-full ">
+            <div className="lg:hidden flex justify-around items-center w-full">
               <button
                 aria-label="previous-button"
-                className=" px-5 py-5 rounded-full bg-black w-fit h-fit  xs:p-2"
+                className=" px-4 py-4 rounded-full bg-black w-fit h-fit  xs:p-2"
                 onClick={previous}
               >
                 <FaAngleLeft className="text-2xl text-white" />
               </button>
               <button
-                className=" px-5 py-5 rounded-full bg-black w-fit h-fit xs:p-2 "
+                className=" px-4 py-4 rounded-full bg-black w-fit h-fit xs:p-2 "
                 onClick={next}
                 aria-label="next-button"
               >
                 <FaAngleRight className="text-2xl text-white" />
               </button>
-            </div> */}
+            </div>
             <Button
-              className=" hidden sm:flex px-5 py-5 rounded-full bg-black w-fit h-fit  "
+              className=" hidden lg:flex px-5 py-5 rounded-full bg-black w-fit h-fit  "
               onClick={next}
               aria-label="next-button"
             >
@@ -425,18 +425,18 @@ export default function SectionLesson({
       ) : null}
 
       {/* codeSample */}
-      {codeSample ? (
+      {codeSample && (
         <div className="w-full flex sm:px-10 px-0 mb-4">
           <p dangerouslySetInnerHTML={{ __html: codeSample }}></p>
         </div>
-      ) : null}
+      )}
 
       {/* dataVideo */}
-      {dataVideo ? (
+      {dataVideo && (
         <div className="w-full flex justify-center items-center  sm:my-10 my-4 flex-col lg:px-10">
           <iframe
             width="560"
-            className="rounded w-full  aspect-video"
+            className="rounded w-full h-fit xl:w-1/2  aspect-video"
             height="315"
             src={dataVideo.url}
             title="YouTube video player"
@@ -450,7 +450,7 @@ export default function SectionLesson({
             </span>
           ) : null}
         </div>
-      ) : null}
+      )}
     </div>
   );
 }

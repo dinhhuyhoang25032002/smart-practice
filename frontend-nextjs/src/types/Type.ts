@@ -66,3 +66,11 @@ export const EvaluateForm = z.object({
 })
 
 export type EvaluationType = z.TypeOf<typeof EvaluateForm>
+
+//form-active-course
+
+export const ActiveCourseForm = z.object({
+  code: z.string().min(1, "Mã không hợp lệ").max(25, "Mã không hợp lệ")
+})
+
+export type ActiveCourseType = z.TypeOf<typeof ActiveCourseForm>

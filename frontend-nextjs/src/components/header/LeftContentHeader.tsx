@@ -80,7 +80,7 @@ export default function LeftContentHeader() {
           <div className="flex flex-col font-medium">
             <Link
               href="/about"
-              className="cursor-pointer hover:bg-[#eee]  rounded"
+              className="cursor-pointer hover:bg-[#eee] active:bg-[#eee] rounded"
             >
               <span className=" flex items-center  w-full gap-3  p-2  hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
                 <GoHome /> Giới Thiệu
@@ -88,7 +88,7 @@ export default function LeftContentHeader() {
             </Link>
             <Link
               href="/about"
-              className="cursor-pointer hover:bg-[#eee]  rounded"
+              className="cursor-pointer hover:bg-[#eee] active:bg-[#eee] rounded"
             >
               <span className=" flex items-center  w-full gap-3  p-2 hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
                 <LuClipboardPen /> Điểm
@@ -96,7 +96,7 @@ export default function LeftContentHeader() {
             </Link>
             <Link
               href="/new"
-              className="cursor-pointer hover:bg-[#eee]  rounded"
+              className="cursor-pointer hover:bg-[#eee] active:bg-[#eee] rounded"
             >
               <span className=" flex items-center  w-full gap-3  p-2 hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
                 <IoRibbonOutline /> Thông Báo
@@ -106,13 +106,13 @@ export default function LeftContentHeader() {
               href="/about"
               className="cursor-pointer hover:bg-[#eee]  rounded"
             >
-              <span className=" flex items-center  w-full gap-3  p-2 hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
-                <SlEarphonesAlt /> Liên Hệ
+              <span className=" flex items-center  w-full gap-3 active:bg-[#eee]  p-2 hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
+                <SlEarphonesAlt /> Hỗ trợ
               </span>
             </Link>
             <Link
               href="/about"
-              className="cursor-pointer hover:bg-[#eee]  rounded"
+              className="cursor-pointer hover:bg-[#eee] active:bg-[#eee] rounded"
             >
               <span className=" flex items-center  w-full gap-3 p-2  hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
                 <IoBookmarksOutline /> Chính Sách
@@ -124,14 +124,17 @@ export default function LeftContentHeader() {
         <div className="flex flex-col gap-3">
           <span className="text-justify text-sm">
             Dữ liệu và thông tin trên website là tài sản riêng của công ty
-            OPENLAB, cấm sao chép dưới mọi hình thức.
+            <span className="font-semibold"> OPENLAB</span> , cấm sao chép dưới
+            mọi hình thức.
           </span>
-          <span className="flex items-center text-center text-sm font-normal  sm:justify-center ">
-            <LuCopyright />
-            <span className="text-sm sm:text-base font-normal  mr-1">
-              2025 Bản quyền thuộc về
+          <span className="flex flex-col items-center text-center text-sm font-normal sm:justify-center ">
+            <span className="inline-flex items-center gap-1">
+              <LuCopyright />
+              <span className="text-sm sm:text-base font-normal mr-1">
+                2025 Bản quyền thuộc về
+              </span>
             </span>
-            <span className="text-base font-semibold ">OPENLAB</span>
+            <span className="text-sm lg:text-base font-semibold ">OPENLAB</span>
           </span>
         </div>
       </div>
@@ -144,7 +147,7 @@ export default function LeftContentHeader() {
         </Link>
         <Link href="/about" className="cursor-pointer">
           <span className=" font-semibold  hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
-            Điểm
+            Hỗ trợ
           </span>
         </Link>
         <Link href="/new" className="cursor-pointer">

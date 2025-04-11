@@ -12,14 +12,17 @@ import { ArrowRightIcon } from "lucide-react";
 import NoDataAvailable from "@/components/custom/NoDataAvailable";
 
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
+import Link from "next/link";
+import Loading from "@/app/(container)/danh-sach-bai-thi-cua-sinh-vien/loading";
 export default function AllResultsFromStudent() {
   const studentId = useSearchParams().get("studentId");
-
-  const { data } = useSWRPrivate<Array<Results>>(
+  const { data, isLoading } = useSWRPrivate<Array<Results>>(
     studentId ? `result/all-results?studentId=${studentId}` : ""
   );
   const router = useRouter();
   if (data?.length === 0) return <NoDataAvailable />;
+  if (isLoading) return <Loading />;
+
   return (
     <>
       <div className="flex justify-center items-center w-full h-full gap-5 p-5 flex-col ">
@@ -30,7 +33,7 @@ export default function AllResultsFromStudent() {
           {data?.map((item) => (
             <div
               key={item._id}
-              className={`flex flex-col gap-2 border-2  p-3 w-[25%] rounded ${
+              className={`flex flex-col gap-2 border-2 p-3 xl:w-[25%] w-full rounded ${
                 item.isEvaluated ? "border-[#1fc930]" : "border-amber-400"
               } `}
             >
@@ -43,9 +46,9 @@ export default function AllResultsFromStudent() {
                     height={900}
                     className="w-full h-[200px] rounded"
                   />
-                  <div className="absolute inset-0 bg-gray-500/50 flex justify-center items-center opacity-0 hover:opacity-100 transition-opacity duration-200">
+                  <div className="hidden absolute inset-0 bg-gray-500/50 xl:flex justify-center items-center opacity-0 hover:opacity-100 transition-opacity duration-200">
                     <Button
-                      className="uppercase bg-[#239b2f] hover:bg-[#239b2f] "
+                      className="uppercase bg-[#239b2f] hover:bg-[#239b2f]"
                       icon={ArrowRightIcon}
                       effect={"expandIcon"}
                       iconPlacement="right"
@@ -78,12 +81,12 @@ export default function AllResultsFromStudent() {
                 {item.isEvaluated ? (
                   <span className="flex items-center gap-2">
                     Đã đánh giá
-                    <IoMdCheckmarkCircleOutline  className="text-[#1d9929]"/>
+                    <IoMdCheckmarkCircleOutline className="text-[#1d9929]" />
                   </span>
                 ) : (
-                  <span className="flex items-center gap-2" >
+                  <span className="flex items-center gap-2">
                     Chưa đánh giá
-                    <IoWarningOutline className="text-amber-600"/>
+                    <IoWarningOutline className="text-amber-600" />
                   </span>
                 )}
               </span>
@@ -106,6 +109,12 @@ export default function AllResultsFromStudent() {
                       .slice(1)}
                 </span>
               )}
+              <Link
+                href={`/danh-sach-bai-thi-cua-sinh-vien/${item.studentId._id}?lessonId=${item.lessonId._id}`}
+                className="xl:hidden inline-flex items-center justify-end w-full visited:text-purple-600 active:text-purple-600 hover:text-blue-700 active:underline hover:underline"
+              >
+                Xem chi tiết
+              </Link>
             </div>
           ))}
         </div>

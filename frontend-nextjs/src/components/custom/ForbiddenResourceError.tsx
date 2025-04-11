@@ -18,11 +18,13 @@ export default function ForbiddenResourceError({
   };
   return (
     <div className="w-full h-full min-h-[500px] flex justify-center items-center flex-col gap-10">
-      <div className="text-3xl">Không được cấp quyền để truy cập.</div>
+      <div className="text-xl font-semibold lg:text-3xl">
+        Không được cấp quyền để truy cập.
+      </div>
 
       <Button
         onClick={handleRiderect}
-        className="text-xl underline flex items-center gap-1 bg-[#228d2c] p-3 rounded-lg text-white cursor-pointer"
+        className="text-xl underline flex items-center gap-1 bg-[#228d2c] p-2 lg:p-3 rounded-lg text-white cursor-pointer"
       >
         <BsHouseDoor className="text-xl font-semibold" />
         {namebtn ?? "Quay lại trang trước"}

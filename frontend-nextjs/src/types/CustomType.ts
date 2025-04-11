@@ -133,7 +133,7 @@ export type CourseSearch = {
   _id: string;
 };
 
-export type ForbiddenException = {
+export type ResponseException = {
   status: number;
   message: string;
   options: object;
@@ -142,7 +142,6 @@ export type ForbiddenException = {
     message: string;
     statusCode: number;
     error: string;
-
   }
 }
 
@@ -188,3 +187,4 @@ export type Evaluate = {
   content: string,
   createdAt: string
 }
+

@@ -9,16 +9,15 @@ import RegisterForm from "@/components/auth/FormRegister";
 export default function AuthContent() {
   const [tab, setTab] = useState("login");
 
-
   return (
     <MainLayout authPage={true}>
-      <div className="flex w-screen h-screen max-h-screen justify-center items-center px-46 relative ">
+      <div className="flex w-screen h-screen max-h-screen justify-center items-center xl:px-40 relative ">
         <Tabs
           defaultValue="login"
           value={tab}
-          className="xl:w-[43%] w-[90%] sm:w-[65%] lg:w-[45%] 2xl:w-[30%] z-10 shadow-lg shadow-green-300"
+          className="xl:w-[36%] w-[94%] sm:w-[65%] lg:w-[45%] 2xl:w-[30%] z-10"
         >
-          <TabsList className=" w-full bg-[#eee] h-12">
+          <TabsList className=" w-full  h-12">
             <TabsTrigger
               value="login"
               onClick={() => setTab("login")}
@@ -34,7 +33,7 @@ export default function AuthContent() {
               Đăng kí
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="login" className=" w-full">
+          <TabsContent value="login" className="w-full ">
             <Suspense>
               <LoginForm />
             </Suspense>

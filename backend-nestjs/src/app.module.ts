@@ -17,16 +17,22 @@ import { AccessTokenStrategy } from 'src/auth/strategy/accessToken.strategy';
 import { RefreshTokenStrategy } from 'src/auth/strategy/refreshToken.strategy';
 import { SuperviceModule } from './supervise/supervice.module';
 import { TimeviewModule } from './timeview/timeview.module';
-
+import { MailerModule } from '@nestjs-modules/mailer';
+import { ConfigService } from '@nestjs/config';
+import { createMailerOptions } from 'src/helper/OAuth2';
 @Module({
   imports: [
     ConfigModule.forRoot(
       {
         isGlobal: true,
         expandVariables: true,
-        envFilePath: '.env.development.local',
+        envFilePath: `.env.${process.env.NODE_ENV}.local`,
       }
     ),
+    MailerModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: createMailerOptions
+    }),
     MongooseModule.forRoot(process.env.URL_DATABASE,
       {
         connectionFactory(connection: Connection, name: string) {

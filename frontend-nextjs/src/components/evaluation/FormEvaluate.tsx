@@ -122,8 +122,8 @@ export default function FormEvaluate({
                 Đã đánh giá{" "}
                 <IoMdCheckmarkCircleOutline className="text-[#1d9929]" />
               </span>
-            )}{" "}
-            <Button type="submit">
+            )}
+            <Button type="submit" className="active:opacity-60">
               {isEvaluated ? "Cập nhật lại" : "Nộp đánh giá"}
             </Button>
           </div>

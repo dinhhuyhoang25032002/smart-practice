@@ -23,7 +23,7 @@ export const fetchPublicData = async (url: string, options?: RequestInit) => {
 
         return await response.json();
     } catch (error) {
-        throw new Error(`Fetch error: ${error instanceof Error ? error.message : "Unknown error"}`);
+        throw new Error(`Fetch error: ${error instanceof Error ? error : "Unknown error"}`);
     }
 };
 

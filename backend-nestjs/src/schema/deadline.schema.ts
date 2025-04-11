@@ -1,6 +1,6 @@
 import mongoose, { Document } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { CommodityType } from 'src/constant/constant';
+import { CommodityType, expireTime } from 'src/constant/constant';
 
 @Schema({ timestamps: true })
 export class Deadline extends Document {
@@ -13,8 +13,11 @@ export class Deadline extends Document {
 
   @Prop({ required: true, enum: CommodityType, })
   productionType: CommodityType;
+
+  @Prop({ type: mongoose.Schema.Types.Date })
+  createdAt: Date;
 }
 export const DEADLINE_MODEL = Deadline.name;
 export const DeadlineSchema = SchemaFactory.createForClass(Deadline);
 
-DeadlineSchema.index({ createdAt: 1 }, { expires: '180d' });
+DeadlineSchema.index({ createdAt: 1 }, { expireAfterSeconds: expireTime, unique: true });

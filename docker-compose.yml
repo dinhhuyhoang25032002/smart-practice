@@ -1,0 +1,43 @@
+services:
+  nextjs:
+    build: ./frontend-nextjs
+    container_name: nextjs_app
+    ports:
+      - "3000:3000"
+    restart: always
+    depends_on:
+      - nestjs
+  nestjs:
+    build: ./backend-nestjs
+    container_name: nestjs_app
+    ports:
+      - "3001:3001"
+    restart: always
+    depends_on:
+      - "mongodb"
+
+  nginx:
+    container_name: nginx
+    image: nginx:alpine
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - nestjs
+
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    volumes:
+      - mongo_data:/data/db
+    restart: always
+    env_file:
+      - ./backend-nestjs/.env.production.local
+    ports:
+      - "27017:27017"
+volumes:
+  mongo_data:
+    driver: local

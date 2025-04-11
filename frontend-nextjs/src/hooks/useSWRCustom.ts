@@ -7,7 +7,7 @@ const defaultSWRConfig: SWRConfiguration = {
   revalidateIfStale: false,
   revalidateOnMount: true,
   revalidateOnReconnect: true,
-  dedupingInterval: 20000,
+  // dedupingInterval: 20000,
   //shouldRetryOnError: true,
   revalidateOnFocus: false,
 };

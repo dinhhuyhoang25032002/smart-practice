@@ -4,7 +4,7 @@ import { BsBoxArrowRight, BsHouseDoor } from "react-icons/bs";
 // import { Container } from '@/components/ui/container'
 export default function NotFound() {
   return (
-    <div className="py-6">
+    <div className="p-5">
       <div className="flex flex-col justify-center items-center">
         <div>
           <Image
@@ -21,13 +21,13 @@ export default function NotFound() {
           <span className="text-lg font-semibold">
             Ối!! Trang không được tìm thấy
           </span>
-          <p className="text-base">
+          <p className="text-base text-justify">
             Xin lỗi nhưng trang bạn đang tìm kiếm không tồn tại, đã được LOẠI
             BỎ, tên đã thay đổi hoặc tạm thời không có.
           </p>
           <Link
             href={"/"}
-            className="text-xl mt-4 underline flex items-center gap-1 bg-[#228d2c] p-3 rounded-lg text-white "
+            className="text-xl mt-4 underline flex items-center gap-1 bg-[#228d2c] p-2 lg:p-3 rounded-lg text-white "
           >
             <BsHouseDoor className="text-xl font-semibold" /> Quay lại trang chủ
             <BsBoxArrowRight className="text-xl font-semibold ml-4" />

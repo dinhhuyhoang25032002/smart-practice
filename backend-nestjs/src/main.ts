@@ -18,8 +18,6 @@ async function bootstrap() {
     rawBody: true
   });
   const configService = app.get(ConfigService);
-
-  
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe({ transform: false }));
   // app.use(

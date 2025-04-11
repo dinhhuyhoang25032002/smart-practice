@@ -45,7 +45,11 @@ export default function FormSendResult() {
 
   async function onSubmit(e: SyntheticEvent) {
     e.preventDefault();
-    if (!file || !id) return;
+    
+    if (!file || !id) {
+      toastNotiFail("Vui lòng chọn tệp tin trước khi gửi!");
+      return;
+    };
     setSubmit(true);
     const formData = new FormData();
     formData.append("file", file);
@@ -80,10 +84,10 @@ export default function FormSendResult() {
   };
 
   return (
-    <form className=" flex flex-col w-full bg-[#eee] items-center justify-center p-5 space-y-5 rounded-sm">
+    <form className=" flex flex-col w-full bg-[#eee] items-center justify-center  space-y-5 rounded-sm">
       <div
         {...getRootProps()}
-        className="rounded-md w-28 h-28 flex justify-center items-center bg-blue-400 cursor-pointer"
+        className="rounded-md w-full h-36 flex justify-center items-center bg-blue-400 cursor-pointer"
       >
         <label>
           <IoCloudUploadOutline className="text-3xl text-white cursor-pointer" />
@@ -114,7 +118,7 @@ export default function FormSendResult() {
                 href={file ? URL.createObjectURL(file) : "#"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className=" rounded-md hover:text-blue-500 visited:text-purple-500"
+                className=" rounded-md hover:text-blue-500 visited:text-purple-500 active:text-purple-500"
               >
                 Xem chi tiết
               </a>
@@ -123,7 +127,7 @@ export default function FormSendResult() {
         </div>
       ) : null}
 
-      <div className="flex justify-center w-full px-10 pt-3">
+      <div className="flex justify-center w-[80%]  pt-3">
         <Button
           type="button"
           effect="expandIcon"

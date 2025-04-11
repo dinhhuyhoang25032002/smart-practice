@@ -1,3 +1,4 @@
+"use client";
 import {
   Tooltip,
   TooltipContent,
@@ -8,12 +9,14 @@ import flagVN from "@/assets/icon/vietnam_flags.png";
 import flagEN from "@/assets/icon/united-states_flags.png";
 import { FaCaretDown } from "react-icons/fa";
 import Image from "next/image";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 type NavContactProps = {
   contentLeft?: ReactNode;
   contentRight?: ReactNode;
 };
 const NavContact = ({ contentLeft }: NavContactProps) => {
+  const [isOpenProfile, setOpenProfile] = useState(false);
+
   return (
     <div
       className="flex justify-between items-center px-6 py-1 bg-gradient-to-r from-[#024718] from-0% via-[#197c1c] via-50% to-[#17771a] to-100% text-white
@@ -22,8 +25,11 @@ const NavContact = ({ contentLeft }: NavContactProps) => {
       <div className="flex xl:w-[20%] ">{contentLeft}</div>
       <div className="flex gap-2 items-center xl:w-[15%] justify-center ">
         <TooltipProvider delayDuration={100}>
-          <Tooltip>
-            <TooltipTrigger className="">
+          <Tooltip open={isOpenProfile}>
+            <TooltipTrigger
+              className=""
+              onClick={() => setOpenProfile(!isOpenProfile)}
+            >
               <div className="flag-container w-[46px] h-[46px] flex gap-2 justify-center items-center">
                 <div>
                   <Image

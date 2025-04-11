@@ -1,11 +1,11 @@
 import AuthContent from "@/app/(container)/dang-nhap/AuthContent";
 import type { Metadata } from "next";
 export const metadata: Metadata = {
-  title: "OpenLAB | Đăng Nhập",
+  title: "SmartPractice | Đăng Nhập",
   description: "Đăng Nhập",
   openGraph: {
     type: "website",
-    title: "OpenLAB",
+    title: "SmartPractice",
     description: "Đăng Nhập",
     url: "https://openlab.com.vn/dang-nhap",
     images: [

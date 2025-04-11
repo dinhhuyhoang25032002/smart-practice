@@ -45,11 +45,11 @@ export default function LoginForm() {
     const queryUrl = query?.get("back_to");
     console.log(res);
     if (res && res.status === 403) {
-      toastNotiFail(res.message,"Hãy nhập đúng mật khẩu");
+      toastNotiFail(res.message, "Hãy nhập đúng mật khẩu");
       return;
     }
     if (res && res.status === 400) {
-      toastNotiFail(res.message,"Hãy nhập đúng tên tài khoản");
+      toastNotiFail(res.message, "Hãy nhập đúng tên tài khoản");
       return;
     }
 
@@ -75,57 +75,10 @@ export default function LoginForm() {
     window.location.href = `${process.env.NEXT_PUBLIC_ENDPOINT}/auth/google/login`;
   };
 
-  // useEffect(() => {
-  //   const token = query.get("token") as string;
-  //   if (token) {
-  //     const validateJwt: { sub: string; email: string } = jwtDecode(token);
-  //     const { sub, email } = validateJwt;
-  //     const getUser = async () => {
-  //       try {
-  //         const dataUser = await (
-  //           await fetch(
-  //             `${process.env.NEXT_PUBLIC_ENDPOINT}/auth?id=${sub}&email=${email}`,
-  //             {
-  //               headers: {
-  //                 Authorization: `Bearer ${token}`,
-  //                 "Content-Type": "application/json",
-  //               },
-  //             }
-  //           )
-  //         ).json();
-  //         if (!dataUser) {
-  //           alert("User not exis!");
-  //         }
-  //         console.log(dataUser);
-
-  //         const user: UserProps = {
-  //           fullname: dataUser.fullname,
-  //           address: dataUser.address,
-  //           dateOfBirth: dataUser.dateOfBirth,
-  //           role: dataUser.role,
-  //           _id: dataUser._id,
-  //           email: dataUser.email,
-  //           image: dataUser.image,
-  //           accessToken: token,
-  //           courses: dataUser.courses,
-  //           // solutions: dataUser.solutions,
-  //           // devices: dataUser.devices,
-  //         };
-  //         setUser(user);
-  //         setIsAuth(true);
-
-  //         router.replace("/");
-  //       } catch (error) {
-  //         throw new Error(error as string);
-  //       }
-  //     };
-  //     getUser();
-  //   }
-  // }, [query, router, setIsAuth, setUser]);
-
+  
   return (
     <Form {...form}>
-      <section className="space-y-4  bg-white h-fit px-5 py-4 rounded-md">
+      <section className="space-y-4 w-full bg-white h-fit px-5 py-4 rounded-md">
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-4 h-fit py-4 "
@@ -182,18 +135,20 @@ export default function LoginForm() {
               Quên mật khẩu
             </span>
           </div>
-          <Button type="submit" className="bg-blue-700 w-full">
+          <Button type="submit" className="bg-blue-700 w-full active:opacity-60">
             Đăng nhập
           </Button>
         </form>
         <aside className="space-y-4">
           <div className=" text-center  w-full">
             <span className="">Đăng nhập bằng</span>
-            <div className="flex text-3xl px-12 pt-4 justify-around">
+            <div className="flex text-3xl xl:px-12 pt-4 justify-around">
               <FaFacebook className="text-[#1877f2] text-4xl cursor-pointer" />
-              <Button onClick={handleLoginWithGoogle}>
-                <FcGoogle className="text-4xl cursor-pointer" />
-              </Button>
+
+              <FcGoogle
+                className="text-4xl cursor-pointer"
+                onClick={handleLoginWithGoogle}
+              />
               <FaGithub className="text-4xl cursor-pointer" />
             </div>
           </div>

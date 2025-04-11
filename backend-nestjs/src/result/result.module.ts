@@ -22,7 +22,7 @@ import { STARTTIME_MODEL, StartTimeSchema } from 'src/schema/starttime.schema';
             },
             fileFilter: (req, file, cb) => {
 
-                const allowedMimeTypes = ['image/png', 'image/jpg', 'image/jpeg', "application/pdf"];
+                const allowedMimeTypes = ['image/png', 'image/jpg', 'image/jpeg'];
                 if (allowedMimeTypes.includes(file.mimetype)) {
                     cb(null, true);
                 } else {

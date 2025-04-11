@@ -14,3 +14,10 @@ export enum CommodityType {
     KIT = 'KIT',
     APP = 'APP'
 }
+
+export const expireTime = 6 * 30 * 24 * 60 * 60
+
+export enum Role {
+    User = 'user',
+    Admin = 'admin',
+}

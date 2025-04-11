@@ -1,7 +1,15 @@
-import { toast, Position } from "sonner";
+import { toast } from "sonner";
+
 import { IoCheckmarkCircleOutline } from "react-icons/io5";
 import { CiWarning } from "react-icons/ci";
 import { IoMdClose } from "react-icons/io";
+type Position =
+  | "top-left"
+  | "top-right"
+  | "bottom-left"
+  | "bottom-right"
+  | "top-center"
+  | "bottom-center";
 export const toastNotiSuccess = (
   message: string,
   description?: string,

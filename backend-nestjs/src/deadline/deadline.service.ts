@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { SoftDeleteModel } from 'mongoose-delete';
 import { DEADLINE_MODEL, Deadline } from 'src/schema/deadline.schema';
@@ -14,11 +14,18 @@ export class DeadlineService {
 
     async handleCreateDeadline(data: DealineDto, userId: string) {
         const { productionId, productionType } = data;
-        const deadline = await new this.deadlineModel({
+        const deadline = await this.deadlineModel.findOne({
             userId,
-            productionId,
-            productionType,
-        }).save({ validateBeforeSave: true });
-        return deadline;
+            productionId, productionType
+        })
+        if (!deadline) {
+            const newDeadline = await new this.deadlineModel({
+                userId,
+                productionId,
+                productionType,
+            }).save({ validateBeforeSave: true });
+            return newDeadline;
+        }
+        return new BadRequestException()
     }
 }

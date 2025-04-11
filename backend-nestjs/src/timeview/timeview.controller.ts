@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
 import { TimeviewService } from './timeview.service';
 import { TimeViewDto } from './class/TimeView.dto';
 import { ApiBearerAuth } from '@nestjs/swagger';
@@ -19,4 +19,5 @@ export class TimeviewController {
     ) {
         return this.timeViewService.handleCreateTimeView(body)
     }
+
 }

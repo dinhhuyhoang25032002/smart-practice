@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { SoftDeleteModel } from 'mongoose-delete';
 import { COURSE_MODEL, Course } from 'src/schema/course.schema';
@@ -6,6 +6,10 @@ import { Model } from 'mongoose';
 import { DEADLINE_MODEL, Deadline } from 'src/schema/deadline.schema';
 import { USER_MODEL, User } from 'src/schema/user.schema';
 import removeAccents from 'remove-accents';
+import { MailerService } from '@nestjs-modules/mailer';
+import { UserJWT } from 'src/types/CustomType';
+import { formatTimeVi } from 'src/util/formatTime';
+
 @Injectable()
 export class CourseService {
     constructor(
@@ -15,6 +19,7 @@ export class CourseService {
         private readonly userModel: Model<User> & SoftDeleteModel<User>,
         @InjectModel(DEADLINE_MODEL)
         private readonly deadlineModel: Model<Deadline> & SoftDeleteModel<Deadline>,
+        private readonly mailerService: MailerService,
     ) { }
 
     async handleGetAllCourseById(userId: string) {
@@ -28,6 +33,9 @@ export class CourseService {
                 path: 'productionId',
             })
             .exec();
+        if (deadline.length === 0) {
+            return new BadRequestException("Not found data");
+        }
         return deadline
     }
     async findOneCourse(slug: string, query?: boolean, seo?: boolean) {
@@ -54,4 +62,44 @@ export class CourseService {
 
     }
 
+    async handleActiveCourse(body: { code: string }, user: UserJWT) {
+        const { code } = body;
+        const { sub } = user
+
+        const userData = await this.userModel.findById(sub).lean().exec();
+        if (!userData) {
+            return new BadRequestException("Not found user data")
+        }
+
+        const course = await this.courseModel.findById(code).lean().exec();
+        if (!course) {
+            return new BadRequestException("Not found course data")
+        }
+
+        const deadline = await this.deadlineModel.findOne({
+            userId: sub,
+            productionId: code
+        }).lean().exec()
+        if (!deadline) {
+            const deadline = {
+                userId: sub,
+                productionId: code,
+                productionType: "COURSE"
+            }
+
+            await this.deadlineModel.create(deadline);
+            return {
+                status: HttpStatus.CREATED,
+                message: "Khóa học đã được mở khóa thành công"
+            }
+        }
+        const { createdAt } = deadline
+        const activeTime = formatTimeVi(createdAt);
+
+        return {
+            status: HttpStatus.OK,
+            message: "Khóa học đã được thêm từ trước",
+            activeTime,
+        }
+    }
 }

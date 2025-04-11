@@ -1,12 +1,14 @@
-import { Controller, HttpCode, HttpStatus, Query, Get, Param, UseGuards, BadRequestException } from '@nestjs/common';
-import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import { Controller, HttpCode, HttpStatus, Query, Get, Param, UseGuards, BadRequestException, Post, Body, Req, ForbiddenException, BadGatewayException } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { JwtAccessAuthGuard } from 'src/auth/guard/accessToken.guard';
 import { CourseService } from 'src/course/course.service';
-
+import { Request } from "express"
+import { UserJWT } from 'src/types/CustomType';
+import { ActiveCourseDto } from 'src/course/class/ActiveCourse.dto';
 @ApiBearerAuth()
 @UseGuards(JwtAccessAuthGuard)
 @Controller('course')
-    
+
 export class CourseController {
 
     constructor(
@@ -16,9 +18,13 @@ export class CourseController {
     @Get()
     @HttpCode(HttpStatus.OK)
     async getAllCourseById(
-        @Query("userId") userId: string
+        @Req() req: Request
     ) {
-        return this.courseService.handleGetAllCourseById(userId);
+        const { sub } = req.user as UserJWT
+        if (!sub) {
+            return new BadGatewayException();
+        }
+        return this.courseService.handleGetAllCourseById(sub);
     }
 
     @Get('search-name')
@@ -42,4 +48,17 @@ export class CourseController {
         return this.courseService.findOneCourse(slug, query, seo);
     }
 
+    @Post()
+    @HttpCode(HttpStatus.OK)
+    @ApiBody({ required: true, type: ActiveCourseDto })
+    ActiveCourse(
+        @Body() body: { code: string },
+        @Req() req: Request
+    ) {
+        const user = req.user as UserJWT;
+        if (!user) {
+            return new ForbiddenException();
+        }
+        return this.courseService.handleActiveCourse(body, user);
+    }
 }

@@ -70,7 +70,6 @@ export type ContentLesson = {
   dataList?: dataListProps;
   dataList2?: dataListProps;
   codeSample?: string
-  isActive?: boolean
 }
 
 

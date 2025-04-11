@@ -4,7 +4,7 @@ import { FileInterceptor, } from '@nestjs/platform-express';
 import { JwtAccessAuthGuard } from 'src/auth/guard/accessToken.guard';
 import { ResultService } from 'src/result/result.service';
 import { ApiBearerAuth, ApiConsumes } from '@nestjs/swagger';
-import { ResultDto } from 'src/result/class/result.dto';
+import { ResultDto } from 'src/result/class/Result.dto';
 import { UserJWT } from 'src/types/CustomType';
 import { UserRole } from 'src/constant/constant';
 import path from 'path';
