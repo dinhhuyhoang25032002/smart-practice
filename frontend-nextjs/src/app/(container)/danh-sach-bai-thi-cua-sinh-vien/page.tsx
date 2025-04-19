@@ -14,6 +14,7 @@ import NoDataAvailable from "@/components/custom/NoDataAvailable";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import Link from "next/link";
 import Loading from "@/app/(container)/danh-sach-bai-thi-cua-sinh-vien/loading";
+import MainLayout from "@/components/main-layout";
 export default function AllResultsFromStudent() {
   const studentId = useSearchParams().get("studentId");
   const { data, isLoading } = useSWRPrivate<Array<Results>>(
@@ -24,27 +25,27 @@ export default function AllResultsFromStudent() {
   if (isLoading) return <Loading />;
 
   return (
-    <>
-      <div className="flex justify-center items-center w-full h-full gap-5 p-5 flex-col ">
-        <span className="uppercase text-2xl font-semibold">
+    <MainLayout>
+      <div className="flex justify-center items-center w-full h-full gap-5 p-5  flex-col ">
+        <span className="uppercase text-2xl font-semibold ">
           Danh sách bài đã nộp
         </span>
-        <div className="flex flex-wrap gap-5 w-full">
+        <div className="flex flex-wrap gap-5 w-full justify-center">
           {data?.map((item) => (
             <div
               key={item._id}
-              className={`flex flex-col gap-2 border-2 p-3 xl:w-[25%] w-full rounded ${
+              className={`flex flex-col gap-2 shadow-xl border-2 p-3 xl:w-[25%] w-full rounded ${
                 item.isEvaluated ? "border-[#1fc930]" : "border-amber-400"
               } `}
             >
               {item.lessonId.linkImage && (
-                <div className="flex justify-center items-center relative">
+                <div className="flex justify-center items-center relative ">
                   <Image
                     src={item.lessonId.linkImage}
                     alt="image-lesson"
                     width={900}
                     height={900}
-                    className="w-full h-[200px] rounded"
+                    className="w-full h-[200px] rounded border-2 p-1"
                   />
                   <div className="hidden absolute inset-0 bg-gray-500/50 xl:flex justify-center items-center opacity-0 hover:opacity-100 transition-opacity duration-200">
                     <Button
@@ -119,6 +120,6 @@ export default function AllResultsFromStudent() {
           ))}
         </div>
       </div>
-    </>
+    </MainLayout>
   );
 }

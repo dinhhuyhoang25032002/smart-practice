@@ -56,7 +56,8 @@ export default function FormEvaluate({
       }),
     });
     if (res.status === 201 || res.status === 200) {
-      toastNotiSuccess("Đã gửi đánh giá thành công", "", "bottom-right");
+      toastNotiSuccess("Đã gửi đánh giá thành công");
+      form.reset();
     } else {
       toastNotiSuccess(
         "Gửi đánh giá thất bại",

@@ -6,7 +6,7 @@ import { SoftDeleteModel } from "mongoose-delete";
 import { SuperviceDto } from "./class/Supervice.dto";
 import { Lesson, LESSON_MODEL } from "src/schema/lesson.schema";
 import { TIMEVIEW_MODEL, TimeView } from "src/schema/timeview.schema";
-
+import { COURSE_MODEL, Course } from "src/schema/course.schema";
 @Injectable()
 export class SuperviceService {
     constructor(
@@ -16,25 +16,29 @@ export class SuperviceService {
         private readonly lessonModel: Model<Lesson> & SoftDeleteModel<Lesson>,
         @InjectModel(TIMEVIEW_MODEL)
         private readonly timeViewModel: Model<TimeView> & SoftDeleteModel<TimeView>,
+        @InjectModel(COURSE_MODEL)
+        private readonly courseModel: Model<Course> & SoftDeleteModel<Course>,
     ) { }
 
     async hanldeCreateAndUpdateSupervice(data: SuperviceDto) {
-        const { lessonId, sectionId } = data
+        const { lessonId, sectionId, studentId } = data
         const lesson = await this.lessonModel.findById(lessonId).lean().exec();
         if (!lesson) {
             return new BadRequestException('Không tồn tại khóa học')
         }
         const timeview = await this.timeViewModel.find({
             lessonId,
+            userId: studentId,
             sectionId,
             isEnd: true
         })
 
         const supervice = await this.superviceModel.findOne({
-            lessonId, sectionId
+            lessonId, sectionId, studentId
         }).exec();
 
         const newSupervice = {
+            studentId,
             lessonId,
             sectionId,
             durationView: 0,
@@ -67,11 +71,34 @@ export class SuperviceService {
         }
 
         return this.superviceModel.create({
-            lessonId, sectionId,
+            lessonId, sectionId, studentId,
             view: timeview.length,
             durationView: durationView
         })
 
     }
 
+    async handleGetTimeDurationACourse(studentId: string, courseId: string) {
+        const course = await this.courseModel.findById(courseId).lean().exec();
+        if (!course) {
+            return new BadRequestException();
+        }
+        const lessons = course.lessons
+        const supervice = await this.superviceModel.find({
+            studentId,
+            lessonId: { $in: lessons }
+        }).lean().exec()
+
+        if (supervice.length === 0) {
+            return { duration: supervice.length }
+        }
+
+        const duration = supervice.reduce((result, item) => {
+            return result + item.durationView
+        }, 0)
+
+        return {
+            duration
+        }
+    }
 }

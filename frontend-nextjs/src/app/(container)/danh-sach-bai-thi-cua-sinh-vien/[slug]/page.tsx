@@ -37,18 +37,18 @@ export default function PdfPage({
       <div className=" flex items-center justify-start h-fit p-5  xl:px-16 flex-col lg:flex-row gap-5 lg:justify-between">
         <div
           className={`xl:w-[50%] w-full cursor-pointer ${
-            isPreview ? " z-50 fixed inset-0 w-full h-full" : ""
+            isPreview ? " z-50 fixed inset-0 xl:w-full h-full bg-white" : ""
           }`}
           onClick={() => setIsPreview(!isPreview)}
         >
           {data?.content && <ContentView url={data?.content} />}
         </div>
 
-        <div className="xl:w-[40%] w-full flex justify-center items-center">
+        <div className="xl:w-[40%] w-full  flex justify-center items-center">
           {user.role === UserRole.TEACHER ? (
             <FormEvaluate
               isEvaluated={data?.isEvaluated}
-              nameStudent={data?.studentId.fullname}
+              nameStudent={data?.studentId?.fullname}
               lessonId={data?.lessonId}
               stdentId={data?.studentId._id}
             />

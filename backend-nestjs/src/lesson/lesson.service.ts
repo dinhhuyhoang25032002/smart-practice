@@ -8,6 +8,8 @@ import { STARTTIME_MODEL, StartTime } from 'src/schema/starttime.schema';
 import { StartTimeDto } from 'src/starttime/class/StartTime.dto';
 import { COURSE_MODEL, Course } from 'src/schema/course.schema';
 import { LessonDto } from './class/Lesson.dto';
+import { TimeView, TIMEVIEW_MODEL } from 'src/schema/timeview.schema';
+import { USER_MODEL, User } from 'src/schema/user.schema';
 @Injectable()
 export class LessonService {
     constructor(
@@ -17,8 +19,14 @@ export class LessonService {
         private readonly startTimeModel: Model<StartTime> & SoftDeleteModel<StartTime>,
         @InjectModel(COURSE_MODEL)
         private readonly courseModel: Model<Course> & SoftDeleteModel<Course>,
+        @InjectModel(TIMEVIEW_MODEL)
+        private readonly timeviewModel: Model<TimeView> & SoftDeleteModel<TimeView>,
+        @InjectModel(USER_MODEL)
+        private readonly userModel: Model<User> & SoftDeleteModel<User>,
+
     ) { }
     async handleGetLessonById(lessonId: string, userId: string, role: string, seo: boolean) {
+
         if (seo) {
             return this.lessonModel.findById(lessonId).select('name');
         }
@@ -80,18 +88,94 @@ export class LessonService {
     async handleCreateLesson(contentLesson: LessonDto) {
         const { course } = contentLesson;
 
-        const courseData = await this.courseModel.findById(course).exec();
+        const courseData = await this.courseModel.findById(course).lean().exec();
         if (!courseData) {
             return { message: 'Không tồn tại khóa học để thêm.' };
         }
 
         const lessonCreated = await new this.lessonModel(contentLesson).save();
-        const listLessons = courseData.toObject().lessons;
+        const listLessons = courseData.lessons;
         const lessonId = lessonCreated.id;
         if (!listLessons.includes(lessonId)) {
             listLessons.push(lessonId);
             await courseData?.save();
         }
         return { message: 'Đã cập nhật bài học mới' };
+    }
+
+    async handleGetAllSections(lessonId: string, userId: string) {
+        console.log(lessonId, userId);
+        
+        const user = await this.userModel.findById(userId).select('fullname ').lean().exec();
+        if (!user) {
+            return new BadRequestException();
+        }
+
+        const lesson = await this.lessonModel.findById(lessonId).lean().exec();
+
+        if (!lesson) return new BadRequestException();
+        const startTime = await this.startTimeModel.findOne({
+            studentId: userId,
+            lessonId
+        }).select("startTime status").lean().exec();
+        const indexItem = lesson.indexItem;
+        const timeview = await this.timeviewModel.find({
+            lessonId, userId,
+            sectionId: { $in: indexItem },
+            isEnd: true
+        }).lean().exec();
+
+        // console.log(timeview);
+
+        if (timeview.length === 0) {
+            console.log(timeview);
+            const data = indexItem.map((item) => (
+                {
+                    _id: item._id,
+                    nameItem: item.nameItem,
+                    views: timeview.length,
+                    duration: timeview.length
+                }
+            ))
+
+            return data
+        }
+
+        const record = timeview.reduce((acc, item) => {
+            const sectionId = item.sectionId.toString();
+            const timestamp = (+item.endTimeView) - (+item.startTimeView)
+            const duration = Math.round(timestamp / (1000 * 60))
+
+            const exesting = acc.find((item) => item.sectionId === sectionId)
+
+            if (exesting) {
+                exesting.views += 1
+                exesting.duration += duration
+            } else {
+                acc.push({
+                    sectionId,
+                    views: 1,
+                    duration
+                })
+            }
+
+            return acc;
+        }, [] as Array<{ sectionId: string; views: number; duration: number }>)
+         console.log(startTime);
+
+        const data = indexItem.map((item) => {
+            const map = record.find((recordItem) => recordItem.sectionId === item._id.toString())
+            return {
+                ...item,
+                views: map?.views ?? 0,
+                duration: map?.duration ?? 0
+            }
+        })
+        return {
+            ...user,
+            nameLesson: lesson.name,
+            dataRecord: data,
+            ...startTime
+        };
     }
 }

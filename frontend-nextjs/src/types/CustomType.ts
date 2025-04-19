@@ -91,6 +91,18 @@ export type SolutionContent = {
   type: string;
 };
 
+type EvaluaDashboard = {
+  lessonId: string,
+  score: number,
+  name: string;
+};
+export type EvaluaTions = {
+  isComplete: boolean,
+  startTime: string,
+  nameCourse: string,
+  dataResult: Array<EvaluaDashboard>
+}
+
 export type CourseInfor = {
   _id: string,
   userId: string,
@@ -188,3 +200,18 @@ export type Evaluate = {
   createdAt: string
 }
 
+
+export type DataRecord = {
+  _id: string,
+  views: string,
+  duration: string,
+  nameItem: string
+}
+export type DataTimeview = {
+  _id: string,
+  fullname: string,
+  dataRecord: DataRecord[],
+  nameLesson: string,
+  status: string,
+  startTime: string
+}

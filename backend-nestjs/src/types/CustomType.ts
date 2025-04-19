@@ -1,5 +1,5 @@
 
-
+import { Types } from "mongoose";
 
 
 export type Production = {
@@ -13,3 +13,7 @@ export type UserJWT = {
   role: string
 }
 
+export type PopulatedLesson = {
+  _id: Types.ObjectId;
+  name: string;
+};

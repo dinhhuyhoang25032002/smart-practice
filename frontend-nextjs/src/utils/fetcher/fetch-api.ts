@@ -14,7 +14,7 @@ export const fetchPublicData = async (url: string, options?: RequestInit) => {
                 ...options?.headers,
             },
             ...options,
-           
+
         });
 
         if (!response.ok) {
@@ -41,13 +41,12 @@ const handleFetchApi = async (url: string, accessToken: string, options?: Reques
         });
 
         if (!res.ok) {
-            throw new Error(`Fetch failed with status: ${res.status}`);
+            throw new Error(`Request failed with status ${res.status}`);
         }
 
         return await res.json();
     } catch (error) {
-        console.error("Fetch error:", error);
-        throw error;
+        throw new Error(`Fetch error:  ${error instanceof Error ? error : "Unknown error"}`);
     }
 };
 

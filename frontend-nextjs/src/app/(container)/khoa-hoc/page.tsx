@@ -10,24 +10,27 @@ import ActiveCourse from "@/components/course/form/ActiveCourse";
 export default function CourseInfo() {
   const { user } = useUserContext();
   const _id = user._id;
-  const { data } = useSWRPrivate<CourseInfor[] & ResponseException>(
-    _id ? `course` : ""
+  const { data } = useSWRPrivate<CourseInfor[] | ResponseException>(
+    _id ? `course?userId=${_id}` : ""
   );
   console.log(data);
 
   return (
     <MainLayout>
       <div className=" min-h-screen h-screen flex justify-center items-center">
-        <div className="w-full h-full  flex justify-center p-5 flex-wrap gap-5 ">
-          {data?.status === 400 && data.name === "BadRequestException" ? (
+        <div className="w-full h-full flex justify-center p-5 flex-wrap gap-5 ">
+          {data &&
+          "status" in data &&
+          data?.status === 400 &&
+          data.name === "BadRequestException" ? (
             <div className="w-full flex items-center justify-center">
               <ActiveCourse />
             </div>
           ) : (
-            data?.map((item, index) => (
+            (data as CourseInfor[])?.map((item, index) => (
               <div
                 key={index}
-                className="border border-gray-500 h-fit shadow-xl p-3 rounded-md flex flex-col space-y-4 items-center"
+                className="border w-[28%] h-[300px] border-gray-500 shadow-xl p-3 rounded-md flex flex-col space-y-4 items-center"
               >
                 {item?.productionId?.image && (
                   <Image
@@ -35,6 +38,7 @@ export default function CourseInfo() {
                     alt="image-course"
                     width={300}
                     height={300}
+                    className="aspect-3/2"
                   />
                 )}
 

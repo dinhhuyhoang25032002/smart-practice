@@ -7,8 +7,12 @@ import { DEADLINE_MODEL, Deadline } from 'src/schema/deadline.schema';
 import { USER_MODEL, User } from 'src/schema/user.schema';
 import removeAccents from 'remove-accents';
 import { MailerService } from '@nestjs-modules/mailer';
-import { UserJWT } from 'src/types/CustomType';
+import { PopulatedLesson, UserJWT } from 'src/types/CustomType';
 import { formatTimeVi } from 'src/util/formatTime';
+
+import { EVALUATE_MODEL, Evaluate } from 'src/schema/evaluate.schema';
+import { STARTTIME_MODEL, StartTime } from 'src/schema/starttime.schema';
+
 
 @Injectable()
 export class CourseService {
@@ -20,6 +24,11 @@ export class CourseService {
         @InjectModel(DEADLINE_MODEL)
         private readonly deadlineModel: Model<Deadline> & SoftDeleteModel<Deadline>,
         private readonly mailerService: MailerService,
+        @InjectModel(EVALUATE_MODEL)
+        private readonly evaluateModel: Model<Evaluate> & SoftDeleteModel<Evaluate>,
+        @InjectModel(STARTTIME_MODEL)
+        private readonly startTimeModel: Model<StartTime> & SoftDeleteModel<StartTime>,
+
     ) { }
 
     async handleGetAllCourseById(userId: string) {
@@ -51,14 +60,14 @@ export class CourseService {
             .findOne({ slug: slug })
             .populate({ path: 'lessons', select: 'name _id linkImage' });
         console.log(dataCourse);
-
+        if (!dataCourse) return new BadRequestException();
         return dataCourse
     }
 
     async getCourseByName(name: string) {
         const valueToSearch = removeAccents(name);
         return this.courseModel
-            .find({ isSearch: { $regex: new RegExp(valueToSearch), $options: 'i' } }, 'name')
+            .find({ isSearch: { $regex: new RegExp(valueToSearch), $options: 'i' } }, 'name').lean().exec()
 
     }
 
@@ -100,6 +109,45 @@ export class CourseService {
             status: HttpStatus.OK,
             message: "Khóa học đã được thêm từ trước",
             activeTime,
+        }
+    }
+
+    async handleGetAllResultACourse(slug: string, studentId: string) {
+        const course = await this.courseModel.findOne({ slug }).populate(
+            { path: "lessons", select: "name _id" }
+        ).exec();
+        if (!course) {
+            return new BadRequestException("Không tồn tại khóa học");
+        }
+        const lessons = course.lessons as unknown as PopulatedLesson[]
+        const startTimeCourse = await this.startTimeModel.findOne({
+            lessonId: lessons[0]._id, studentId
+        }).select("startTime -_id").lean().exec()
+        const evaluation = await this.evaluateModel.find({
+            studentId,
+            lessonId: { $in: lessons }
+        })
+        const isComplete = evaluation.length === lessons.length
+        console.log(evaluation, startTimeCourse);
+
+        const result = await this.evaluateModel.find({
+            lessonId: { $in: lessons },
+            studentId
+        }).select("lessonId score").lean().exec()
+
+        const resultMap = new Map(
+            result.map((item) => [item.lessonId.toString(), parseFloat(item.score)])
+        );
+        const final = lessons.map((item) => ({
+            lessonId: item._id,
+            name: item.name,
+            score: resultMap.get(item._id.toString()) || 0,
+        }));
+        return {
+            nameCourse: course.name,
+            dataResult: final,
+            isComplete,
+            ...startTimeCourse
         }
     }
 }

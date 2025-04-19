@@ -17,7 +17,7 @@ export class TimeviewService {
         private readonly lessonModel: Model<Lesson> & SoftDeleteModel<Lesson>
     ) { }
 
-    async handleCreateTimeView(data: TimeViewDto) {
+    async handleCreateTimeView(data: TimeViewDto, userId: string) {
         const { lessonId, sectionId, endTimeView, startTimeView } = data;
         const lesson = await this.lessonModel.findById(lessonId).exec();
         if (!lesson) {
@@ -26,7 +26,7 @@ export class TimeviewService {
 
         if (!endTimeView) {
             await this.timeViewModel.create({
-                lessonId, sectionId, startTimeView
+                lessonId, sectionId, startTimeView, userId
             })
 
             return {
@@ -36,14 +36,13 @@ export class TimeviewService {
         }
         //endTimeview
         const timeView = await this.timeViewModel.find({
-            lessonId, sectionId, isEnd: false
+            lessonId, sectionId, isEnd: false, userId
         }).lean().exec();
-
-        const timeViewWithoutStartTime = timeView.filter((item) => !item.startTimeView)
 
         if (timeView.length === 0) {
             return new BadRequestException("Not found data")
         }
+        const timeViewWithoutStartTime = timeView.filter((item) => !item.startTimeView)
 
         if (timeViewWithoutStartTime.length > 0) {
             const idToDelete = timeViewWithoutStartTime.map((item) => item._id)
@@ -57,7 +56,7 @@ export class TimeviewService {
 
         if (timeViewIsChecked.length === 1) {
             const timeviewToUpdate = await this.timeViewModel.findOne({
-                lessonId, sectionId, startTimeView: timeViewIsChecked[0].startTimeView, isEnd: false
+                lessonId, sectionId, startTimeView: timeViewIsChecked[0].startTimeView, isEnd: false, userId
             }).exec();
 
             if (timeviewToUpdate) {
@@ -66,6 +65,7 @@ export class TimeviewService {
                     endTimeView: endTimeView
                 })
                 await timeviewToUpdate.save();
+
                 return {
                     status: 200,
                     message: "Updated successfully"
@@ -77,7 +77,7 @@ export class TimeviewService {
 
         if (timeViewIsChecked.length === 0) {
             await this.timeViewModel.deleteMany({
-                lessonId, sectionId, isEnd: false
+                lessonId, sectionId, isEnd: false, userId
             }).exec();
             return new BadRequestException("No document found to update!")
         }
@@ -97,15 +97,14 @@ export class TimeviewService {
         await this.timeViewModel.deleteMany({
             startTimeView: { $in: startTimesToDelete },
             lessonId: { $in: lessonIdToDelete },
-            sectionId: { $in: sectionIdToDelete }
+            sectionId: { $in: sectionIdToDelete }, userId
         }).exec()
 
         await this.timeViewModel.findOneAndUpdate({
             lessonId: timeviewToUpdate.lessonId,
             sectionId: timeviewToUpdate.sectionId,
-            startTimeView: timeviewToUpdate.startTimeView
+            startTimeView: timeviewToUpdate.startTimeView, userId
         }, { endTimeView: endTimeView, isEnd: true }).exec();
-
         return {
             status: 200,
             message: "Updated successfully"

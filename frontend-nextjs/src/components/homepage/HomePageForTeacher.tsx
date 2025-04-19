@@ -4,6 +4,7 @@ import { UserPropsContext } from "@/store/context/AuthContext";
 import { FaPenNib } from "react-icons/fa6";
 import Link from "next/link";
 import CardUserInfor from "@/components/custom/CardUserInfor";
+import { FaRegCalendarAlt } from "react-icons/fa";
 export default function HomePageForTeacher() {
   const { data } = useSWRPrivate<Array<UserPropsContext>>(`user/all-user`);
 
@@ -20,11 +21,8 @@ export default function HomePageForTeacher() {
               <th className="border border-gray-300">Email</th>
               <th className="border border-gray-300">Ngày sinh</th>
               <th className="border border-gray-300">Địa chỉ</th>
-              <th className="border border-gray-300">
-                <div className="flex gap-2 items-center w-full h-full justify-center">
-                  Chấm điểm
-                </div>
-              </th>
+              <th className="border border-gray-300">Chấm điểm</th>
+              <th className="border border-gray-300">Quá trình học</th>
             </tr>
           </thead>
           <tbody>
@@ -44,6 +42,14 @@ export default function HomePageForTeacher() {
                     href={`/danh-sach-bai-thi-cua-sinh-vien?studentId=${item._id}`}
                   >
                     <FaPenNib />
+                  </Link>
+                </td>
+                <td className="border border-gray-300 cursor-pointer text-center">
+                  <Link
+                    className="mx-auto"
+                    href={`/thong-so-hoc-tap?studentId=${item._id}`}
+                  >
+                    <FaRegCalendarAlt className="mx-auto" />
                   </Link>
                 </td>
               </tr>

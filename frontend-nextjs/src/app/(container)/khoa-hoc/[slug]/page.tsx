@@ -6,7 +6,7 @@ import { MdMenuOpen } from "react-icons/md";
 import { useSWRPrivate } from "@/hooks/useSWRCustom";
 import { useSearchParams } from "next/navigation";
 import FormSendResult from "@/components/course/section/FormSendResult";
-import { use } from "react";
+import { use, useRef } from "react";
 import moment from "moment-timezone";
 import type {
   ContentLesson,
@@ -66,9 +66,12 @@ export default function CourseContent({
 
   const indexItem: IndexItemProps[] = dataLesson?.indexItem || [];
   const [idMappingContent, setMappingContent] = useState("");
+  const [activeSection, setActiveSection] = useState("");
+  const prevActiveSectionRef = useRef("");
   const nameLesson = dataLesson?.name;
   const contentCourse: ContentLesson[] = dataLesson?.content || [];
   const arrayLessons: ArrLessons[] = dataCourse?.lessons || [];
+
   if (contentCourse.length === 0 && !isLoadingLesson) return <CommingSoon />;
   const MapArrayLesson: (ArrLessons & { index: number })[] = arrayLessons?.map(
     (item, index) => ({
@@ -117,6 +120,7 @@ export default function CourseContent({
       return;
     }
     setMappingContent(sectionId);
+
     if (index === 0) {
       console.log(sectionId, index);
 
@@ -147,6 +151,45 @@ export default function CourseContent({
         lessonId: id,
         sectionId,
         startTimeView: Date.now().toString(),
+      }),
+      method: "POST",
+      headers: Headers,
+    });
+  };
+
+  const handleSubmitIndex = async (sectionId: string) => {
+    setMappingContent(sectionId);
+    prevActiveSectionRef.current = activeSection;
+    setActiveSection(sectionId);
+    if (!prevActiveSectionRef.current) {
+      await fetchPrivateData("timeview", {
+        body: JSON.stringify({
+          lessonId: id,
+          sectionId,
+          startTimeView: Date.now().toString(),
+        }),
+        method: "POST",
+        headers: Headers,
+      });
+      return;
+    }
+
+    await fetchPrivateData("timeview", {
+      body: JSON.stringify({
+        lessonId: id,
+        sectionId,
+        startTimeView: Date.now().toString(),
+      }),
+      method: "POST",
+      headers: Headers,
+    });
+    console.log(prevActiveSectionRef.current);
+
+    await fetchPrivateData("timeview", {
+      body: JSON.stringify({
+        lessonId: id,
+        sectionId: prevActiveSectionRef.current,
+        endTimeView: Date.now().toString(),
       }),
       method: "POST",
       headers: Headers,
@@ -196,7 +239,7 @@ export default function CourseContent({
               <li className="py-2 hover:bg-[#eee] active:bg-[#eee] cursor-pointer rounded-sm pl-3 font-normal text-sm flex items-center gap-1 ">
                 <BsCameraVideo /> Mục lục
               </li>
-              {indexItem?.map((item, index) => {
+              {indexItem?.map((item) => {
                 return (
                   <li
                     key={item._id}
@@ -204,7 +247,7 @@ export default function CourseContent({
                   >
                     <Link
                       href={`#${item._id}`}
-                      onClick={() => handleSubmitTime(item._id, index)}
+                      onClick={() => handleSubmitIndex(item._id)}
                       className="flex items-center gap-1 font-normal text-sm "
                     >
                       <BsCameraVideo />
@@ -285,12 +328,12 @@ export default function CourseContent({
                   ))}
 
                   <ul>
-                    {indexItem?.map((item, index) => {
+                    {indexItem?.map((item) => {
                       return (
                         <li key={item._id} className="  ">
                           <Link
                             href={`#${item._id}`}
-                            onClick={() => handleSubmitTime(item._id, index)}
+                            onClick={() => handleSubmitIndex(item._id)}
                             className="flex items-center gap-1 text-base font-semibold p-3 hover:bg-[#eee] active:bg-[#eee] rounded-sm "
                           >
                             <BsCameraVideo /> {item.nameItem}

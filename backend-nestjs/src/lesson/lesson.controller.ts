@@ -30,6 +30,14 @@ export class LessonController {
         return this.lessonService.handleGetLessonById(lessonId, sub, role, seo);
     }
 
+    @Get('/get-sections')
+    @HttpCode((HttpStatus.OK))
+    async getAllSectionALesson(@Query('lessonId') lessonId: string, @Query('userId') userId: string,) {
+        if (!lessonId || !userId) {
+            throw new BadRequestException();
+        }
+        return this.lessonService.handleGetAllSections(lessonId, userId);
+    }
     @Post()
     @HttpCode(HttpStatus.CREATED)
     async createALesson(@Body() content: LessonDto) {

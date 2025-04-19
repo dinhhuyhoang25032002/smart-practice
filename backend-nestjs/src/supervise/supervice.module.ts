@@ -5,6 +5,7 @@ import { MongooseModule } from "@nestjs/mongoose";
 import { SUPERVICE_MODEL, SuperviceSchema } from "src/schema/supervise.schema";
 import { LESSON_MODEL, LessonSchema } from "src/schema/lesson.schema";
 import { TimeViewSchema, TIMEVIEW_MODEL } from "src/schema/timeview.schema";
+import { COURSE_MODEL, CourseSchema } from "src/schema/course.schema";
 
 
 @Module({
@@ -21,7 +22,11 @@ import { TimeViewSchema, TIMEVIEW_MODEL } from "src/schema/timeview.schema";
             {
                 schema: LessonSchema,
                 name: LESSON_MODEL
-            }
+            },
+            {
+                name: COURSE_MODEL,
+                schema: CourseSchema,
+            },
         ])
     ],
     controllers: [SuperviceController],

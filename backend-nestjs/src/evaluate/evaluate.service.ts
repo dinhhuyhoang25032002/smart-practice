@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { SoftDeleteModel } from 'mongoose-delete';
 import { Evaluate, EVALUATE_MODEL } from 'src/schema/evaluate.schema';
@@ -73,9 +73,13 @@ export class EvaluateService {
     }
 
     async handleGetEvaluation(studentId: string, lessonId: string) {
-        return this.evaluateModel.findOne({ studentId, lessonId }).populate([
+        const evaluate = await this.evaluateModel.findOne({ studentId, lessonId }).populate([
             { path: "studentId", select: "fullname" },
             { path: "lessonId", select: "name" }
         ]).lean().exec();
+        if (!evaluate) {
+            return new BadRequestException("Không tìm thấy dữ liệu")
+        }
+        return evaluate;
     }
 }

@@ -18,3 +18,4 @@ export class Result extends Document {
 }
 export const RESULT_MODEL = Result.name;
 export const ResultSchema = SchemaFactory.createForClass(Result);
+ResultSchema.index({ studentId: 1, lessonId: 1 }, { name: "INDEX_RESULT" })

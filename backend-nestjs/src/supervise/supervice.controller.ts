@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Query, UseGuards } from "@nestjs/common";
 import { SuperviceService } from "./supervice.service";
 import { SuperviceDto } from "./class/Supervice.dto";
 import { ApiBearerAuth } from "@nestjs/swagger";
@@ -19,5 +19,14 @@ export class SuperviceController {
     ) {
 
         return this.superviceService.hanldeCreateAndUpdateSupervice(body)
+    }
+
+    @Get()
+    @HttpCode(HttpStatus.OK)
+    async getTimeDurationACourse(
+        @Query("studentId") studentId: string,
+        @Query("courseId") courseId: string
+    ) {
+        return this.superviceService.handleGetTimeDurationACourse(studentId,courseId)
     }
 }

@@ -1,10 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import slugify from 'slugify';
+import { InjectModel } from '@nestjs/mongoose';
+import { SoftDeleteModel } from 'mongoose-delete';
+import { Model } from 'mongoose';
+import { StartTime, STARTTIME_MODEL } from 'src/schema/starttime.schema';
+import { LESSON_MODEL, Lesson } from 'src/schema/lesson.schema';
 @Injectable()
 export class StarttimeService {
-    constructor() { }
+    constructor(
+        @InjectModel(STARTTIME_MODEL)
+        private readonly startTimeModel: Model<StartTime> & SoftDeleteModel<StartTime>,
+        @InjectModel(LESSON_MODEL)
+        private readonly lessonModel: Model<Lesson> & SoftDeleteModel<Lesson>,
+    ) { }
 
-    async handleGetSlugLesson(name: string) {
-        return slugify(name, { locale: "vi", lower: true })
+    async handleGetStartTime(userId: string, lessonId: string) {
+        const lesson = await this.lessonModel.findById(lessonId)
+        // const startTime = await this.startTimeModel.findById()
     }
 }

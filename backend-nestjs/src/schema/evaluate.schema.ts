@@ -22,3 +22,4 @@ export class Evaluate extends Document {
 }
 export const EVALUATE_MODEL = Evaluate.name;
 export const EvaluateSchema = SchemaFactory.createForClass(Evaluate);
+EvaluateSchema.index({ studentId: 1, lessonId: 1 }, { name: "INDEX_EVALUTION" })

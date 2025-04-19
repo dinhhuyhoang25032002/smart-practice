@@ -9,9 +9,10 @@ export class StarttimeController {
     ) { }
 
     @Get()
-    async getSlugLesson(
-        @Query("name") name: string
+    async getStartTime(
+        @Query("userId") userId: string,
+        @Query("lessonId") lessonId: string,
     ) {
-        return this.startTimeService.handleGetSlugLesson(name);
+        return this.startTimeService.handleGetStartTime(userId, lessonId);
     }
 }

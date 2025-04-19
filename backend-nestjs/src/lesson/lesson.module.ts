@@ -5,6 +5,8 @@ import { LessonService } from 'src/lesson/lesson.service';
 import { COURSE_MODEL, CourseSchema } from 'src/schema/course.schema';
 import { LESSON_MODEL, LessonSchema } from 'src/schema/lesson.schema';
 import { STARTTIME_MODEL, StartTimeSchema } from 'src/schema/starttime.schema';
+import { TIMEVIEW_MODEL, TimeViewSchema } from 'src/schema/timeview.schema';
+import { USER_MODEL, UserSchema } from 'src/schema/user.schema';
 
 @Module({
     imports: [
@@ -20,6 +22,14 @@ import { STARTTIME_MODEL, StartTimeSchema } from 'src/schema/starttime.schema';
             {
                 name: COURSE_MODEL,
                 schema: CourseSchema,
+            },
+            {
+                name: TIMEVIEW_MODEL,
+                schema: TimeViewSchema,
+            },
+            {
+                name: USER_MODEL,
+                schema: UserSchema,
             },
         ])
     ],

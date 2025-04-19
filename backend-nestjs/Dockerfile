@@ -18,4 +18,4 @@ RUN npm ci --omit=dev
 COPY --from=builder /app/dist ./dist
 COPY .env.production.local ./
 EXPOSE 3001
-CMD ["NODE_ENV=production","node","dist/main"] 
+CMD ["node","dist/main"] 

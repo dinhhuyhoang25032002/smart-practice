@@ -20,4 +20,4 @@ export class Deadline extends Document {
 export const DEADLINE_MODEL = Deadline.name;
 export const DeadlineSchema = SchemaFactory.createForClass(Deadline);
 
-DeadlineSchema.index({ createdAt: 1 }, { expireAfterSeconds: expireTime, unique: true });
+DeadlineSchema.index({ createdAt: 1 }, { expireAfterSeconds: expireTime, unique: true, name: "INDEX_DEADLINE" });

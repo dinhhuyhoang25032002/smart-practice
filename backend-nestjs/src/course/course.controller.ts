@@ -18,13 +18,11 @@ export class CourseController {
     @Get()
     @HttpCode(HttpStatus.OK)
     async getAllCourseById(
-        @Req() req: Request
+        @Req() req: Request,
+        @Query("userId") userId: string
     ) {
-        const { sub } = req.user as UserJWT
-        if (!sub) {
-            return new BadGatewayException();
-        }
-        return this.courseService.handleGetAllCourseById(sub);
+
+        return this.courseService.handleGetAllCourseById(userId);
     }
 
     @Get('search-name')
@@ -34,6 +32,15 @@ export class CourseController {
             return new BadRequestException('Missing require parameter: nameCourse!');
         }
         return this.courseService.getCourseByName(name);
+    }
+
+    @Get("get-result")
+    @HttpCode(HttpStatus.OK)
+    async getAllResultACourse(
+        @Query("slug") slug: string,
+        @Query("studentId") studentId: string
+    ) {
+        return this.courseService.handleGetAllResultACourse(slug, studentId)
     }
 
     @Get(":slug")
