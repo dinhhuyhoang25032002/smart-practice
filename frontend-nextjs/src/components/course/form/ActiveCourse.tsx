@@ -41,16 +41,17 @@ export default function ActiveCourse() {
       router.refresh();
       return;
     }
+
     toastNotiSuccess(res.message);
     router.refresh();
   };
   return (
-    <Form {...form}>
+    <Form {...form} >
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-full flex items-center justify-center"
       >
-        <div className="space-y-5 p-4 rounded-sm shadow-lg bg-amber-200 xl:w-1/4 w-full">
+        <div className="space-y-5 p-4 rounded-sm shadow-lg bg-amber-200  w-full">
           <FormField
             control={form.control}
             name="code"
@@ -58,7 +59,7 @@ export default function ActiveCourse() {
               <FormItem>
                 <FormLabel>Mã khóa học</FormLabel>
                 <FormControl>
-                  <Input {...field} className="bg-white" />
+                  <Input {...field} className="bg-white" placeholder="Nhập mã khóa học"/>
                 </FormControl>
                 <FormMessage />
               </FormItem>

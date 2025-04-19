@@ -30,7 +30,7 @@ services:
 
   mongodb:
     image: mongo
-    container_name: mongodb
+    container_name: mongodb_database
     volumes:
       - mongo_data:/data/db
     restart: always

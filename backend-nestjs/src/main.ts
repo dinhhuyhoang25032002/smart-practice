@@ -11,11 +11,12 @@ import { ConfigService } from '@nestjs/config';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { Response } from 'express';
+import { staticFolders } from './constant/constant';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bodyParser: true,
     cors: ConfigCors,
-    rawBody: true
+    rawBody: true,
   });
   const configService = app.get(ConfigService);
   app.setGlobalPrefix('api');
@@ -37,20 +38,26 @@ async function bootstrap() {
   app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
   app.use(cookieParser());
-  app.useStaticAssets(join(__dirname, '..', 'upload'), {
-    prefix: '/uploads/', // Ví dụ: http://localhost:3001/uploads/image.png
-    setHeaders: (res: Response) => {
-      res.setHeader("Access-Control-Allow-Origin", `${configService.get<string>("NEXT_PUBLIC_API_URL")}`)
-    }
+
+  staticFolders.forEach((folder) => {
+    app.useStaticAssets(join(__dirname, '..', folder.path), {
+      prefix: folder.prefix + '/', // Ví dụ: http://localhost:3001/uploads/image.png
+      setHeaders: (res: Response) => {
+        res.setHeader(
+          'Access-Control-Allow-Origin',
+          `${configService.get<string>('NEXT_PUBLIC_API_URL')}`,
+        );
+      },
+    });
   });
 
   const config = new DocumentBuilder()
-    .setTitle("Smart-Practice")
-    .setDescription("The API List for Smart-Practice")
-    .setVersion("1.0.0")
+    .setTitle('Smart-Practice')
+    .setDescription('The API List for Smart-Practice')
+    .setVersion('1.0.0')
     .addBearerAuth()
-    .addCookieAuth("token")
-    .build()
+    .addCookieAuth('token')
+    .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
 

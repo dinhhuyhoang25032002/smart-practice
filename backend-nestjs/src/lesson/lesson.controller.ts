@@ -38,6 +38,7 @@ export class LessonController {
         }
         return this.lessonService.handleGetAllSections(lessonId, userId);
     }
+
     @Post()
     @HttpCode(HttpStatus.CREATED)
     async createALesson(@Body() content: LessonDto) {
