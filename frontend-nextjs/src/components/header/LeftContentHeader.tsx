@@ -16,6 +16,8 @@ import LogoHeader from "@/components/header/LogoHeader";
 import { LuCopyright } from "react-icons/lu";
 import { SlEarphonesAlt } from "react-icons/sl";
 import { FaArrowLeft } from "react-icons/fa6";
+import { useUserContext } from "@/store/context/AuthContext";
+import TooltipChatbot from "../custom/TooltipChatbot";
 
 // import {
 //   Tooltip,
@@ -31,7 +33,7 @@ export default function LeftContentHeader() {
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   // const [isOpenAllProduct, setOpenAllProduct] = useState(false);
   const [isOpenSearch, setOpenSearch] = useState(false);
-
+  const { user } = useUserContext();
   // const pathname = usePathname();
 
   return (
@@ -64,7 +66,7 @@ export default function LeftContentHeader() {
           isOpenMenu ? "translate-x-0" : " -translate-x-full"
         }`}
       >
-        <div>
+        {/* <div>
           <div className="flex items-center gap-3 pb-5">
             <div
               onClick={() => setIsOpenMenu(!isOpenMenu)}
@@ -119,7 +121,7 @@ export default function LeftContentHeader() {
               </span>
             </Link>
           </div>
-        </div>
+        </div> */}
 
         <div className="flex flex-col gap-3">
           <span className="text-justify text-sm">
@@ -139,18 +141,24 @@ export default function LeftContentHeader() {
         </div>
       </div>
 
-      <div className="hidden lg:flex items-center gap-7 text-xl">
-        <Link href="/about" className="cursor-pointer">
+      <div className="hidden lg:flex items-center gap-20 text-xl">
+        <Link href="/khoa-hoc" className="cursor-pointer">
           <span className=" font-semibold  hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
-            Giới Thiệu
+            Bắt đầu học
           </span>
         </Link>
-        <Link href="/about" className="cursor-pointer">
+        <Link
+          href={`/danh-sach-bai-thi-cua-sinh-vien?studentId=${user._id}`}
+          className="cursor-pointer"
+        >
           <span className=" font-semibold  hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
-            Hỗ trợ
+            Xem điểm
           </span>
         </Link>
-        <Link href="/new" className="cursor-pointer">
+        <div>
+          <TooltipChatbot />
+        </div>
+        {/* <Link href="/new" className="cursor-pointer">
           <span className=" font-semibold  hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
             Thông Báo
           </span>
@@ -159,8 +167,9 @@ export default function LeftContentHeader() {
           <span className=" font-semibold  hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
             Chính Sách
           </span>
-        </Link>
+        </Link> */}
       </div>
+
       <div
         className="text-xl p-2 cursor-pointer hover:bg-[#eee] active:bg-[#eee] rounded-full sm:hidden lg:hidden"
         onClick={() => setOpenSearch(true)}

@@ -61,7 +61,7 @@ export default function MainLayout({
 
       <ButtonGoToTop />
 
-      {!authPage && !coursePage && <Footer />}
+      {/* {!authPage && !coursePage && <Footer />} */}
     </div>
   );
 }

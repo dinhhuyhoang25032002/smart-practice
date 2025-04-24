@@ -14,7 +14,7 @@ export default function Home() {
       case UserRole.TEACHER:
         return <HomePageForTeacher />;
       default:
-        return <ForbiddenResourceError namebtn="Quay lại trang đăng nhập" />;
+        return <HomePageForStudent />;;
     }
   };
   const { user } = useUserContext();
