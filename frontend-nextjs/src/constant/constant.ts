@@ -13,3 +13,7 @@ export const Headers: HeadersInit | undefined = {
   "Content-Type": "application/json",
   "accept": "application/json",
 }
+export enum StatusAttendance {
+  ON_TIME = 'ON_TIME',
+  LATE = 'LATE',
+}

@@ -2,8 +2,7 @@
 import NoResult from "@/components/result/NoResult";
 import { Textarea } from "@/components/ui/textarea";
 import { useSWRPrivate } from "@/hooks/useSWRCustom";
-import { Evaluate, ResponseException } from "@/types/CustomType";
-
+import { Evaluate } from "@/types/CustomType";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import { IoWarningOutline } from "react-icons/io5";
 
@@ -17,12 +16,10 @@ export default function ResultContent({
   studentId,
   isEvaluated,
 }: ResultProps) {
-  const { data } = useSWRPrivate<Evaluate | ResponseException>(
+  const { data } = useSWRPrivate<Evaluate>(
     `evaluate?studentId=${studentId}&lessonId=${lessonId}`
   );
-
   if (data && "status" in data && data.status === 400) return <NoResult />;
-
   return (
     data &&
     "_id" in data && (

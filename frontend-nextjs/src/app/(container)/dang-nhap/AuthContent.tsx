@@ -17,7 +17,7 @@ export default function AuthContent() {
           value={tab}
           className="xl:w-[36%] w-[94%] sm:w-[65%] lg:w-[45%] 2xl:w-[30%] z-10"
         >
-          <TabsList className=" w-full  h-12">
+          <TabsList className="w-full h-12">
             <TabsTrigger
               value="login"
               onClick={() => setTab("login")}

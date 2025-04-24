@@ -4,6 +4,7 @@ import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { ResultController } from 'src/result/result.controller';
 import { ResultService } from 'src/result/result.service';
+import { DEADLINE_MODEL, DeadlineSchema } from 'src/schema/deadline.schema';
 import { RESULT_MODEL, ResultSchema } from 'src/schema/result.schema';
 import { STARTTIME_MODEL, StartTimeSchema } from 'src/schema/starttime.schema';
 
@@ -11,7 +12,7 @@ import { STARTTIME_MODEL, StartTimeSchema } from 'src/schema/starttime.schema';
     imports: [
         MulterModule.register({
             storage: diskStorage({
-                destination: './upload', // Thư mục lưu file
+                destination: './uploads', // Thư mục lưu file
                 filename: (req, file, cb) => {
                     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
                     cb(null, `${file.fieldname}-${uniqueSuffix}-${file.originalname}`);
@@ -38,7 +39,11 @@ import { STARTTIME_MODEL, StartTimeSchema } from 'src/schema/starttime.schema';
             {
                 name: STARTTIME_MODEL,
                 schema: StartTimeSchema
-            }
+            },
+            {
+                name: DEADLINE_MODEL,
+                schema: DeadlineSchema,
+            },
         ])
     ],
     controllers: [ResultController],

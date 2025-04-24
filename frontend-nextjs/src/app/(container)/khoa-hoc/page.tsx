@@ -1,7 +1,7 @@
 "use client";
 import { useUserContext } from "@/store/context/AuthContext";
 import { useSWRPrivate } from "@/hooks/useSWRCustom";
-import type { CourseInfor, ResponseException } from "@/types/CustomType";
+import type { CourseInfor } from "@/types/CustomType";
 import Image from "next/image";
 import slugify from "slugify";
 import {
@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 export default function CourseInfo() {
   const { user } = useUserContext();
   const _id = user._id;
-  const { data } = useSWRPrivate<CourseInfor[] | ResponseException>(
+  const { data } = useSWRPrivate<CourseInfor[]>(
     _id ? `course?userId=${_id}` : ""
   );
   console.log(data);
@@ -51,10 +51,7 @@ export default function CourseInfo() {
             </Dialog>
           </div>
           <div className="w-full flex  p-5 flex-wrap gap-10 justify-start ">
-            {data &&
-            "status" in data &&
-            data?.status === 400 &&
-            data.name === "BadRequestException" ? (
+            {data && "status" in data && data?.status === 400 ? (
               <div className="w-full flex items-center justify-center">
                 <ActiveCourse />
               </div>

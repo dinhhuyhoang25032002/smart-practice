@@ -54,7 +54,7 @@ export default function FormSendResult() {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("lessonId", id);
-    formData.append("submissionTime", Date.now().toString());
+    // formData.append("submissionTime", Date.now().toString());
 
     const res = await fetchPrivateData("result", {
       body: formData,
@@ -84,7 +84,7 @@ export default function FormSendResult() {
   };
 
   return (
-    <form className=" flex flex-col w-full bg-[#eee] items-center justify-center  space-y-5 rounded-sm">
+    <form className="flex flex-col w-full bg-[#eee] items-center justify-center space-y-5 rounded-sm">
       <div
         {...getRootProps()}
         className="rounded-md w-full h-36 flex justify-center items-center bg-blue-400 cursor-pointer"

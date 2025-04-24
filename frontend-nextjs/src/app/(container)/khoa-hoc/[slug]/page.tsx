@@ -15,7 +15,6 @@ import type {
   ArrLessons,
   IndexItemProps,
   Lesson,
-  ResponseException,
 } from "@/types/CustomType";
 import { useState } from "react";
 import { BsCameraVideo } from "react-icons/bs";
@@ -49,7 +48,7 @@ export default function CourseContent({
     isLoading: isLoadingLesson,
     error: errorLesson,
     data: dataLesson,
-  } = useSWRPrivate<Lesson & ResponseException>(
+  } = useSWRPrivate<Lesson>(
     `lesson?lessonId=${id}`,
     {},
     {
@@ -87,7 +86,7 @@ export default function CourseContent({
     })
   );
   if (isLoadingLesson || isLoadingCourse) return <Loading />;
-  if (dataLesson?.status === 403 && dataLesson?.name === "ForbiddenException") {
+  if (dataLesson && "status" in dataLesson && dataLesson?.status === 403) {
     return <ForbiddenResourceError />;
   }
   if (errorLesson || errorCourse) return <NotFound />;

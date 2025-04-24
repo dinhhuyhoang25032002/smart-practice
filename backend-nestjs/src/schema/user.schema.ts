@@ -10,7 +10,7 @@ export class User extends Document {
     @Prop()
     class: string;
 
-    @Prop()
+    @Prop({ unique: true })
     email: string;
 
     @Prop()

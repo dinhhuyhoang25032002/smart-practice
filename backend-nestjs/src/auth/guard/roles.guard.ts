@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { UserJWT } from "src/types/CustomType";
-import { Request } from "express";
+import type { Request } from "express";
 import { Reflector } from "@nestjs/core";
 import { Role } from "src/constant/constant";
 

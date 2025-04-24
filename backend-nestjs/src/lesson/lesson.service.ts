@@ -104,8 +104,8 @@ export class LessonService {
     }
 
     async handleGetAllSections(lessonId: string, userId: string) {
-        console.log(lessonId, userId);
-        
+
+
         const user = await this.userModel.findById(userId).select('fullname ').lean().exec();
         if (!user) {
             return new BadRequestException();
@@ -138,7 +138,12 @@ export class LessonService {
                 }
             ))
 
-            return data
+            return {
+                ...user,
+                nameLesson: lesson.name,
+                dataRecord: data,
+                ...startTime
+            }
         }
 
         const record = timeview.reduce((acc, item) => {
@@ -161,7 +166,7 @@ export class LessonService {
 
             return acc;
         }, [] as Array<{ sectionId: string; views: number; duration: number }>)
-         console.log(startTime);
+
 
         const data = indexItem.map((item) => {
             const map = record.find((recordItem) => recordItem.sectionId === item._id.toString())

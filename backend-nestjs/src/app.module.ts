@@ -20,6 +20,7 @@ import { TimeviewModule } from './timeview/timeview.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { createMailerOptions } from 'src/helper/OAuth2';
+import { AttendanceModule } from './attendance/attendance.module';
 @Module({
   imports: [
     ConfigModule.forRoot(
@@ -49,7 +50,7 @@ import { createMailerOptions } from 'src/helper/OAuth2';
           return connection;
         }
       }
-    ), SuperviceModule, UserModule, AuthModule, CourseModule, EvaluateModule, LessonModule, StarttimeModule, ResultModule, DeadlineModule, TimeviewModule
+    ), SuperviceModule, UserModule, AuthModule, CourseModule, EvaluateModule, LessonModule, StarttimeModule, ResultModule, DeadlineModule, TimeviewModule, AttendanceModule
   ],
   controllers: [AppController,],
   providers: [AppService, AccessTokenStrategy, RefreshTokenStrategy],

@@ -6,8 +6,7 @@ import { useRouter } from "next/navigation";
 import { useUserContext } from "@/store/context/AuthContext";
 import Image from "next/image";
 import bgHomePageForStudent from "@/assets/background/homepage/nonbg-01.png";
-import SectionAbout from "@/components/homepage/SectionAbout";
-import SectionContact from "@/components/homepage/SectionContact";
+
 export default function HomePageForStudent() {
   const router = useRouter();
   const { user } = useUserContext();
@@ -44,12 +43,7 @@ export default function HomePageForStudent() {
           </Button>
         </div>
       </div>
-      <div>
-        <SectionAbout />
-      </div>
-      <div>
-        <SectionContact />
-      </div>
+     
     </div>
   );
 }

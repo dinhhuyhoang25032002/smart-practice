@@ -1,4 +1,5 @@
 
+
 import { StaticImageData } from "next/image";
 
 type dataContentSide = {
@@ -72,7 +73,6 @@ export class ContentLesson {
 }
 export type ContentLessonMerge = ContentLesson & { _id: string }
 
-
 export type Lesson = {
   content: Array<ContentLesson>,
   name: string,
@@ -102,7 +102,14 @@ export type EvaluaTions = {
   nameCourse: string,
   dataResult: Array<EvaluaDashboard>
 }
-
+export type Attendances = {
+  _id: string,
+  studentId: string
+  time: string
+  shift: string
+  day: string
+  status: string
+}
 export type CourseInfor = {
   _id: string,
   userId: string,
@@ -158,18 +165,20 @@ export type ResponseException = {
 }
 
 export type Results = {
-  _id: string;
-  studentId: {
-    _id: string;
-    fullname: string
-  };
-  lessonId: {
-    _id: string;
+  courseId: string;
+  courseName: string;
+  lessonNumber: number;
+  lessons: Array<{
+    lessonId: string;
     name: string
     linkImage: string
-  };
-  createdAt: string;
-  isEvaluated: boolean;
+    studentId: {
+      _id: string;
+      fullname: string
+    };
+    isEvaluated: boolean;
+    createdAt: string;
+  }>;
 }
 
 export type Result = {

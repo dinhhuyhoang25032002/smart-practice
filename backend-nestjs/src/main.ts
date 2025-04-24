@@ -1,16 +1,15 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigCors } from 'src/config/configCors';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common/pipes/validation.pipe';
 // import session from 'express-session';
 import cookieParser from 'cookie-parser';
-import bodyParser from 'body-parser';
 import passport from 'passport';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
-import { Response } from 'express';
+import type { Response } from 'express';
 import { staticFolders } from './constant/constant';
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -34,9 +33,9 @@ async function bootstrap() {
   //   }));
   app.use(passport.initialize());
   //app.use(passport.session());
-  app.use(bodyParser.json({ limit: '50mb' }));
-  app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
-
+  app.useBodyParser('json', { limit: '50mb' });
+  app.useBodyParser('text', { limit: '50mb' });
+  app.useBodyParser('urlencoded', { limit: '50mb', extended: true });
   app.use(cookieParser());
 
   staticFolders.forEach((folder) => {

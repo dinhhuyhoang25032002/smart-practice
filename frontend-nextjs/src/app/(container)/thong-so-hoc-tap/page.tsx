@@ -2,7 +2,7 @@
 import NoDataAvailable from "@/components/custom/NoDataAvailable";
 import MainLayout from "@/components/main-layout";
 import { useSWRPrivate } from "@/hooks/useSWRCustom";
-import { CourseInfor, ResponseException } from "@/types/CustomType";
+import { CourseInfor } from "@/types/CustomType";
 import Image from "next/image";
 import Link from "next/link";
 import React, { use } from "react";
@@ -12,22 +12,26 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
   const query = use(searchParams).studentId;
   console.log(query);
 
-  const { data } = useSWRPrivate<CourseInfor[] | ResponseException>(
+  const { data } = useSWRPrivate<CourseInfor[]>(
     query ? `course?userId=${query}` : ""
   );
-  if (data && "status" in data && data?.status === 400) {
+  if (
+    (data && "status" in data && data?.status === 400) ||
+    data?.length === 0
+  ) {
     return <NoDataAvailable />;
   }
+
   return (
-    data &&
-    (data as CourseInfor[]).length !== 0 && (
-      <MainLayout>
-        <div className="p-10 xl:p-16 xl:flex-row ">
-          <span className="block text-center text-2xl uppercase mb-12">
-            Danh sách khóa học sinh viên đã đăng kí
-          </span>
-          <div className=" flex justify-center items-center gap-10">
-            {(data as CourseInfor[]).map((item, index) => (
+    <MainLayout>
+      <div className="p-10 xl:p-16 xl:flex-row ">
+        <span className="block text-center text-2xl uppercase mb-12">
+          Danh sách khóa học sinh viên đã đăng kí
+        </span>
+        <div className=" flex justify-center items-center gap-10">
+          {data &&
+            data.length !== 0 &&
+            data?.map((item, index) => (
               <div
                 key={index}
                 className="border w-[28%] h-[300px] border-green-500  shadow-xl p-3 rounded-md flex flex-col space-y-4 items-center "
@@ -53,9 +57,8 @@ export default function Page({ searchParams }: { searchParams: SearchParams }) {
                 </Link>
               </div>
             ))}
-          </div>
         </div>
-      </MainLayout>
-    )
+      </div>
+    </MainLayout>
   );
 }

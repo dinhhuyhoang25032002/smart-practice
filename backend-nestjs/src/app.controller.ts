@@ -1,7 +1,6 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common/decorators';
 import { AppService } from './app.service';
 import { JwtAccessAuthGuard } from 'src/auth/guard/accessToken.guard';
-import { JwtRefreshAuthGuard } from 'src/auth/guard/refreshToken.guard';
 
 @Controller()
 export class AppController {

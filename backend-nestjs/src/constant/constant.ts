@@ -15,6 +15,16 @@ export enum CommodityType {
   APP = 'APP',
 }
 
+export enum StatusAttendance {
+  ON_TIME = 'ON_TIME',
+  LATE = 'LATE',
+}
+
+export enum ShiftAttendance {
+  MORNING = '8h-12h (Ca 1)',
+  AFTERNOON = '13h-17h (Ca 2)',
+}
+
 export const expireTime = 6 * 30 * 24 * 60 * 60;
 
 export enum Role {

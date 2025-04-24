@@ -7,8 +7,10 @@ import { ConfigService } from '@nestjs/config';
 import path from 'path';
 import fs, { promises } from "fs"
 
-import { StatusLesson } from 'src/constant/constant';
+import { CommodityType, StatusLesson } from 'src/constant/constant';
 import { StartTime, STARTTIME_MODEL } from 'src/schema/starttime.schema';
+import { DEADLINE_MODEL, Deadline } from 'src/schema/deadline.schema';
+import { PopulatedDeadline, PopulatedResult } from 'src/types/CustomType';
 
 @Injectable()
 export class ResultService {
@@ -19,6 +21,8 @@ export class ResultService {
         readonly configService: ConfigService,
         @InjectModel(STARTTIME_MODEL)
         private readonly startTimeModel: Model<StartTime> & SoftDeleteModel<StartTime>,
+        @InjectModel(DEADLINE_MODEL)
+        private readonly deadlineModel: Model<Deadline> & SoftDeleteModel<Deadline>,
     ) { }
 
     async handleCreateResultLesson(data: { sub: string, lessonId: string }, file: Express.Multer.File) {
@@ -62,16 +66,53 @@ export class ResultService {
     }
 
     async handleGetAllResultByStudentId(studentId: string) {
-        return this.resultModel.find({ studentId: studentId }).populate([
-            { path: "lessonId", select: "name linkImage" },
+        const results = await this.resultModel.find({ studentId: studentId }).populate([
+            {
+                path: "lessonId", select: "name linkImage course", populate: {
+                    path: "course", select: "_id"
+                }
+            },
             { path: "studentId", select: "fullname" }
-        ]).select("-content").lean().exec();
-    }
+        ]).select("-content").exec();
 
+        if (results.length === 0) {
+            return new BadRequestException();
+        }
+        const deadlines = await this.deadlineModel.find({
+            userId: studentId, productionType: CommodityType.COURSE
+        }).populate({ path: "productionId", select: "name lessons" }).lean().exec();
+
+        if (deadlines.length === 0) {
+            return new BadRequestException("Không tìm thấy deadline nào!");
+        }
+
+        const merged = (deadlines as unknown as PopulatedDeadline[]).map((item) => {
+            const lessons = (results as unknown as PopulatedResult[])
+                .filter((result) => result.lessonId.course._id.toString() === item.productionId._id.toString())
+                .map((res) => ({
+                    lessonId: res.lessonId._id,
+                    name: res.lessonId.name,
+                    studentId: res.studentId,
+                    linkImage: res.lessonId.linkImage,
+                    isEvaluated: res.isEvaluated,
+                    createdAt: res.createdAt,
+                }));
+
+            return {
+                courseId: item.productionId._id,
+                courseName: item.productionId.name,
+                lessonNumber: item.productionId.lessons.length,
+                lessons,
+            };
+        });
+
+        return merged
+    }
     async handleGetOneResult(studentId: string, lessonId: string) {
         return await this.resultModel.findOne({ studentId, lessonId }).populate({
             path: "studentId",
             select: "fullname"
         }).lean().exec();
     }
+
 }
