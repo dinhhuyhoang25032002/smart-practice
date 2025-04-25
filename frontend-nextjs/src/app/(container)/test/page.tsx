@@ -117,7 +117,7 @@ const experience = [
 
 export default function page() {
   const handleDownloadPDF = () => {
-    console.log('abc');
+
     
     const input = document.getElementById("pdf-content") as HTMLElement;
   
