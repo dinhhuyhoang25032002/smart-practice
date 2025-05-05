@@ -5,6 +5,8 @@ import LoginForm from "@/components/auth/FormLogin";
 import bgImage from "@/assets/background/auth/00d8fc7bcb426c1c3553.jpg";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Suspense, useState } from "react";
+import bgHomePageForStudent from "@/assets/background/homepage/nonbg-01.png";
+
 import RegisterForm from "@/components/auth/FormRegister";
 export default function AuthContent() {
   const [tab, setTab] = useState("login");
@@ -48,13 +50,14 @@ export default function AuthContent() {
         <div
           className=" h-full lg:flex xl:flex 2xl:flex absolute inset-0 z-0
         before:contenr-[''] before:w-46 before:h-full before:bg-gradient-to-r before:from-[rgba(255,255,255,1)] before:from-0% before:via-[rgba(239,242,239,0.6)] before:via-48% before:to-[rgba(255,255,255,0.2)] before:to-100%  before:absolute before:inset-0 before:z-0
-        after:contenr-[''] after:w-46 after:h-full after:bg-gradient-to-r after:from-[rgba(207,230,213,0.08)] after:from-0% after:via-[rgba(239,242,239,0.6)] after:via-48% after:to-[rgba(255,255,255,1)] after:to-100% after:absolute after:top-0 after:right-0 after:z-0"
+        after:contenr-[''] after:w-46 after:h-full after:bg-gradient-to-r after:from-[rgba(207,230,213,0.01)] after:from-0% after:via-[rgba(239,242,239,0.0)] after:via-48% after:to-[rgba(255,255,255,0.01)] after:to-100% after:absolute after:top-0 after:right-0 after:z-0
+        "
         >
           <Image
-            src={bgImage}
+            src={bgHomePageForStudent}
             alt="Cloud-Image"
             priority
-            className="w-full h-full object-cover object-center blur-[2px]"
+            className="w-full h-full object-cover object-center blur-[2px] p-10 bg-gradient-to-r from-[#0c47a6] from-0% via-[#1f58b5] via-48% to-[#1859c4] to-100%"
           />
         </div>
       </div>

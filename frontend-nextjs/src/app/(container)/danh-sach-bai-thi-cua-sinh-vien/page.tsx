@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { ArrowRightIcon } from "lucide-react";
 import NoDataAvailable from "@/components/custom/NoDataAvailable";
-
+import { Progress } from "@/components/ui/progress";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import Link from "next/link";
 import Loading from "@/app/(container)/danh-sach-bai-thi-cua-sinh-vien/loading";
@@ -40,9 +40,17 @@ export default function AllResultsFromStudent() {
                   <span className=" text-2xl font-semibold">
                     {item.courseName}
                   </span>
-                  <span>
-                    {item.lessons.length} / {item.lessonNumber} bài đã nộp.
-                  </span>
+                  <div className="relative flex items-center justify-center">
+                    <span className="inline-block">
+                      {item.lessons.length} / {item.lessonNumber} bài đã nộp.
+                    </span>
+                    <Progress
+                      className="absolute bottom-0 left-0 w-full h-1 rounded-full"
+                      value={Math.round(
+                        (item.lessons.length / item.lessonNumber) * 100
+                      )}
+                    />
+                  </div>
                 </div>
                 <div className="flex gap-5 flex-wrap justify-center ">
                   {item.lessons.length === 0 ? (

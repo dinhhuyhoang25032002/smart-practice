@@ -1,49 +1,21 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { ArrowRightIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
-// import CommingSoon from "@/components/custom/CommingSoon";
-import { useUserContext } from "@/store/context/AuthContext";
+
 import Image from "next/image";
 import bgHomePageForStudent from "@/assets/background/homepage/nonbg-01.png";
 
 export default function HomePageForStudent() {
-  const router = useRouter();
-  const { user } = useUserContext();
   return (
-    <div className=" flex flex-col justify-center items-center w-screen max-w-full">
-      <div className="h-[600px] w-full flex items-center bg-gradient-to-r from-[#2A9B37] from-0% via-[#75B547] via-48% to-[#68C9CC] to-100% justify-center relative flex-col">
+    <div className="flex flex-col items-center w-screen max-w-full min-h-full">
+      <div className="lg:h-[600px] h-[300px] w-full flex  bg-gradient-to-r from-[#090979] from-0% via-[#054c5c] via-[41%]  to-[#090979] to-100% relative flex-col justify-center items-center">
         <Image
-          className="absolute inset-0 w-full h-full object-contain object-center"
+          className="absolute inset-0 w-full h-full object-contain object-center py-5"
           src={bgHomePageForStudent}
           alt="image-bg-homepage-student"
         />
-        <div className=" flex gap-10 items-center justify-center ">
-          <Button
-            className="rounded bg-[#239b2f] hover:bg-[#239b2f] active:opacity-55"
-            effect={"expandIcon"}
-            icon={ArrowRightIcon}
-            iconPlacement="right"
-            onClick={() => router.push("/khoa-hoc")}
-          >
-            Bắt đầu khóa học
-          </Button>
-          <Button
-            className="rounded bg-[#239b2f] hover:bg-[#239b2f] active:opacity-55"
-            effect={"expandIcon"}
-            icon={ArrowRightIcon}
-            iconPlacement="right"
-            onClick={() =>
-              router.push(
-                `/danh-sach-bai-thi-cua-sinh-vien?studentId=${user._id}`
-              )
-            }
-          >
-            Xem điểm
-          </Button>
+        <div className="text-white text-2xl lg:text-6xl font-semibold z-20 mt-[-50px]">
+          NỀN TẢNG THỰC HÀNH SỐ AIoT
         </div>
       </div>
-     
     </div>
   );
 }

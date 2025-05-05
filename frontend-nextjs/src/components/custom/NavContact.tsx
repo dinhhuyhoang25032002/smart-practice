@@ -19,7 +19,7 @@ const NavContact = ({ contentLeft }: NavContactProps) => {
 
   return (
     <div
-      className="flex justify-between items-center px-6 py-1 bg-gradient-to-r from-[#024718] from-0% via-[#197c1c] via-50% to-[#17771a] to-100% text-white
+      className="flex justify-between items-center px-6 py-1 bg-gradient-to-r from-[#080541] from-0% via-[#090979] via-58% to-[#06044a] to-100% text-white
     "
     >
       <div className="flex xl:w-[20%] ">{contentLeft}</div>

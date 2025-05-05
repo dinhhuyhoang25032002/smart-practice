@@ -21,6 +21,8 @@ export type UserPropsContext = {
 type AuthContextType = {
   user: UserPropsContext;
   setUser: (user: UserPropsContext) => void;
+  openSheet: boolean;
+  setOpenSheet: (open: boolean) => void;
 };
 
 const initialUser: UserPropsContext = {
@@ -35,12 +37,14 @@ const initialUser: UserPropsContext = {
 
 export const AuthContext = createContext<AuthContextType>({
   user: initialUser,
-  setUser: () => {},
+  setUser: () => { },
+  setOpenSheet: () => { },
+  openSheet: false,
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserPropsContext>(initialUser);
-
+  const [openSheet, setOpenSheet] = useState(false);
   // const router = useRouter();
   // const [userInfo, setUserInfo] = useState(handleGetUserInfor());
   // const [isLogged, setIsLogged] = useState(handleGetIsAuth());
@@ -91,11 +95,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (pathname === "/dang-nhap") {
         return;
       }
-      
+
       router.push("/dang-nhap");
       return;
     }
-   
+
     const fetcher = async () => {
       const res = await fetchPrivateData(`user?userId=${_id}`);
 
@@ -109,11 +113,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser((prev) => ({ ...prev, ...res }));
     };
     fetcher();
-   
   }, [_id, act, isLogged, pathname, router]);
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider value={{ user, setUser, setOpenSheet, openSheet }}>
       {children}
     </AuthContext.Provider>
   );
