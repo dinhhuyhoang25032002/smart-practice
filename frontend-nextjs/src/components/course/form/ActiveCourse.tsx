@@ -38,15 +38,15 @@ export default function ActiveCourse() {
 
     if (res && res.status === 200) {
       toastNotiFail(res.message);
-      router.refresh();
+      router.push("/khoa-hoc");
       return;
     }
 
     toastNotiSuccess(res.message);
-    router.refresh();
+    router.push("/khoa-hoc");
   };
   return (
-    <Form {...form} >
+    <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="w-full flex items-center justify-center"
@@ -59,7 +59,11 @@ export default function ActiveCourse() {
               <FormItem>
                 <FormLabel>Mã khóa học</FormLabel>
                 <FormControl>
-                  <Input {...field} className="bg-white" placeholder="Nhập mã khóa học"/>
+                  <Input
+                    {...field}
+                    className="bg-white"
+                    placeholder="Nhập mã khóa học"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

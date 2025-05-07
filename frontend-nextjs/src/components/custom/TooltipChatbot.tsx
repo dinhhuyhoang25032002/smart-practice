@@ -25,9 +25,9 @@ export default function TooltipChatbot() {
             />
           </div>
         </TooltipTrigger>
-        <TooltipContent className="px-0 py-0 bg-white " side="bottom">
-          <div className="flex items-center gap-2 text-[13px]">
-            Chat để được tư vấn về sản phẩm
+        <TooltipContent className="px-0 py-0 bg-white" side="bottom">
+          <div className="flex items-center gap-2 text-base text-red-500 p-5">
+            Chatbot AI hỗ trợ 24/7
           </div>
         </TooltipContent>
       </Tooltip>

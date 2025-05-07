@@ -71,7 +71,6 @@ export default function CourseContent({
   const contentCourse: ContentLesson[] = dataLesson?.content || [];
   const arrayLessons: ArrLessons[] = dataCourse?.lessons || [];
 
-  if (contentCourse.length === 0 && !isLoadingLesson) return <CommingSoon />;
   const MapArrayLesson: (ArrLessons & { index: number })[] = arrayLessons?.map(
     (item, index) => ({
       ...item,
@@ -86,9 +85,10 @@ export default function CourseContent({
     })
   );
   if (isLoadingLesson || isLoadingCourse) return <Loading />;
-  if (dataLesson && "status" in dataLesson && dataLesson?.status === 403) {
+  if (dataLesson && "status" in dataLesson && dataLesson.status === 403) {
     return <ForbiddenResourceError />;
   }
+  if (dataLesson && dataLesson?.content.length === 0) return <CommingSoon />;
   if (errorLesson || errorCourse) return <NotFound />;
 
   const handleSubmitTime = async (

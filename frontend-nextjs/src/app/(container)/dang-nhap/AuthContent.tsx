@@ -2,7 +2,7 @@
 import MainLayout from "@/components/main-layout";
 import Image from "next/image";
 import LoginForm from "@/components/auth/FormLogin";
-import bgImage from "@/assets/background/auth/00d8fc7bcb426c1c3553.jpg";
+// import bgImage from "@/assets/background/auth/00d8fc7bcb426c1c3553.jpg";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Suspense, useState } from "react";
 import bgHomePageForStudent from "@/assets/background/homepage/nonbg-01.png";

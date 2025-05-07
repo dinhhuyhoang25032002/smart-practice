@@ -192,7 +192,7 @@ export default function LeftContentHeader() {
           onClick={(e) => handleRedirect(e, "/khoa-hoc")}
         >
           <span className=" font-semibold  hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
-            Bắt đầu học
+           Khoá học
           </span>
         </Link>
         <Link
@@ -206,7 +206,7 @@ export default function LeftContentHeader() {
           }
         >
           <span className=" font-semibold  hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
-            Xem điểm
+            Kết quả
           </span>
         </Link>
         <div>

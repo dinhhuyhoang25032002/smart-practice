@@ -23,7 +23,6 @@ export default function CourseInfo() {
   const { data } = useSWRPrivate<CourseInfor[]>(
     _id ? `course?userId=${_id}` : ""
   );
-  console.log(data);
 
   return (
     <MainLayout>
@@ -32,7 +31,12 @@ export default function CourseInfo() {
           <div className="w-full flex justify-end items-center">
             <Dialog>
               <DialogTrigger asChild>
-                <Button variant="outline">Đăng kí khóa học mới</Button>
+                <Button
+                  variant="outline"
+                  className="rounded bg-[#D32F2F] hover:bg-[#1513be] active:bg-[#1513be] hover:text-white  active:text-white cursor-pointer text-base p-2 text-white font-medium flex items-center gap-2"
+                >
+                  Đăng kí khóa học mới
+                </Button>
               </DialogTrigger>
               <DialogContent className="">
                 <DialogHeader>

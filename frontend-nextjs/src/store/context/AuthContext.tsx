@@ -91,14 +91,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const isLogged = handleGetIsAuth();
   const pathname = usePathname();
   useEffect(() => {
-    if (!_id || !act || !isLogged) {
-      if (pathname === "/dang-nhap") {
-        return;
-      }
+    // if (!_id || !act || !isLogged) {
+    //   if (pathname === "/dang-nhap") {
+    //     return;
+    //   }
 
-      router.push("/dang-nhap");
-      return;
-    }
+    //   router.push("/dang-nhap");
+    //   return;
+    // }
 
     const fetcher = async () => {
       const res = await fetchPrivateData(`user?userId=${_id}`);

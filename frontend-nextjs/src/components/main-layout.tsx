@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Header from "@/components/header/Header";
 import { GrMail } from "react-icons/gr";
-import Footer from "@/components/footer/Footer";
+// import Footer from "@/components/footer/Footer";
 import ButtonGoToTop from "@/components/custom/ButtonGoToTop";
 import NavContact from "@/components/custom/NavContact";
 

@@ -24,14 +24,15 @@ import { useSearchParams } from "next/navigation";
 import { decodeUrl } from "@/utils/encryption-url";
 // import { useAuthStore } from "@/store/auth/AuthStore";
 import { useState } from "react";
-import { toastNotiFail } from "@/components/custom/ToastNotification";
+import { toastNotiFail, toastNotiSuccess } from "@/components/custom/ToastNotification";
+import { useUserContext } from "@/store/context/AuthContext";
 
 export default function LoginForm() {
   // const { setUser, setIsAuth } = useAuthStore();
   const [isShowPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const query = useSearchParams();
-
+  const { setOpenSheet } = useUserContext();
   const form = useForm<LoginBodyType>({
     resolver: zodResolver(LoginBody),
     defaultValues: {
@@ -68,14 +69,15 @@ export default function LoginForm() {
       const back_to = decodeUrl(queryUrl);
       router.replace(`${back_to}`, {});
     } else {
-      router.replace("/");
+      form.reset();
+      setOpenSheet(false);
+      toastNotiSuccess("Đăng nhập thành công!")
     }
   }
   const handleLoginWithGoogle = async () => {
     window.location.href = `${process.env.NEXT_PUBLIC_ENDPOINT}/auth/google/login`;
   };
 
-  
   return (
     <Form {...form}>
       <section className="space-y-4 w-full bg-white h-fit px-5 py-4 rounded-md">
@@ -135,7 +137,10 @@ export default function LoginForm() {
               Quên mật khẩu
             </span>
           </div>
-          <Button type="submit" className="bg-blue-700 w-full active:opacity-60">
+          <Button
+            type="submit"
+            className="bg-blue-700 w-full active:opacity-60"
+          >
             Đăng nhập
           </Button>
         </form>
