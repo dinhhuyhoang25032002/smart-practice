@@ -1,4 +1,4 @@
-import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, HttpException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { SoftDeleteModel } from 'mongoose-delete';
 import { COURSE_MODEL, Course } from 'src/schema/course.schema';
@@ -14,6 +14,7 @@ import { EVALUATE_MODEL, Evaluate } from 'src/schema/evaluate.schema';
 import { STARTTIME_MODEL, StartTime } from 'src/schema/starttime.schema';
 import { CreateCourseDto } from 'src/course/class/ActiveCourse.dto';
 import slugify from 'slugify';
+import { CommodityType } from 'src/constant/constant';
 
 @Injectable()
 export class CourseService {
@@ -194,41 +195,62 @@ export class CourseService {
 
   async handleCreateACourse(
     body: CreateCourseDto,
-    files: {
-      image?: Express.Multer.File[],
-      video?: Express.Multer.File[]
-    }
+    image: Express.Multer.File,
   ) {
-    const { name, description, price } = body;
+    const { name } = body;
+    const course = await this.courseModel.findOneWithDeleted({
+      name
+    });
+    if (course) {
+      if ('deleted' in course) {
+        // Nếu khóa học đã bị xóa, restore lại
+        await this.courseModel.restore({ _id: course._id });
 
-    // Validate files
-    if (!files.image?.[0] || !files.video?.[0]) {
-      throw new BadRequestException('Both image and video are required');
+        // Cập nhật thông tin mới
+        // const safeFolderName = slugify(name, { locale: "vi", lower: true });
+        // const staticServerUrl = process.env.NEST_ENDPOINT_URL_COURSE || 'http://localhost:3000';
+        // const imagePath = `${staticServerUrl}/${safeFolderName}/images/${image.filename}`;
+
+        // await this.courseModel.findByIdAndUpdate(course._id, {
+        //   ...body,
+        //   image: imagePath,
+        //   slug: slugify(name, { locale: "vi", lower: true }),
+        //   type: CommodityType.COURSE,
+        //   isSearch: slugify(name, { locale: "vi", lower: false })
+        // });
+
+        return {
+          message: 'Tạo khóa học thành công',
+          status: HttpStatus.CREATED
+        };
+      } else {
+        // Nếu khóa học đang tồn tại, xóa ảnh và báo lỗi
+        const fs = require('fs');
+        const path = require('path');
+        const imagePath = path.join(process.cwd(), image.path);
+        if (fs.existsSync(imagePath)) {
+          fs.unlinkSync(imagePath);
+        }
+        return new BadRequestException('Khóa học đã tồn tại');
+      }
     }
 
-    const imageFile = files.image[0];
-    const videoFile = files.video[0];
-
-    // Tạo tên thư mục an toàn từ tên khóa học
+    // Tạo khóa học mới nếu chưa tồn tại
     const safeFolderName = slugify(name, { locale: "vi", lower: true });
-
-    // Tạo đường dẫn đầy đủ cho files với static server URL
     const staticServerUrl = process.env.NEST_ENDPOINT_URL_COURSE || 'http://localhost:3000';
-    const imagePath = `${staticServerUrl}/courses/${safeFolderName}/images/${imageFile.filename}`;
-    const videoPath = `${staticServerUrl}/courses/${safeFolderName}/videos/${videoFile.filename}`;
+    const imagePath = `${staticServerUrl}/${safeFolderName}/images/${image.filename}`;
 
-    // Create course with file paths
-    const course = await this.courseModel.create({
-      name,
-      description,
-      price,
+    await this.courseModel.create({
+      ...body,
       image: imagePath,
-      video: videoPath
+      slug: slugify(name, { locale: "vi", lower: true }),
+      type: CommodityType.COURSE,
+      isSearch: slugify(name, { locale: "vi", lower: false })
     });
 
     return {
-      message: 'Course created successfully',
-      course
+      message: 'Tạo khóa học thành công',
+      status: HttpStatus.CREATED
     };
   }
 }

@@ -34,7 +34,7 @@ export class Course extends Document {
     type: string;
 
     @Prop({ required: true })
-    subType: string;
+    code: string;
 
     @Prop()
     starNumber: string;

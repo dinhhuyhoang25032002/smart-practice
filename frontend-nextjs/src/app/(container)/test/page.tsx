@@ -38,6 +38,11 @@ const App = () => {
     console.log(3);
     Promise.resolve().then(() => console.log(4));
   }, []);
+  const arr = ['1', '2', '3']
+  const string = arr.reduce((acc, curr) => {
+    return acc + curr
+  }, '')
+  console.log(+string);
 
   return (
     <div>

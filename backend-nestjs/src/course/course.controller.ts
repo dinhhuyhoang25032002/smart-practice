@@ -84,20 +84,16 @@ export class CourseController {
     }
 
     @Post("create-course")
-    @UseInterceptors(FileFieldsInterceptor([
-        { name: 'image', maxCount: 1 },
-        { name: 'video', maxCount: 1 }
-    ]))
+    @UseInterceptors(FileInterceptor("image"))
     @ApiConsumes('multipart/form-data')
     @HttpCode(HttpStatus.CREATED)
     async createACourse(
         @Body() body: CreateCourseDto,
-        @UploadedFiles() files: {
-            image?: Express.Multer.File[],
-            video?: Express.Multer.File[]
-        }
+        @UploadedFile() image: Express.Multer.File,
     ) {
-        return this.courseService.handleCreateACourse(body, files);
+        console.log(image);
+
+        return this.courseService.handleCreateACourse(body, image);
     }
 
     @Delete()

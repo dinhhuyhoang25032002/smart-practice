@@ -33,11 +33,11 @@ export class ResultService {
         }).exec();
 
         if (resultData) {
-            const filePath = path.join('./upload', file.filename)
+            const filePath = path.join(process.cwd(), file.filename)
 
             if (fs.existsSync(filePath)) {
                 try {
-                    await promises.unlink(filePath)
+                     fs.unlinkSync(filePath)
                 } catch (error) {
                     console.error('Error deleting file:', error);
                 }

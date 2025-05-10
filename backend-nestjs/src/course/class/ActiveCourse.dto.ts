@@ -1,5 +1,6 @@
 import {
     IsNotEmpty,
+    IsOptional,
     IsString,
 } from 'class-validator';
 
@@ -10,6 +11,7 @@ export class ActiveCourseDto {
 }
 
 export class CreateCourseDto {
+
     @IsString()
     @IsNotEmpty()
     code: string;
@@ -19,17 +21,13 @@ export class CreateCourseDto {
     name: string;
 
     @IsString()
-    @IsNotEmpty()
-    video: string;
-
-    @IsString()
-    @IsNotEmpty()
-    image: string;
+    @IsOptional()
+    video?: string;
 
     @IsString()
     @IsNotEmpty()
     price: string;
-    
+
     @IsString()
     @IsNotEmpty()
     description: string;

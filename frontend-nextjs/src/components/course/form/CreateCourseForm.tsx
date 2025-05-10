@@ -24,8 +24,9 @@ import {
 import { NumericFormat } from "react-number-format";
 import { IoMdClose } from "react-icons/io";
 import { IoCloudUploadOutline } from "react-icons/io5";
-import { Progress } from "@/components/ui/progress";
+
 import { fetchPrivateData } from "@/utils/fetcher/fetch-api";
+import { HttpStatus } from "@/constant/constant";
 
 export default function CreateCourseForm() {
   const form = useForm<CreateACourseFormType>({
@@ -35,19 +36,13 @@ export default function CreateCourseForm() {
       name: "",
       description: "",
       image: undefined,
-      video: undefined,
+      video: "",
       price: "",
     },
   });
 
   const [imgInfor, setImgInfo] = useState<ImgInfo>();
-  const [videoInfo, setVideoInfo] = useState<{
-    name: string;
-    size: number;
-    url: string;
-  }>();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
 
   const onDropImage = useCallback(
     async (acceptedFiles: File[]) => {
@@ -69,25 +64,6 @@ export default function CreateCourseForm() {
     [form]
   );
 
-  const onDropVideo = useCallback(
-    async (acceptedFiles: File[]) => {
-      if (!acceptedFiles.length) return;
-      const file = acceptedFiles[0];
-
-      // Tạo URL preview
-      const previewUrl = URL.createObjectURL(file);
-      setVideoInfo({
-        name: file.name,
-        size: Math.round(file.size / 1024),
-        url: previewUrl,
-      });
-
-      // Lưu file vào form
-      form.setValue("video", file);
-    },
-    [form]
-  );
-
   const {
     getRootProps: getImageRootProps,
     getInputProps: getImageInputProps,
@@ -99,61 +75,36 @@ export default function CreateCourseForm() {
     },
   });
 
-  const {
-    getRootProps: getVideoRootProps,
-    getInputProps: getVideoInputProps,
-    isDragActive: isVideoDragActive,
-  } = useDropzone({
-    onDrop: onDropVideo,
-    accept: {
-      "video/*": [".mp4", ".webm", ".ogg"],
-    },
-  });
-
-  const handleDeleteVideo = () => {
-    if (videoInfo?.url) {
-      URL.revokeObjectURL(videoInfo.url);
-    }
-    setVideoInfo(undefined);
-    form.setValue("video", undefined);
-  };
-
   const handleDeleteImage = () => {
     setImgInfo(undefined);
-    form.setValue("image", undefined);
+    form.setValue("image", new File([], ""));
   };
 
   const onSubmit = async (values: CreateACourseFormType) => {
     try {
       setIsSubmitting(true);
-      setUploadProgress(0);
 
       const formData = new FormData();
 
-     
       Object.entries(values).forEach(([key, value]) => {
         if (value !== undefined) {
           formData.append(key, value);
         }
       });
- 
+
       const response = await fetchPrivateData(`course/create-course`, {
         method: "POST",
         body: formData,
       });
-
-      if (response.status === 400 || response.status === 403) {
+      if (response && response.status === HttpStatus.BADREQUEST) {
         toastNotiFail(response.message);
         return;
       }
-
-      toastNotiSuccess("Tạo khóa học thành công!");
+      toastNotiSuccess(response.message);
       form.reset();
       setImgInfo(undefined);
-      setVideoInfo(undefined);
-      setUploadProgress(0);
     } catch (error) {
-      console.error("Error:", error);
+      console.log(error);
       toastNotiFail("Có lỗi xảy ra khi tạo khóa học!");
     } finally {
       setIsSubmitting(false);
@@ -232,7 +183,7 @@ export default function CreateCourseForm() {
                     <NumericFormat
                       value={field.value}
                       onValueChange={(values) => {
-                        field.onChange(values.value);
+                        field.onChange(values.floatValue?.toString() || "");
                       }}
                       thousandSeparator="."
                       decimalSeparator=","
@@ -295,53 +246,16 @@ export default function CreateCourseForm() {
             <FormField
               control={form.control}
               name="video"
-              render={() => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Video khóa học</FormLabel>
-                  <div
-                    {...getVideoRootProps()}
-                    className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-blue-500 transition-colors"
-                  >
-                    <input type="file" {...getVideoInputProps()} />
-                    {videoInfo ? (
-                      <div className="space-y-2 relative">
-                        <Button
-                          type="button"
-                          onClick={handleDeleteVideo}
-                          className="absolute -top-2 -right-2 w-8 h-8 bg-white hover:bg-gray-100 rounded-full shadow-md"
-                        >
-                          <IoMdClose className="text-gray-600" />
-                        </Button>
-                        <video
-                          src={videoInfo.url}
-                          className="max-h-32 mx-auto"
-                          controls
-                        />
-                        <p className="text-sm text-gray-500 flex flex-col">
-                          <span>Tên video: {videoInfo.name}</span>
-                          <span>Kích thước: ({videoInfo.size} KB)</span>
-                        </p>
-                        {isSubmitting && (
-                          <div className="mt-2">
-                            <Progress
-                              value={uploadProgress}
-                              className="w-full"
-                            />
-                            <p className="text-sm text-gray-500 mt-1">
-                              Đang upload: {Math.round(uploadProgress)}%
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    ) : isVideoDragActive ? (
-                      <p className="text-blue-500">Thả video vào đây...</p>
-                    ) : (
-                      <p className="text-gray-500 inline-flex items-center gap-2">
-                        <IoCloudUploadOutline className="text-2xl text-gray-400" />{" "}
-                        Kéo hoặc chọn video khóa học
-                      </p>
-                    )}
-                  </div>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      className="bg-white"
+                      placeholder="Nhập link video khóa học"
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

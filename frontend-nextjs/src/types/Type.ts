@@ -80,8 +80,8 @@ export const CreateACourseForm = z.object({
   name: z.string().min(1, "Tên khóa học không được để trống"),
   code: z.string().min(1, "Mã khóa học không được để trống"),
   description: z.string().min(1, "Mô tả khóa học không được để trống"),
-  price: z.string().min(1, "Giá khóa học không được để trống"),
-  image: z.instanceof(File, { message: "Vui lòng chọn ảnh khóa học" }).optional(),
-  video: z.instanceof(File).optional(),
+  price: z.string().min(0, "Giá khóa học không được để trống"),
+  image: z.instanceof(File, { message: "Vui lòng chọn ảnh khóa học" }),
+  video: z.string().min(1, "Mô tả khóa học không được để trống").optional(),
 })
 export type CreateACourseFormType = z.TypeOf<typeof CreateACourseForm>
