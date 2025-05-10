@@ -14,7 +14,7 @@ export default function Home() {
       case UserRole.TEACHER:
         return <HomePageForTeacher />;
       default:
-        return <HomePageForStudent />;;
+        return <HomePageForStudent />;
     }
   };
   const { user } = useUserContext();

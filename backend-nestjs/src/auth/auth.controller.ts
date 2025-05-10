@@ -4,6 +4,7 @@ import { Response, Request } from 'express';
 import { JwtRefreshAuthGuard } from 'src/auth/guard/refreshToken.guard';
 import { LoginDto, RegisterDto } from 'src/auth/class/Auth.dto';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { UserJWT } from 'src/types/CustomType';
 @ApiBearerAuth()
 @Controller('auth')
 export class AuthController {
@@ -23,13 +24,13 @@ export class AuthController {
     @HttpCode(HttpStatus.OK)
     async Login(
         @Body() data: LoginDto,
-        @Res({ passthrough: true }) res: Response
+        @Res({ passthrough: true }) res: Response,
     ) {
         const { email, password } = data;
         if (!email || !password) {
             return new BadRequestException("Thiếu tham số quan trọng")
         }
-        
+
         return this.authService.handleLogin(data, res);
     }
 

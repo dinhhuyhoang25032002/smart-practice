@@ -11,6 +11,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import type { Response } from 'express';
 import { staticFolders } from './constant/constant';
+
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
     bodyParser: true,
@@ -33,10 +34,25 @@ async function bootstrap() {
   //   }));
   app.use(passport.initialize());
   //app.use(passport.session());
-  app.useBodyParser('json', { limit: '50mb' });
-  app.useBodyParser('text', { limit: '50mb' });
-  app.useBodyParser('urlencoded', { limit: '50mb', extended: true });
+  app.useBodyParser('json', { limit: '1gb' });
+  app.useBodyParser('text', { limit: '1gb' });
+  app.useBodyParser('urlencoded', { limit: '1gb', extended: true });
   app.use(cookieParser());
+
+  // Cấu hình cho upload file lớn
+  app.use((req, res, next) => {
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('Keep-Alive', 'timeout=300');
+    next();
+  });
+
+  // Tăng timeout cho request
+  app.enableCors({
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+    maxAge: 3600,
+  });
 
   staticFolders.forEach((folder) => {
     app.useStaticAssets(join(__dirname, '..', folder.path), {
@@ -51,14 +67,13 @@ async function bootstrap() {
   });
 
   const config = new DocumentBuilder()
-    .setTitle('Smart-Practice')
-    .setDescription('The API List for Smart-Practice')
-    .setVersion('1.0.0')
+    .setTitle('Smart Practice API')
+    .setDescription('The Smart Practice API description')
+    .setVersion('1.0')
     .addBearerAuth()
-    .addCookieAuth('token')
     .build();
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, documentFactory);
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
 
   const PORT = configService.get('PORT');
   await app.listen(PORT, () => {

@@ -11,9 +11,8 @@ import { MdLogout } from "react-icons/md";
 import { MdEditCalendar } from "react-icons/md";
 import { RxAvatar } from "react-icons/rx";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, MouseEvent } from "react";
 import { handleLogout } from "@/services/auth/authService";
-import { useRouter } from "next/navigation";
 import {
   Command,
   CommandEmpty,
@@ -23,13 +22,17 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
-
+import { useRouter } from "next/navigation";
 import { useUserContext } from "@/store/context/AuthContext";
+import { toastNotiSuccess } from "@/components/custom/ToastNotification";
 export default function TooltipAvatar() {
   const [isOpenProfile, setOpenProfile] = useState(false);
   const router = useRouter();
   const { setUser } = useUserContext();
-  const handleLogoutPage = async () => {
+  const handleLogoutPage = async (
+    e: MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>
+  ) => {
+    e.preventDefault();
     await handleLogout();
     const resetUser = {
       _id: "",
@@ -44,7 +47,8 @@ export default function TooltipAvatar() {
     localStorage.removeItem("isAuth");
     localStorage.removeItem("s");
     setUser(resetUser);
-    router.push("/dang-nhap");
+    router.push(`/`);
+    toastNotiSuccess("Bạn đã đăng xuất khỏi hệ thống!");
   };
   return (
     <TooltipProvider delayDuration={100}>
@@ -82,7 +86,7 @@ export default function TooltipAvatar() {
                     Thông tin Thiết bị/Kit
                   </CommandItem>
                 </Link>
-                <Link href="/dang-nhap" onClick={handleLogoutPage}>
+                <Link href="" onClick={handleLogoutPage}>
                   <CommandItem className="flex items-center gap-2">
                     <MdLogout />
                     Đăng xuất

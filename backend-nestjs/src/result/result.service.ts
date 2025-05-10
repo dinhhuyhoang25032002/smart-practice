@@ -44,7 +44,7 @@ export class ResultService {
             }
             return new BadRequestException("Sinh viên đã nộp bài trước đó!")
         }
-        const NEST_ENDPOINT_IMG_URL = this.configService.get<string>("NEST_ENDPOINT_IMG_URL")
+        const NEST_ENDPOINT_IMG_URL = this.configService.get<string>("NEST_ENDPOINT_IMG_URL_UPLOAD")
         const content = `${NEST_ENDPOINT_IMG_URL}/${file.filename}`
         const dataResult = {
             studentId: sub,

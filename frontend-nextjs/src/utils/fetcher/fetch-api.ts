@@ -23,7 +23,9 @@ export const fetchPublicData = async (url: string, options?: RequestInit) => {
 
         return await response.json();
     } catch (error) {
-        throw new Error(`Fetch error: ${error instanceof Error ? error : "Unknown error"}`);
+        console.log(`Fetch error: ${error instanceof Error ? error : "Unknown error"});
+        
+       // throw new Error(`);
     }
 };
 
@@ -46,7 +48,8 @@ const handleFetchApi = async (url: string, accessToken: string, options?: Reques
 
         return await res.json();
     } catch (error) {
-        throw new Error(`Fetch error:  ${error instanceof Error ? error : "Unknown error"}`);
+        console.log(`Fetch error:  ${error instanceof Error ? error : "Unknown error"}`);
+        //   throw new Error(`Fetch error:  ${error instanceof Error ? error : "Unknown error"}`);
     }
 };
 
@@ -70,7 +73,8 @@ export const fetchPrivateData = async (url: string, options?: RequestInit) => {
     const fullUrl = url.startsWith("/") ? `${baseUrl}${url}` : `${baseUrl}/${url}`;
 
     if (!act) {
-        throw new Error("Access Token is not exist!");
+        console.log("Access Token is not exist!");
+        return;
     }
 
     if (isTokenExpired(act)) {

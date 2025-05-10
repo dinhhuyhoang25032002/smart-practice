@@ -17,3 +17,7 @@ export enum StatusAttendance {
   ON_TIME = 'ON_TIME',
   LATE = 'LATE',
 }
+
+export const HttpStatus = {
+  OK: 200
+}

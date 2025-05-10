@@ -40,7 +40,7 @@ export class AuthService {
         return new BadRequestException('Email đã tồn tại');
     }
 
-    async handleLogin(user: LoginDto, res: Response) {
+    async handleLogin(user: LoginDto, res: Response,) {
         try {
             const { email, password } = user;
 
@@ -53,54 +53,55 @@ export class AuthService {
                 return new BadRequestException('Email không tồn tại');
             }
 
-            // Attendance
-            const date = new Date().toLocaleString("vi-VN", {
-                timeZone: "Asia/Ho_Chi_Minh",
-            });
-            // const date = "15:43:10 23/4/2025"
-            const [timePart, datePart] = date.split(" ");
-            const [hours, minutes] = timePart.split(":");
-            console.log(date);
+            if (User.role === UserRole.STUDENT) {
+                // Attendance
+                const date = new Date().toLocaleString("vi-VN", {
+                    timeZone: "Asia/Ho_Chi_Minh",
+                });
+                // const date = "15:43:10 23/4/2025"
+                const [timePart, datePart] = date.split(" ");
+                const [hours, minutes] = timePart.split(":");
 
-            const attendance = await this.attendanceModel.find({
-                studentId: User._id,
-                day: datePart,
-            })
-            if (+hours >= 8 && +hours <= 12 || +hours >= 13 && +hours <= 17) {
-                const attendanceSave = {
+                const attendance = await this.attendanceModel.find({
                     studentId: User._id,
-                    time: timePart,
                     day: datePart,
-                    status: "",
-                    shift: ""
-                };
-                if (attendance.length === 0) {
-                    if ((+hours === 8 && +minutes <= 30)) {
-                        await new this.attendanceModel({ ...attendanceSave, status: StatusAttendance.ON_TIME, shift: ShiftAttendance.MORNING })
-                            .save({ validateBeforeSave: true })
-                    }
-                    if ((+hours >= 8 && +minutes > 30)) {
-                        await new this.attendanceModel({ ...attendanceSave, status: StatusAttendance.LATE, shift: ShiftAttendance.MORNING })
-                            .save({ validateBeforeSave: true })
-                    }
-                    if (+hours === 13 && +minutes <= 30) {
-                        await new this.attendanceModel({ ...attendanceSave, status: StatusAttendance.ON_TIME, shift: ShiftAttendance.AFTERNOON })
-                            .save({ validateBeforeSave: true })
-                    }
-                    if (+hours >= 13 && +minutes > 30) {
-                        await new this.attendanceModel({ ...attendanceSave, status: StatusAttendance.LATE, shift: ShiftAttendance.AFTERNOON })
-                            .save({ validateBeforeSave: true })
-                    }
-                } else if (attendance.length === 1) {
-                    if (+hours >= 13 && +hours <= 17) {
-                        const hourAttendanced = +attendance[0].time.split(":")[0]
-                        if (hourAttendanced >= 8 && hourAttendanced <= 12) {
-                            if ((+hours === 13 && +minutes <= 30)) {
-                                await new this.attendanceModel({ ...attendanceSave, status: StatusAttendance.ON_TIME, shift: ShiftAttendance.AFTERNOON })
-                                    .save({ validateBeforeSave: true })
-                            } else if (+hours >= 13 && +minutes > 30) {
-                                await new this.attendanceModel({ ...attendanceSave, status: StatusAttendance.LATE, shift: ShiftAttendance.AFTERNOON })
-                                    .save({ validateBeforeSave: true })
+                })
+                if (+hours >= 8 && +hours <= 12 || +hours >= 13 && +hours <= 17) {
+                    const attendanceSave = {
+                        studentId: User._id,
+                        time: timePart,
+                        day: datePart,
+                        status: "",
+                        shift: ""
+                    };
+                    if (attendance.length === 0) {
+                        if ((+hours === 8 && +minutes <= 30)) {
+                            await new this.attendanceModel({ ...attendanceSave, status: StatusAttendance.ON_TIME, shift: ShiftAttendance.MORNING })
+                                .save({ validateBeforeSave: true })
+                        }
+                        if ((+hours >= 8 && +minutes > 30)) {
+                            await new this.attendanceModel({ ...attendanceSave, status: StatusAttendance.LATE, shift: ShiftAttendance.MORNING })
+                                .save({ validateBeforeSave: true })
+                        }
+                        if (+hours === 13 && +minutes <= 30) {
+                            await new this.attendanceModel({ ...attendanceSave, status: StatusAttendance.ON_TIME, shift: ShiftAttendance.AFTERNOON })
+                                .save({ validateBeforeSave: true })
+                        }
+                        if (+hours >= 13 && +minutes > 30) {
+                            await new this.attendanceModel({ ...attendanceSave, status: StatusAttendance.LATE, shift: ShiftAttendance.AFTERNOON })
+                                .save({ validateBeforeSave: true })
+                        }
+                    } else if (attendance.length === 1) {
+                        if (+hours >= 13 && +hours <= 17) {
+                            const hourAttendanced = +attendance[0].time.split(":")[0]
+                            if (hourAttendanced >= 8 && hourAttendanced <= 12) {
+                                if ((+hours === 13 && +minutes <= 30)) {
+                                    await new this.attendanceModel({ ...attendanceSave, status: StatusAttendance.ON_TIME, shift: ShiftAttendance.AFTERNOON })
+                                        .save({ validateBeforeSave: true })
+                                } else if (+hours >= 13 && +minutes > 30) {
+                                    await new this.attendanceModel({ ...attendanceSave, status: StatusAttendance.LATE, shift: ShiftAttendance.AFTERNOON })
+                                        .save({ validateBeforeSave: true })
+                                }
                             }
                         }
                     }

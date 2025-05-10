@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 
 const ProgressComponent = () => {
@@ -25,8 +26,18 @@ const ProgressComponent = () => {
   return <div>Progress: {progress}%</div>;
 };
 
+//RESULT
+
 const App = () => {
   const [showComponent, setShowComponent] = useState(true);
+  useEffect(() => {
+    console.log(1);
+    setTimeout(() => {
+      console.log(2);
+    }, 0);
+    console.log(3);
+    Promise.resolve().then(() => console.log(4));
+  }, []);
 
   return (
     <div>

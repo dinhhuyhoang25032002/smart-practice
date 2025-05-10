@@ -1,5 +1,5 @@
 "use client";
-import { toastNotiFail } from "@/components/custom/ToastNotification";
+// import { toastNotiFail } from "@/components/custom/ToastNotification";
 import { handleGetIsAuth, handleGetUserInfor } from "@/store/localStorage";
 import { fetchPrivateData } from "@/utils/fetcher/fetch-api";
 import { createContext, useEffect, useState, useContext } from "react";
@@ -37,8 +37,8 @@ const initialUser: UserPropsContext = {
 
 export const AuthContext = createContext<AuthContextType>({
   user: initialUser,
-  setUser: () => { },
-  setOpenSheet: () => { },
+  setUser: () => {},
+  setOpenSheet: () => {},
   openSheet: false,
 });
 
@@ -103,12 +103,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const fetcher = async () => {
       const res = await fetchPrivateData(`user?userId=${_id}`);
 
-      if (!res) {
-        toastNotiFail(
-          "Không lấy được dữ liệu người dùng",
-          "Hãy đăng nhập và kiểm tra lại"
-        );
-      }
+      // if (!res) {
+      //   toastNotiFail(
+      //     "Không lấy được dữ liệu người dùng",
+      //     "Hãy đăng nhập và kiểm tra lại"
+      //   );
+      // }
 
       setUser((prev) => ({ ...prev, ...res }));
     };

@@ -42,7 +42,7 @@ export class LessonService {
             }).lean().exec();
 
             if (startTimeData) {
-                return this.lessonModel.findById(lessonId);
+                return this.lessonModel.findById(lessonId).exec();
             }
 
             const { idFrontLesson, _id } = await this.lessonModel.findById(lessonId).lean().exec();
@@ -51,7 +51,7 @@ export class LessonService {
                 lessonId,
                 studentId: userId,
                 status: StatusLesson.STARTED,
-                startTime: (Math.floor(Date.now() / 1000)).toString()
+                startTime: (Math.floor(Date.now())).toString()
             }
 
             if (idFrontLesson.toString() === _id.toString()) {
@@ -104,7 +104,6 @@ export class LessonService {
     }
 
     async handleGetAllSections(lessonId: string, userId: string) {
-
 
         const user = await this.userModel.findById(userId).select('fullname ').lean().exec();
         if (!user) {

@@ -18,7 +18,6 @@ export class ResultController {
     ) { }
 
     @Post()
-    @UseInterceptors(FileInterceptor("file"))
     @ApiConsumes('multipart/form-data')
     @HttpCode((HttpStatus.CREATED))
     async createResultLesson(
@@ -77,5 +76,5 @@ export class ResultController {
         }
         return this.resultService.handleGetOneResult(studentId, lessonId);
     }
-   
+
 }

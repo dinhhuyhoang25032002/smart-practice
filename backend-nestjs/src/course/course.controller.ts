@@ -1,10 +1,12 @@
-import { Controller, HttpCode, HttpStatus, Query, Get, Param, UseGuards, BadRequestException, Post, Body, Req, ForbiddenException, BadGatewayException } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiQuery } from '@nestjs/swagger';
+import { Controller, HttpCode, HttpStatus, Query, Get, Param, UseGuards, BadRequestException, Post, Body, Req, ForbiddenException, BadGatewayException, Delete, UseInterceptors, UploadedFile, UploadedFiles } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiQuery } from '@nestjs/swagger';
 import { JwtAccessAuthGuard } from 'src/auth/guard/accessToken.guard';
 import { CourseService } from 'src/course/course.service';
 import { Request } from "express"
 import { UserJWT } from 'src/types/CustomType';
-import { ActiveCourseDto } from 'src/course/class/ActiveCourse.dto';
+import { ActiveCourseDto, CreateCourseDto } from 'src/course/class/ActiveCourse.dto';
+import { UserRole } from 'src/constant/constant';
+import { FileInterceptor, FileFieldsInterceptor } from '@nestjs/platform-express';
 @ApiBearerAuth()
 @UseGuards(JwtAccessAuthGuard)
 @Controller('course')
@@ -25,9 +27,21 @@ export class CourseController {
         return this.courseService.handleGetAllCourseById(userId);
     }
 
+    @Get("all-course")
+    @HttpCode(HttpStatus.OK)
+    async getAllCourseByTeacher(
+        @Req() req: Request
+    ) {
+        const { role } = req.user as UserJWT
+        if (role !== UserRole.TEACHER) {
+            return new BadRequestException();
+        }
+        return this.courseService.handleGetAllCourseByTeacher()
+    }
+
     @Get('search-name')
     @HttpCode(HttpStatus.OK)
-    getNameCourses(@Query('name') name: string) {
+    async getNameCourses(@Query('name') name: string) {
         if (!name) {
             return new BadRequestException('Missing require parameter: nameCourse!');
         }
@@ -58,7 +72,7 @@ export class CourseController {
     @Post()
     @HttpCode(HttpStatus.OK)
     @ApiBody({ required: true, type: ActiveCourseDto })
-    ActiveCourse(
+    async ActiveCourse(
         @Body() body: { code: string },
         @Req() req: Request
     ) {
@@ -67,5 +81,28 @@ export class CourseController {
             return new ForbiddenException();
         }
         return this.courseService.handleActiveCourse(body, user);
+    }
+
+    @Post("create-course")
+    @UseInterceptors(FileFieldsInterceptor([
+        { name: 'image', maxCount: 1 },
+        { name: 'video', maxCount: 1 }
+    ]))
+    @ApiConsumes('multipart/form-data')
+    @HttpCode(HttpStatus.CREATED)
+    async createACourse(
+        @Body() body: CreateCourseDto,
+        @UploadedFiles() files: {
+            image?: Express.Multer.File[],
+            video?: Express.Multer.File[]
+        }
+    ) {
+        return this.courseService.handleCreateACourse(body, files);
+    }
+
+    @Delete()
+    @HttpCode(HttpStatus.OK)
+    async DeleteCourse(@Query('_id') _id: string) {
+        return this.courseService.handleDeleteCourse(_id);
     }
 }

@@ -12,6 +12,8 @@ import { formatTimeVi } from 'src/util/formatTime';
 
 import { EVALUATE_MODEL, Evaluate } from 'src/schema/evaluate.schema';
 import { STARTTIME_MODEL, StartTime } from 'src/schema/starttime.schema';
+import { CreateCourseDto } from 'src/course/class/ActiveCourse.dto';
+import slugify from 'slugify';
 
 @Injectable()
 export class CourseService {
@@ -28,7 +30,7 @@ export class CourseService {
     @InjectModel(STARTTIME_MODEL)
     private readonly startTimeModel: Model<StartTime> &
       SoftDeleteModel<StartTime>,
-  ) {}
+  ) { }
 
   async handleGetAllCourseById(userId: string) {
     const user = await this.userModel.findById(userId).exec();
@@ -42,7 +44,7 @@ export class CourseService {
       })
       .exec();
     if (deadline.length === 0) {
-      return new BadRequestException('Not found data');
+      return []
     }
     return deadline;
   }
@@ -171,6 +173,62 @@ export class CourseService {
       dataResult: final,
       isComplete,
       ...startTimeCourse,
+    };
+  }
+
+  async handleGetAllCourseByTeacher() {
+    return this.courseModel.aggregate([
+      {
+        $project: {
+          name: 1,
+          code: 1,
+          lessons: { $size: "$lessons" }
+        }
+      }
+    ]);
+  }
+  async handleDeleteCourse(_id: string) {
+    await this.courseModel.deleteById(_id);
+    return { message: "Đã xóa khóa học thành công!", status: HttpStatus.OK }
+  }
+
+  async handleCreateACourse(
+    body: CreateCourseDto,
+    files: {
+      image?: Express.Multer.File[],
+      video?: Express.Multer.File[]
+    }
+  ) {
+    const { name, description, price } = body;
+
+    // Validate files
+    if (!files.image?.[0] || !files.video?.[0]) {
+      throw new BadRequestException('Both image and video are required');
+    }
+
+    const imageFile = files.image[0];
+    const videoFile = files.video[0];
+
+    // Tạo tên thư mục an toàn từ tên khóa học
+    const safeFolderName = slugify(name, { locale: "vi", lower: true });
+
+    // Tạo đường dẫn đầy đủ cho files với static server URL
+    const staticServerUrl = process.env.NEST_ENDPOINT_URL_COURSE || 'http://localhost:3000';
+    const imagePath = `${staticServerUrl}/courses/${safeFolderName}/images/${imageFile.filename}`;
+    const videoPath = `${staticServerUrl}/courses/${safeFolderName}/videos/${videoFile.filename}`;
+
+    // Create course with file paths
+    const course = await this.courseModel.create({
+      name,
+      description,
+      price,
+      image: imagePath,
+      video: videoPath
+    });
+
+    return {
+      message: 'Course created successfully',
+      course
     };
   }
 }

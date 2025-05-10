@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "http",
-        hostname: "192.168.1.222",
+        hostname: `${process.env.NEXT_PUBLIC_HOST_SERVER}`,
       },
     ],
   },

@@ -2,6 +2,7 @@
 import { useUserContext } from "@/store/context/AuthContext";
 import { useSWRPrivate } from "@/hooks/useSWRCustom";
 import type { CourseInfor } from "@/types/CustomType";
+
 import Image from "next/image";
 import slugify from "slugify";
 import {
@@ -17,22 +18,28 @@ import Link from "next/link";
 import MainLayout from "@/components/main-layout";
 import ActiveCourse from "@/components/course/form/ActiveCourse";
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 export default function CourseInfo() {
   const { user } = useUserContext();
   const _id = user._id;
   const { data } = useSWRPrivate<CourseInfor[]>(
     _id ? `course?userId=${_id}` : ""
   );
-
+  const [courseActive, setCourseActive] = useState<CourseInfor[]>();
+  const [isOpen, setOpen] = useState<boolean>(false);
+  useEffect(() => {
+    setCourseActive(data);
+  }, [data]);
   return (
     <MainLayout>
       <div className=" min-h-screen h-screen flex justify-center items-center ">
         <div className="w-full h-full flex justify-start p-5 flex-wrap gap-10 flex-col ">
           <div className="w-full flex justify-end items-center">
-            <Dialog>
+            <Dialog open={isOpen}>
               <DialogTrigger asChild>
                 <Button
                   variant="outline"
+                  onClick={() => setOpen(true)}
                   className="rounded bg-[#D32F2F] hover:bg-[#1513be] active:bg-[#1513be] hover:text-white  active:text-white cursor-pointer text-base p-2 text-white font-medium flex items-center gap-2"
                 >
                   Đăng kí khóa học mới
@@ -49,18 +56,28 @@ export default function CourseInfo() {
                   </DialogDescription>
                 </DialogHeader>
                 <div className="w-full flex items-center justify-center ">
-                  <ActiveCourse />
+                  <ActiveCourse
+                    _id={_id}
+                    setOpen={setOpen}
+                    setCourseActive={setCourseActive}
+                  />
                 </div>
               </DialogContent>
             </Dialog>
           </div>
           <div className="w-full flex  p-5 flex-wrap gap-10 justify-start ">
-            {data && "status" in data && data?.status === 400 ? (
+            {courseActive?.length === 0 ? (
               <div className="w-full flex items-center justify-center">
-                <ActiveCourse />
+                <div className="w-1/2">
+                  <ActiveCourse
+                    _id={_id}
+                    setOpen={setOpen}
+                    setCourseActive={setCourseActive}
+                  />
+                </div>
               </div>
             ) : (
-              (data as CourseInfor[])?.map((item, index) => (
+              courseActive?.map((item, index) => (
                 <div
                   key={index}
                   className="border w-[28%] h-[300px] border-gray-500 shadow-xl p-3 rounded-md flex flex-col space-y-4 items-center"
