@@ -1,5 +1,3 @@
-
-
 import { StaticImageData } from "next/image";
 
 type dataContentSide = {
@@ -33,7 +31,7 @@ type dataTab = {
 
 export type IndexItemProps = {
   nameItem: string;
-  _id: string
+  _id: string;
 };
 type dataListProps = {
   header?: string;
@@ -71,13 +69,13 @@ export class ContentLesson {
   dataList2?: dataListProps;
   codeSample?: string;
 }
-export type ContentLessonMerge = ContentLesson & { _id: string }
+export type ContentLessonMerge = ContentLesson & { _id: string };
 
 export type Lesson = {
-  content: Array<ContentLesson>,
-  name: string,
-  indexItem: Array<IndexItemProps>
-}
+  content: Array<ContentLesson>;
+  name: string;
+  indexItem: Array<IndexItemProps>;
+};
 
 export type SolutionContent = {
   _id: string;
@@ -92,45 +90,45 @@ export type SolutionContent = {
 };
 
 type EvaluaDashboard = {
-  lessonId: string,
-  score: number,
+  lessonId: string;
+  score: number;
   name: string;
 };
 export type EvaluaTions = {
-  isComplete: boolean,
-  startTime: string,
-  nameCourse: string,
-  dataResult: Array<EvaluaDashboard>
-}
+  isComplete: boolean;
+  startTime: string;
+  nameCourse: string;
+  dataResult: Array<EvaluaDashboard>;
+};
 export type Attendances = {
-  _id: string,
-  studentId: string
-  time: string
-  shift: string
-  day: string
-  status: string
-}
+  _id: string;
+  studentId: string;
+  time: string;
+  shift: string;
+  day: string;
+  status: string;
+};
 export type CourseInfor = {
-  _id: string,
-  userId: string,
+  _id: string;
+  userId: string;
   productionId: {
-    _id: string,
-    name: string,
-    description: string,
-    image: string
-    price: string,
-    type: string,
-    subType: string,
-    startNumber: 4.5,
-    lessons: Array<string>,
-    deleted: false,
-    slug: string,
-    video: string,
-    benefit: [],
-    isSearch: string
-  },
-  productionType: string,
-}
+    _id: string;
+    name: string;
+    description: string;
+    image: string;
+    price: string;
+    type: string;
+    subType: string;
+    startNumber: 4.5;
+    lessons: Array<string>;
+    deleted: false;
+    slug: string;
+    video: string;
+    benefit: [];
+    isSearch: string;
+  };
+  productionType: string;
+};
 
 export type UserProps = {
   act: string;
@@ -143,10 +141,10 @@ export type ArrLessons = {
 };
 
 export type CourseIsActive = {
-  _id: string,
-  name: string,
-  lessons: Array<ArrLessons>
-}
+  _id: string;
+  name: string;
+  lessons: Array<ArrLessons>;
+};
 export type CourseSearch = {
   name: string;
   _id: string;
@@ -156,13 +154,13 @@ export type ResponseException = {
   status: number;
   message: string;
   options: object;
-  name: string
+  name: string;
   response: {
     message: string;
     statusCode: number;
     error: string;
-  }
-}
+  };
+};
 
 export type Results = {
   courseId: string;
@@ -170,57 +168,79 @@ export type Results = {
   lessonNumber: number;
   lessons: Array<{
     lessonId: string;
-    name: string
-    linkImage: string
+    name: string;
+    linkImage: string;
     studentId: {
       _id: string;
-      fullname: string
+      fullname: string;
     };
     isEvaluated: boolean;
     createdAt: string;
   }>;
-}
+};
 
 export type Result = {
-  _id: string,
+  _id: string;
   studentId: {
-    _id: string,
-    fullname: string
-  },
-  isEvaluated: boolean
-  lessonId: string,
-  content: string,
-  createdAt: string
-}
+    _id: string;
+    fullname: string;
+  };
+  isEvaluated: boolean;
+  lessonId: string;
+  content: string;
+  createdAt: string;
+};
 
 export type Evaluate = {
-  _id: string,
+  _id: string;
   studentId: {
-    _id: string,
-    fullname: string
-  },
-  teacherId: string,
+    _id: string;
+    fullname: string;
+  };
+  teacherId: string;
   lessonId: {
-    _id: string,
-    name: string
-  },
-  score: string,
-  content: string,
-  createdAt: string
-}
-
+    _id: string;
+    name: string;
+  };
+  score: string;
+  content: string;
+  createdAt: string;
+};
 
 export type DataRecord = {
-  _id: string,
-  views: string,
-  duration: string,
-  nameItem: string
-}
+  _id: string;
+  views: string;
+  duration: string;
+  nameItem: string;
+};
 export type DataTimeview = {
-  _id: string,
-  fullname: string,
-  dataRecord: DataRecord[],
-  nameLesson: string,
-  status: string,
-  startTime: string
-}
+  _id: string;
+  fullname: string;
+  dataRecord: DataRecord[];
+  nameLesson: string;
+  status: string;
+  startTime: string;
+};
+
+export type ChatResponse = {
+  answer: string;
+  session_id: string;
+  model: string;
+};
+
+export type IoTResponse = {
+  answer: string;
+  session_id: string;
+  model: string;
+};
+
+export type Document = {
+  id: number;
+  filename: string;
+  upload_timestamp: string;
+};
+
+export type UploadResponse = {
+  message: string;
+  file_id: number;
+};

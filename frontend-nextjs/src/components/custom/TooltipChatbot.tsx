@@ -7,15 +7,18 @@ import {
 } from "@/components/ui/tooltip";
 import aiService from "@/assets/image/service/Chatbot_service.png";
 import Image from "next/image";
-// import { useState } from "react";
-
+import { useChatBotAiContext } from "@/store/context/ChatBotAi";
 
 export default function TooltipChatbot() {
   // const { isOpen, setIsOpen } = useState();
+  const { setOpenChatBotAi, isOpenChatBotAi } = useChatBotAiContext();
   return (
     <TooltipProvider delayDuration={100}>
-      <Tooltip>
-        <TooltipTrigger className="">
+      <Tooltip open={isOpenChatBotAi}>
+        <TooltipTrigger
+          className=""
+          onClick={() => setOpenChatBotAi(!isOpenChatBotAi)}
+        >
           <div className="flex justify-center items-center gap-2 cursor-pointer ">
             <Image
               src={aiService}

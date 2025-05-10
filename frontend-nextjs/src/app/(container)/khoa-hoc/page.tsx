@@ -68,12 +68,8 @@ export default function CourseInfo() {
           <div className="w-full flex  p-5 flex-wrap gap-10 justify-start ">
             {courseActive?.length === 0 ? (
               <div className="w-full flex items-center justify-center">
-                <div className="w-1/2">
-                  <ActiveCourse
-                    _id={_id}
-                    setOpen={setOpen}
-                    setCourseActive={setCourseActive}
-                  />
+                <div className="w-full text-center h-[200px] font-semibold text-2xl ">
+                  Không có khóa học nào được đăng kí
                 </div>
               </div>
             ) : (

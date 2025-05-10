@@ -19,6 +19,7 @@ export class ResultController {
 
     @Post()
     @ApiConsumes('multipart/form-data')
+    @UseInterceptors(FileInterceptor("file"))
     @HttpCode((HttpStatus.CREATED))
     async createResultLesson(
         @UploadedFile() file: Express.Multer.File,

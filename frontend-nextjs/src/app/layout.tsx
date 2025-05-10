@@ -7,6 +7,8 @@ import "slick-carousel/slick/slick-theme.css";
 import "react-pdf/dist/Page/TextLayer.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import { Toaster } from "@/components/ui/sonner";
+import { ChatBotAiProvider } from "@/store/context/ChatBotAi";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -33,7 +35,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          {children}
+          <ChatBotAiProvider>{children}</ChatBotAiProvider>
         </AuthProvider>
         <Toaster />
       </body>

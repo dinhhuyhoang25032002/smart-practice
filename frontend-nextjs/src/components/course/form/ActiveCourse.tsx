@@ -22,7 +22,6 @@ import { Headers } from "@/constant/constant";
 import { CourseInfor } from "@/types/CustomType";
 import { ArrowRightIcon } from "lucide-react";
 
-
 type ActiveCourseProps = {
   setOpen: Dispatch<SetStateAction<boolean>>;
   setCourseActive: Dispatch<SetStateAction<CourseInfor[] | undefined>>;
@@ -53,10 +52,13 @@ export default function ActiveCourse({
         toastNotiFail(res.message);
         return;
       }
-      toastNotiSuccess(res.message);
-      setOpen(false);
-      const data = await fetchPrivateData(`course?userId=${_id}`);
-      setCourseActive(data);
+      if (res && res.status === 201) {
+        toastNotiSuccess(res.message);
+        setOpen(false);
+        const data = await fetchPrivateData(`course?userId=${_id}`);
+        setCourseActive(data);
+        return;
+      }
     } catch (err) {
       console.log(err);
       toastNotiFail("Có lỗi xảy ra khi kích hoạt khóa học!");
@@ -112,7 +114,6 @@ export default function ActiveCourse({
           </div>
         </form>
       </Form>
-    
     </div>
   );
 }
