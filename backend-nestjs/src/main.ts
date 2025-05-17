@@ -19,7 +19,7 @@ async function bootstrap() {
     rawBody: true,
   });
   const configService = app.get(ConfigService);
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('/v1/api');
   app.useGlobalPipes(new ValidationPipe({ transform: false }));
   // app.use(
   //   session({
@@ -73,7 +73,7 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('/v1/api', app, document);
 
   const PORT = configService.get('PORT');
   await app.listen(PORT, () => {

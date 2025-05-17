@@ -97,7 +97,7 @@ export class Lesson extends Document {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true })
   course: ObjectId;
 
-  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId })
+  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Lesson' })
   idFrontLesson: ObjectId
 
 }

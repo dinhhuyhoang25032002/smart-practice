@@ -1,4 +1,4 @@
-import { Controller, HttpCode, HttpStatus, Query, Get, Param, UseGuards, BadRequestException, Post, Body, Req, ForbiddenException, BadGatewayException, Delete, UseInterceptors, UploadedFile, UploadedFiles } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Query, Get, Patch, Param, UseGuards, BadRequestException, Post, Body, Req, ForbiddenException, Delete, UseInterceptors, UploadedFile, } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiQuery } from '@nestjs/swagger';
 import { JwtAccessAuthGuard } from 'src/auth/guard/accessToken.guard';
 import { CourseService } from 'src/course/course.service';
@@ -20,7 +20,6 @@ export class CourseController {
     @Get()
     @HttpCode(HttpStatus.OK)
     async getAllCourseById(
-        @Req() req: Request,
         @Query("userId") userId: string
     ) {
 
@@ -37,6 +36,18 @@ export class CourseController {
             return new BadRequestException();
         }
         return this.courseService.handleGetAllCourseByTeacher()
+    }
+
+    @Get("all-course-deleted")
+    @HttpCode(HttpStatus.OK)
+    async getAllCourseDeleted(
+        @Req() req: Request
+    ) {
+        const { role } = req.user as UserJWT
+        if (role !== UserRole.TEACHER) {
+            return new BadRequestException();
+        }
+        return this.courseService.handleGetAllCourseDeleted()
     }
 
     @Get('search-name')
@@ -65,8 +76,11 @@ export class CourseController {
         @Param('slug') slug: string,
         @Query('isActive') query?: boolean,
         @Query('isSeo') seo?: boolean,
+        @Req() req?: Request
     ) {
-        return this.courseService.findOneCourse(slug, query, seo);
+        const { role } = req.user as UserJWT
+
+        return this.courseService.findOneCourse(slug, query, seo, role);
     }
 
     @Post()
@@ -95,6 +109,15 @@ export class CourseController {
 
         return this.courseService.handleCreateACourse(body, image);
     }
+
+    @Patch("restore/:id")
+    @HttpCode(HttpStatus.OK)
+    async restoreCourse(
+        @Param('id') id: string
+    ) {
+        return this.courseService.handleRestoreCourse(id)
+    }
+
 
     @Delete()
     @HttpCode(HttpStatus.OK)

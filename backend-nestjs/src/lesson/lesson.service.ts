@@ -32,7 +32,13 @@ export class LessonService {
         }
 
         if (role === UserRole.TEACHER) {
-            return this.lessonModel.findById(lessonId);
+            return this.lessonModel.findById(lessonId).populate([{
+                path: 'course',
+                select: 'name'
+            }, {
+                path: 'idFrontLesson',
+                select: 'name'
+            }]);
         }
 
         if (role === UserRole.STUDENT) {

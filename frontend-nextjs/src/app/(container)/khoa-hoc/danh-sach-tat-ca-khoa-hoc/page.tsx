@@ -33,23 +33,20 @@ import { useEffect, useState } from "react";
 import { toastNotiSuccess } from "@/components/custom/ToastNotification";
 import { Button } from "@/components/ui/button";
 import CreateCourseForm from "@/components/course/form/CreateCourseForm";
+import DeletedCourse from "@/components/course/course-list/DeletedCourse";
+import slugify from "slugify";
 
-type Course = {
+export type Course = {
   _id: string;
   name: string;
   lessons: number;
   code: string;
 };
 export default function CreateACourse() {
-  // const form = useForm<CourseContent>({
-  //   resolver: zodResolver(),
-  //   defaultValues: {
-  //     email: "",
-  //     password: "",
-  //   },
-  // });
   const { user } = useUserContext();
   const [isOpen, setOpen] = useState(false);
+  const [isOpenDelete, setOpenDelete] = useState(false);
+
   const { data, isLoading } = useSWRPrivate<Array<Course>>(
     `/course/all-course`,
     {
@@ -63,7 +60,7 @@ export default function CreateACourse() {
   if (user.role && user.role !== UserRole.TEACHER)
     return <ForbiddenResourceError />;
   if (isLoading) return <Loading />;
-  console.log("data", data);
+
   const handleDeleteCourse = async (id: string) => {
     setCourses(courses?.filter((item) => item._id !== id));
     const res = await fetchPrivateData(`course?_id=${id}`, {
@@ -72,6 +69,18 @@ export default function CreateACourse() {
     });
     if (res && res.status === HttpStatus.OK) {
       toastNotiSuccess(res.message);
+    }
+  };
+  const handleRestoreCourse = async (id: string) => {
+    const res = await fetchPrivateData(`course/restore/${id}`, {
+      method: "PATCH",
+    });
+    if (res.status === HttpStatus.OK) {
+      toastNotiSuccess(res.message);
+      const courses = await fetchPrivateData(`/course/all-course`, {
+        headers: Headers,
+      });
+      setCourses(courses);
     }
   };
   return (
@@ -121,7 +130,10 @@ export default function CreateACourse() {
                       <div className="flex justify-center items-center">
                         <Link
                           aria-label="setting"
-                          href={`/khoa-hoc/danh-sach-tat-ca-khoa-hoc/${item._id}`}
+                          href={`/khoa-hoc/danh-sach-tat-ca-khoa-hoc/${slugify(
+                            item.name,
+                            { lower: true, strict: true, locale: "vi" }
+                          )}`}
                           className="bg-green-500 p-2 rounded-sm text-white hover:opacity-85 active:opacity-85"
                         >
                           <CiSettings className="text-2xl font-semibold" />
@@ -145,11 +157,23 @@ export default function CreateACourse() {
             </TableBody>
           </Table>
         </div>
-        <div className="flex justify-end items-center w-full">
-          <Button className="h-fit" onClick={() => setOpen(!isOpen)}>
+        <div className="flex justify-end items-center w-full gap-2">
+          <Button
+            className="h-fit bg-[#05B51A]"
+            onClick={() => setOpen(!isOpen)}
+          >
             <span className="flex gap-2 items-center ">
               <LuFolderPlus />
               Thêm khóa học
+            </span>
+          </Button>
+          <Button
+            className="h-fit bg-[#E00707]"
+            onClick={() => setOpenDelete(!isOpenDelete)}
+          >
+            <span className="flex gap-2 items-center ">
+              <LuFolderPlus />
+              Khóa học đã xóa
             </span>
           </Button>
         </div>
@@ -158,8 +182,10 @@ export default function CreateACourse() {
             <CreateCourseForm />
           </div>
         )}
+        {isOpenDelete && (
+          <DeletedCourse handleRestoreCourse={handleRestoreCourse} />
+        )}
       </div>
-     
     </div>
   );
 }

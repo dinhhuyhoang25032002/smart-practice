@@ -116,3 +116,112 @@ export const CreateACourseForm = z.object({
   video: z.string().min(1, "Mô tả khóa học không được để trống").optional(),
 });
 export type CreateACourseFormType = z.TypeOf<typeof CreateACourseForm>;
+
+// form-edit-course
+export const EditCourseForm = z.object({
+  name: z.string().min(1, "Tên khóa học không được để trống"),
+  code: z.string().min(1, "Mã khóa học không được để trống"),
+  description: z.string().min(1, "Mô tả không được để trống"),
+  price: z.string().min(1, "Giá khóa học không được để trống"),
+  type: z.string().min(1, "Loại khóa học không được để trống"),
+  video: z.string().optional(),
+  image:
+    typeof window !== "undefined"
+      ? z.instanceof(File, { message: "Vui lòng chọn ảnh khóa học" }).optional()
+      : z.any().optional(),
+});
+export type EditCourseFormType = z.TypeOf<typeof EditCourseForm>;
+
+// form-edit-lesson
+// Định nghĩa các schema con
+const dataSlideSchema = z.object({
+  title: z.string().optional(),
+  data: z.array(z.object({
+    image: z.string(),
+    description: z.string().optional(),
+  })),
+});
+
+const dataContentPlusSchema = z.object({
+  title: z.string(),
+  description: z.array(z.string()).optional(),
+});
+
+const dataPlusSchema = z.object({
+  header: z.string().optional(),
+  data: z.array(dataContentPlusSchema),
+});
+
+const dataTabContentSchema = z.object({
+  title: z.string(),
+  image: z.string().optional(),
+  description: z.array(z.string()).optional(),
+});
+
+const dataTabSchema = z.object({
+  header: z.string().optional(),
+  data: z.array(dataTabContentSchema),
+});
+
+const dataListSchema = z.object({
+  header: z.string().optional(),
+  data: z.array(z.string()).optional(),
+});
+
+const dataContentMergeSchema = z.object({
+  label: z.string(),
+  description: z.array(dataContentPlusSchema),
+});
+
+const dataVideoSchema = z.object({
+  url: z.string(),
+  title: z.string().optional(),
+});
+
+const dataImageSchema = z.object({
+  url: z.string(),
+  title: z.string().optional(),
+});
+
+const dataMergeSchema = z.object({
+  header: z.string().optional(),
+  data: z.array(dataContentMergeSchema).optional(),
+  image: z.string().optional(),
+});
+
+const contentLessonSchema = z.object({
+  dataSlides: dataSlideSchema.optional(),
+  contentText: z.array(z.string()).optional(),
+  dataPlus: dataPlusSchema.optional(),
+  dataMerge: dataMergeSchema.optional(),
+  dataVideo: dataVideoSchema.optional(),
+  dataImage: dataImageSchema.optional(),
+  dataTab: dataTabSchema.optional(),
+  dataList: dataListSchema.optional(),
+  dataList2: dataListSchema.optional(),
+  codeSample: z.string().optional(),
+});
+
+const indexItemSchema = z.object({
+  _id: z.string().optional(),
+  nameItem: z.string(),
+});
+
+
+export const EditLessonForm = z.object({
+  name: z.string().min(1, "Tên bài học không được để trống"),
+  content: z.array(contentLessonSchema).min(1, "Nội dung bài học không được để trống"),
+  indexItem: z.array(indexItemSchema).min(1, "Mục lục bài học không được để trống"),
+  course: z.object({
+    _id: z.string().optional(),
+    name: z.string(),
+  }),
+  idFrontLesson: z.object({
+    _id: z.string().optional(),
+    name: z.string(),
+  }),
+  video: z.string().optional(),
+  image: z.string().optional(),
+});
+
+export type EditLessonFormType = z.infer<typeof EditLessonForm>;

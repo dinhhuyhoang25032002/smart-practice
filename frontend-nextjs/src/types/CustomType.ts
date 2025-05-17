@@ -1,7 +1,7 @@
-import { StaticImageData } from "next/image";
+
 
 type dataContentSide = {
-  image: string | StaticImageData;
+  image: string ;
   description?: string;
 };
 type dataSlide = {
@@ -20,7 +20,7 @@ type dataPlus = {
 
 type dataTabContent = {
   title: string;
-  image?: string | StaticImageData;
+  image?: string ;
   description?: Array<string>;
 };
 
@@ -48,16 +48,16 @@ type dataVideo = {
   title?: string;
 };
 type dataImage = {
-  url: string | StaticImageData;
+  url: string ;
   title?: string;
 };
 type dataMergeProps = {
   header?: string;
   data?: dataContentMerge[];
-  image?: string | StaticImageData;
+  image?: string ;
 };
 
-export class ContentLesson {
+export type ContentLesson = {
   dataSlides?: dataSlide;
   contentText?: Array<string>;
   dataPlus?: dataPlus;
@@ -74,7 +74,17 @@ export type ContentLessonMerge = ContentLesson & { _id: string };
 export type Lesson = {
   content: Array<ContentLesson>;
   name: string;
+  linkImage: string;
+  video: string;
   indexItem: Array<IndexItemProps>;
+  course: {
+    _id: string;
+    name: string;
+  };
+  idFrontLesson: {
+    _id: string;
+    name: string;
+  }
 };
 
 export type SolutionContent = {
@@ -88,6 +98,14 @@ export type SolutionContent = {
   price: string;
   type: string;
 };
+
+export type CourseContent = SolutionContent & {
+  code: string, lessons: Array<{
+    _id: string,
+    name: string,
+    linkImage: string,
+  }>
+}
 
 type EvaluaDashboard = {
   lessonId: string;

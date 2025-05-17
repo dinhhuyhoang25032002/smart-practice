@@ -52,7 +52,6 @@ export default function CourseContent({
     `lesson?lessonId=${id}`,
     {},
     {
-      dedupingInterval: 1000,
       revalidateIfStale: true,
     }
   );

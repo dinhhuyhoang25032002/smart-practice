@@ -52,7 +52,7 @@ import slugify from 'slugify';
                 },
             }),
             limits: {
-                fileSize: 1024 * 1024 * 1024, // 500MB cho mỗi file
+                fileSize: 5 * 1024 * 1024, // 5MB cho mỗi file
             },
             fileFilter: (req, file, cb) => {
                 // Validate file type

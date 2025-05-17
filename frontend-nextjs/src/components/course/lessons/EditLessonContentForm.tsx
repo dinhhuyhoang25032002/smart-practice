@@ -1,54 +1,34 @@
 import { ContentLesson, IndexItemProps } from "@/types/CustomType";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import Slider from "react-slick";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@radix-ui/react-tabs";
 import AccordionExtra from "@/components/course/section/AccordionExtra";
-import { IoMdCheckmark } from "react-icons/io";
-import { settings } from "@/configs/settingSlider";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { Suspense, useRef } from "react";
+import { Control } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import "react-markdown-editor-lite/lib/index.css";
+import "highlight.js/styles/a11y-dark.css";
+
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { EditLessonFormType } from "@/types/Type";
+import MarkdownCodeEditor from "@/components/course/lessons/MarkdownCodeEditor";
+
 type SectionLessonProps = ContentLesson & {
   header?: IndexItemProps;
+  control: Control<EditLessonFormType>;
+  index: number;
 };
 
-const newSettings = {
-  ...settings,
-  autoplay: false,
-  //autoplaySpeed: 3000,
-  pauseOnHover: true,
-  pauseOnFocus: true,
-  dots: false,
-  slidesToShow: 1,
-  slidesToScroll: 1,
-  responsive: [
-    {
-      breakpoint: 10000,
-      settings: {
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        infinite: true,
-      },
-    },
-    {
-      breakpoint: 1024,
-      settings: {
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        initialSlide: 2,
-      },
-    },
-    {
-      breakpoint: 640,
-      settings: {
-        slidesToShow: 1,
-        slidesToScroll: 1,
-      },
-    },
-  ],
-};
 
-export default function SectionLesson({
+export default function EditLessonContentForm({
   dataImage,
   dataList2,
   dataList,
@@ -60,8 +40,11 @@ export default function SectionLesson({
   dataVideo,
   contentText,
   codeSample,
+  control,
+  index,
 }: SectionLessonProps) {
   const sliderRef = useRef<Slider | null>(null);
+
   const next = () => {
     sliderRef.current?.slickNext();
   };
@@ -74,10 +57,16 @@ export default function SectionLesson({
       {/* header */}
       {header ? (
         <div className="mb-5 flex flex-col lg:gap-5 gap-4 w-full my-4 ">
-          <hr className="w-full  border-2 border-red-600" />
-          <span className="xl:text-2xl font-semibold text-xl ">
-            {header?.nameItem}
+          <span className="font-semibold text-base">
+            Phần {index + 1}: {header?.nameItem}
           </span>
+          {/* <div className="flex flex-col gap-2">
+            <FormField
+              control={control}
+              name={`indexItem.${index}.nameItem`}
+              render={({ field }) => <Input {...field} />}
+            />
+          </div> */}
         </div>
       ) : null}
 
@@ -120,13 +109,53 @@ export default function SectionLesson({
 
               {dataPlus && (
                 <div className="flex flex-col gap-1">
-                  <span>{dataPlus.header}</span>
-                  {dataPlus?.data?.map((item, index) => {
+                  <FormField
+                    control={control}
+                    name={`content.${index}.dataPlus.header`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="font-semibold text-base">
+                          Nhập tiêu đề
+                        </FormLabel>
+                        <FormControl>
+                          <Input {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  {dataPlus?.data?.map((_, indexDataPlus) => {
                     return (
-                      <div key={index}>
-                        <AccordionExtra
-                          content={item.title}
-                          description={item.description}
+                      <div key={indexDataPlus}>
+                        <FormField
+                          control={control}
+                          name={`content.${index}.dataPlus.data.${indexDataPlus}.title`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="font-semibold text-base">
+                                Nhập tiêu đề
+                              </FormLabel>
+                              <FormControl>
+                                <Input {...field} placeholder="Nhập tiêu đề" />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={control}
+                          name={`content.${index}.dataPlus.data.${indexDataPlus}.description`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="font-semibold text-base">
+                                Nhập nội dung
+                              </FormLabel>
+                              <FormControl>
+                                <Input {...field} placeholder="Nhập nội dung" />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
                         />
                       </div>
                     );
@@ -145,19 +174,39 @@ export default function SectionLesson({
               }
             >
               {dataImage.url && (
-                <Image
-                  src={dataImage.url as string}
-                  alt="dataImage"
-                  width={500}
-                  height={300}
-                  className={
-                    "lg:h-80 h-72 object-center object-contain lg:w-[80%] w-full"
-                  }
+                <FormField
+                  control={control}
+                  name={`content.${index}.dataImage.url`}
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel className="font-semibold text-base">
+                        Nhập Link hình ảnh
+                      </FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Nhập Link hình ảnh" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               )}
-              <span className="flex justify-center items-center w-full">
-                {dataImage.title}
-              </span>
+              {dataImage.title && (
+                <FormField
+                  control={control}
+                  name={`content.${index}.dataImage.title`}
+                  render={({ field }) => (
+                    <FormItem className="w-full">
+                      <FormLabel className="font-semibold text-base">
+                        Nhập tên hình ảnh
+                      </FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Nhập tên hình ảnh" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
             </div>
           )}
         </div>
@@ -168,26 +217,41 @@ export default function SectionLesson({
         <div className="flex flex-col items-center justify-center mb-4 w-full">
           {dataList && (
             <div className="mb-4 flex flex-col gap-4  w-full ">
-              {/* <hr className="w-full  border-2 border-red-600 mb-2" /> */}
-              <span className="lg:text-2xl font-semibold text-xl">
-                {dataList.header}
-              </span>
+              <FormField
+                control={control}
+                name={`content.${index}.dataList.header`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-semibold text-base">
+                      Nhập tiêu đề
+                    </FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Nhập tiêu đề" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
           )}
           {dataList || dataList2 ? (
             <div className=" flex justify-around w-full flex-col lg:flex-row gap-0 lg:gap-5">
               {dataList && (
                 <ul>
-                  {dataList.data?.map((item, index) => {
+                  {dataList.data?.map((_, indexDataList) => {
                     return (
-                      <li
-                        key={index}
-                        className="flex items-center gap-2 py-4  text-justify"
-                      >
-                        <div className="xl:w-10 xl:h-10 w-8 h-8 rounded-full bg-blue-600 flex justify-center items-center text-white">
-                          <IoMdCheckmark />
-                        </div>
-                        <span className="text-justify w-[87%]">{item}</span>
+                      <li key={indexDataList}>
+                        <FormField
+                          control={control}
+                          name={`content.${index}.dataList.data.${indexDataList}`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <Input {...field} placeholder="Nhập nội dung" />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
                       </li>
                     );
                   })}
@@ -195,16 +259,20 @@ export default function SectionLesson({
               )}
               {dataList2 && (
                 <ul>
-                  {dataList2?.data?.map((item, index) => {
+                  {dataList2?.data?.map((_, indexDataList2) => {
                     return (
-                      <li
-                        key={index}
-                        className="flex items-center  gap-2  py-4"
-                      >
-                        <div className="xl:w-10 xl:h-10 w-8 h-8  rounded-full bg-blue-600 flex justify-center items-center text-white">
-                          <IoMdCheckmark />
-                        </div>
-                        <span className="text-justify w-[87%]">{item}</span>
+                      <li key={indexDataList2}>
+                        <FormField
+                          control={control}
+                          name={`content.${index}.dataList2.data.${indexDataList2}`}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormControl>
+                                <Input {...field} placeholder="Nhập nội dung" />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
                       </li>
                     );
                   })}
@@ -219,25 +287,92 @@ export default function SectionLesson({
       {dataMerge ? (
         <div className="flex flex-col items-center justify-center mb-8">
           <div className="mb-8 flex flex-col gap-4  w-full ">
-            {/* <hr className="w-full  border-2 border-red-600 mb-2" /> */}
-            <span className="lg:text-2xl font-semibold text-xl ">
-              {dataMerge?.header}
-            </span>
+            <FormField
+              control={control}
+              name={`content.${index}.dataMerge.header`}
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input {...field} placeholder="Nhập tiêu đề" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
           <div className=" flex justify-around w-full flex-col sm:flex-row">
             <div className="sm:w-[45%]  w-full">
-              {dataMerge.data?.map((item, index) => {
+              {dataMerge.data?.map((item, indexDataMerge) => {
                 return (
-                  <div key={index}>
-                    <span className="block text-justify">{item.label}</span>
+                  <div key={indexDataMerge}>
+                    <FormField
+                      control={control}
+                      name={`content.${index}.dataMerge.data.${indexDataMerge}.label`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="font-semibold text-base">
+                            Nhập tiêu đề
+                          </FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="Nhập tiêu đề" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                     <div>
-                      {item?.description?.map((item, index) => {
+                      {item?.description?.map((x, indexs) => {
                         return (
-                          <div key={index}>
-                            <AccordionExtra
-                              content={item.title}
-                              description={item.description}
+                          <div key={indexs}>
+                            <FormField
+                              control={control}
+                              name={`content.${index}.dataMerge.data.${indexDataMerge}.description.${indexs}.title`}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormControl>
+                                    <Input
+                                      {...field}
+                                      placeholder="Nhập nội dung"
+                                    />
+                                  </FormControl>
+                                </FormItem>
+                              )}
                             />
+                            <div>
+                              <FormField
+                                control={control}
+                                name={`content.${index}.dataMerge.data.${indexDataMerge}.description.${indexs}.description`}
+                                render={({ field }) => (
+                                  <FormItem>
+                                    <FormControl>
+                                      <Input
+                                        {...field}
+                                        placeholder="Nhập nội dung"
+                                      />
+                                    </FormControl>
+                                  </FormItem>
+                                )}
+                              />
+                              {x?.description?.map((_, indexX) => {
+                                return (
+                                  <FormField
+                                    control={control}
+                                    key={indexX}
+                                    name={`content.${index}.dataMerge.data.${indexDataMerge}.description.${indexs}.description.${indexX}`}
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormControl>
+                                          <Input
+                                            {...field}
+                                            placeholder="Nhập nội dung"
+                                          />
+                                        </FormControl>
+                                      </FormItem>
+                                    )}
+                                  />
+                                );
+                              })}
+                            </div>
                           </div>
                         );
                       })}
@@ -246,14 +381,22 @@ export default function SectionLesson({
                 );
               })}
             </div>
-            <div className="sm:w-[45%]  w-full">
+            <div className="sm:w-[45%] w-full">
               {dataMerge.image && (
-                <Image
-                  src={dataMerge.image}
-                  alt="data-merge"
-                  width={500}
-                  height={500}
-                  className="w-full sm:h-52 h-44 object-center object-contain"
+                <FormField
+                  control={control}
+                  name={`content.${index}.dataMerge.image`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="font-semibold text-base">
+                        Nhập Link hình ảnh
+                      </FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Nhập Link hình ảnh" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               )}
             </div>
@@ -364,7 +507,7 @@ export default function SectionLesson({
               <FaAngleLeft className="text-2xl text-white" />
             </Button>
 
-            <div className="w-full lg:w-[80%] ">
+            {/* <div className="w-full lg:w-[80%] ">
               <Slider {...newSettings} ref={sliderRef}>
                 {dataSlides?.data?.map((item, index) => {
                   return (
@@ -395,7 +538,7 @@ export default function SectionLesson({
                   );
                 })}
               </Slider>
-            </div>
+            </div> */}
 
             <div className="lg:hidden flex justify-around items-center w-full">
               <button
@@ -426,8 +569,25 @@ export default function SectionLesson({
 
       {/* codeSample */}
       {codeSample && (
-        <div className="w-full flex sm:px-10 px-0 mb-4">
-          <p dangerouslySetInnerHTML={{ __html: codeSample }}></p>
+        <div className="w-full flex flex-col gap-4 sm:px-10 px-0 mb-4">
+          <FormField
+            control={control}
+            name={`content.${index}.codeSample`}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="font-semibold text-base">
+                  Code Editor
+                </FormLabel>
+                <FormControl>
+                  <MarkdownCodeEditor
+                    value={field.value ||""}
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
       )}
 

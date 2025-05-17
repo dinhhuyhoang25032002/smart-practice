@@ -14,7 +14,7 @@ import { EVALUATE_MODEL, Evaluate } from 'src/schema/evaluate.schema';
 import { STARTTIME_MODEL, StartTime } from 'src/schema/starttime.schema';
 import { CreateCourseDto } from 'src/course/class/ActiveCourse.dto';
 import slugify from 'slugify';
-import { CommodityType } from 'src/constant/constant';
+import { CommodityType, UserRole } from 'src/constant/constant';
 
 @Injectable()
 export class CourseService {
@@ -49,7 +49,7 @@ export class CourseService {
     }
     return deadline;
   }
-  async findOneCourse(slug: string, query?: boolean, seo?: boolean) {
+  async findOneCourse(slug: string, query?: boolean, seo?: boolean, role?: string) {
     if (query) {
       return this.courseModel
         .findOne({ slug: slug })
@@ -59,7 +59,9 @@ export class CourseService {
     if (seo) {
       return this.courseModel.findOne({ slug: slug }).select('name');
     }
-
+    if (role === UserRole.TEACHER) {
+      return this.courseModel.findOne({ slug: slug }).populate({ path: 'lessons', select: 'name _id' });
+    }
     const dataCourse = await this.courseModel
       .findOne({ slug: slug })
       .populate({ path: 'lessons', select: 'name _id linkImage' });
@@ -197,27 +199,14 @@ export class CourseService {
     body: CreateCourseDto,
     image: Express.Multer.File,
   ) {
-    const { name } = body;
+    const { name, code } = body;
     const course = await this.courseModel.findOneWithDeleted({
-      name
+      name, code
     });
     if (course) {
       if ('deleted' in course) {
         // Nếu khóa học đã bị xóa, restore lại
         await this.courseModel.restore({ _id: course._id });
-
-        // Cập nhật thông tin mới
-        // const safeFolderName = slugify(name, { locale: "vi", lower: true });
-        // const staticServerUrl = process.env.NEST_ENDPOINT_URL_COURSE || 'http://localhost:3000';
-        // const imagePath = `${staticServerUrl}/${safeFolderName}/images/${image.filename}`;
-
-        // await this.courseModel.findByIdAndUpdate(course._id, {
-        //   ...body,
-        //   image: imagePath,
-        //   slug: slugify(name, { locale: "vi", lower: true }),
-        //   type: CommodityType.COURSE,
-        //   isSearch: slugify(name, { locale: "vi", lower: false })
-        // });
 
         return {
           message: 'Tạo khóa học thành công',
@@ -252,5 +241,30 @@ export class CourseService {
       message: 'Tạo khóa học thành công',
       status: HttpStatus.CREATED
     };
+  }
+  async handleGetAllCourseDeleted() {
+    const courseDeleted = await this.courseModel.findWithDeleted({ deleted: true }).select("name code lessons").lean().exec();
+
+    if (courseDeleted.length === 0) {
+      return { message: "Không có khóa học đã xóa", status: HttpStatus.NOT_FOUND, data: [] }
+    }
+    const data = courseDeleted.map((item) => {
+      return {
+        name: item.name,
+        code: item.code,
+        lessons: item.lessons.length,
+        _id: item._id
+      }
+    })
+    return {
+      status: HttpStatus.OK,
+      message: "Danh sách các khóa học đã xóa",
+      data
+    }
+  }
+
+  async handleRestoreCourse(id: string) {
+    await this.courseModel.restore({ _id: id });
+    return { message: "Khôi phục khóa học thành công", status: HttpStatus.OK }
   }
 }

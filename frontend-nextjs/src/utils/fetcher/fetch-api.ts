@@ -66,6 +66,7 @@ const isTokenExpired = (token: string): boolean => {
 };
 
 export const fetchPrivateData = async (url: string, options?: RequestInit) => {
+    console.log(url);
     const s: string | null = localStorage.getItem("s")
     const userInfo: UserProps = s ? JSON.parse(s) : "";
     const { act } = userInfo;

@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import { Lesson } from "@/types/CustomType";
+import { useSWRPrivate } from "@/hooks/useSWRCustom";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 
 const ProgressComponent = () => {
   const [progress, setProgress] = useState(0);
@@ -30,19 +32,6 @@ const ProgressComponent = () => {
 
 const App = () => {
   const [showComponent, setShowComponent] = useState(true);
-  useEffect(() => {
-    console.log(1);
-    setTimeout(() => {
-      console.log(2);
-    }, 0);
-    console.log(3);
-    Promise.resolve().then(() => console.log(4));
-  }, []);
-  const arr = ['1', '2', '3']
-  const string = arr.reduce((acc, curr) => {
-    return acc + curr
-  }, '')
-  console.log(+string);
 
   return (
     <div>
@@ -51,6 +40,10 @@ const App = () => {
       </button>
 
       {showComponent && <ProgressComponent />}
+      <div className="bg-red-500 flex gap-2 ">
+        <div className="bg-green-500 w-1/2"></div>
+        <div className="bg-blue-500 h-[300px] w-[300px]"></div>
+      </div>
     </div>
   );
 };

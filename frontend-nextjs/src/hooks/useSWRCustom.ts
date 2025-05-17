@@ -37,9 +37,7 @@ export function useSWRPrivate<T = unknown>(
   options?: RequestInit,
   config?: SWRConfiguration
 ) {
-  console.log(url);
-
-  const { isLoading, error, data } = useSWR<T>(
+  const { isLoading, error, data, mutate } = useSWR<T>(
     url,
     () => fetchPrivateData(url, options),
     config ? {
@@ -47,5 +45,5 @@ export function useSWRPrivate<T = unknown>(
       ...defaultSWRConfig
     } : defaultSWRConfig
   );
-  return { isLoading, error, data };
+  return { isLoading, error, data, mutate };
 }
