@@ -17,14 +17,14 @@ import { Input } from "@/components/ui/input";
 import { useParams } from "next/navigation";
 import { CourseContent } from "@/types/CustomType";
 import { useCallback, useState, useEffect } from "react";
-import { Headers } from "@/constant/constant";
+// import { Headers } from "@/constant/constant";
 import { useSWRPrivate } from "@/hooks/useSWRCustom";
-import { toastNotiFail } from "@/components/custom/ToastNotification";
+// import { toastNotiFail } from "@/components/custom/ToastNotification";
 import { useDropzone } from "react-dropzone";
 import Loading from "@/app/loading";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { toastNotiSuccess } from "@/components/custom/ToastNotification";
+// import { toastNotiSuccess } from "@/components/custom/ToastNotification";
 import { IoMdClose } from "react-icons/io";
 import { IoCloudUploadOutline } from "react-icons/io5";
 import EditLessonFormContent from "../lessons/EditLessonForm";
@@ -34,7 +34,7 @@ type EditCourseContentProps = {
 };
 export default function EditCourseContent({
   isEditing,
-  setIsEditing,
+  // setIsEditing,
 }: EditCourseContentProps) {
   const form = useForm<EditCourseFormType>({
     resolver: zodResolver(EditCourseForm),

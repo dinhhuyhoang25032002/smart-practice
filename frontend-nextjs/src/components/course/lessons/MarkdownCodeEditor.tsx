@@ -51,11 +51,10 @@ export default function MarkdownCodeEditor({
       <Textarea
         className="w-full border rounded p-2 font-mono min-h-[200px] mb-4 overflow-auto bg-white"
         value={value}
-        
         onChange={(e) => onChange(e.target.value)}
+        dangerouslySetInnerHTML={{ __html: renderMarkdownOrCode(value) }}
         placeholder="Gõ code hoặc markdown ở đây..."
       />
-      <div dangerouslySetInnerHTML={{ __html: renderMarkdownOrCode(value) }} />
     </div>
   );
 }

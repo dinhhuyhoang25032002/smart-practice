@@ -1,26 +1,30 @@
 export const enum UserRole {
   STUDENT = "STUDENT",
-  TEACHER = "TEACHER"
+  TEACHER = "TEACHER",
 }
 export enum StatusLesson {
   STARTED = "STARTED",
   SUBMITTED = "SUBMITTED",
-  COMPLETED = "COMPLETED"
+  COMPLETED = "COMPLETED",
 }
-export const REGEX = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/
+export const REGEX =
+  /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
 
 export const Headers: HeadersInit | undefined = {
   "Content-Type": "application/json",
-  "accept": "application/json",
-}
+  accept: "application/json",
+};
 export enum StatusAttendance {
-  ON_TIME = 'ON_TIME',
-  LATE = 'LATE',
+  ON_TIME = "ON_TIME",
+  LATE = "LATE",
 }
-
+export enum ChatAIMode {
+  NORMAL = "NORMAL",
+  IOT = "IOT",
+}
 export const HttpStatus = {
   OK: 200,
   INTERNAL_SERVER_ERROR: 500,
   CREATED: 201,
-  BADREQUEST:400
-}
+  BADREQUEST: 400,
+};

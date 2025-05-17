@@ -36,7 +36,7 @@ export const sendIoTQuestionToAi = async (
   };
   try {
     const res = await (
-      await fetch(`${process.env.AI_ENDPOINT_URL}/IoT`, {
+      await fetch(`http://192.168.1.222:8090/IoT`, {
         method: "POST",
         headers: Headers,
         body: JSON.stringify(body),

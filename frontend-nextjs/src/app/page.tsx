@@ -27,7 +27,7 @@ export default function Home() {
           {renderHomepage(user.role)}
           {}
           {isOpenChatBotAi && (
-            <div className="fixed bottom-10 z-50 right-12 w-[600px]">
+            <div className="fixed bottom-10 z-50 right-12 w-[500px]">
               <ChatBotAI />
             </div>
           )}

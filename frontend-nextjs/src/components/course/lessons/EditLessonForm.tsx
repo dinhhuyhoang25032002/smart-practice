@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useSWRPrivate } from "@/hooks/useSWRCustom";
 import { ContentLesson, IndexItemProps, Lesson } from "@/types/CustomType";
 import { RiAddCircleLine, RiDeleteBack2Line } from "react-icons/ri";
-import { fetchPrivateData } from "@/utils/fetcher/fetch-api";
+// import { fetchPrivateData } from "@/utils/fetcher/fetch-api";
 import { RiErrorWarningLine } from "react-icons/ri";
 import {
   Form,
