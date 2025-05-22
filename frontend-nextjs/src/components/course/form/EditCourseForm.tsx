@@ -34,8 +34,8 @@ type EditCourseContentProps = {
 };
 export default function EditCourseContent({
   isEditing,
-  // setIsEditing,
-}: EditCourseContentProps) {
+}: // setIsEditing,
+EditCourseContentProps) {
   const form = useForm<EditCourseFormType>({
     resolver: zodResolver(EditCourseForm),
     defaultValues: {
@@ -55,7 +55,7 @@ export default function EditCourseContent({
   const [isEditingLesson, setIsEditingLesson] = useState<boolean>(false);
   const [lessonId, setLessonId] = useState<string>("");
   const slug = params.slug;
-  const { data, isLoading, mutate } = useSWRPrivate<CourseContent>(
+  const { data, isLoading, } = useSWRPrivate<CourseContent>(
     `course/${slug}`
   );
   useEffect(() => {
@@ -263,7 +263,7 @@ export default function EditCourseContent({
                 control={form.control}
                 name="image"
                 render={() => (
-                  <FormItem>
+                  <FormItem className=" w-full">
                     <FormLabel className="text-lg font-medium">
                       Ảnh khóa học
                     </FormLabel>
@@ -319,8 +319,8 @@ export default function EditCourseContent({
                           )}
                         </div>
                       ) : previewImage ? (
-                        <div className="relative w-full flex-1 flex items-center justify-center">
-                          <div className="w-full h-full aspect-video bg-gray-100 rounded-lg flex items-center justify-center p-5">
+                        <div className="relative w-full flex-1 flex items-center justify-center ">
+                          <div className="w-full h-full aspect-video  rounded-lg flex items-center justify-center p-5">
                             <Image
                               src={previewImage}
                               alt="Course image"
@@ -332,8 +332,10 @@ export default function EditCourseContent({
                           </div>
                         </div>
                       ) : (
-                        <div className="flex-1 bg-gray-100 rounded-lg flex items-center justify-center">
-                          <p>Không có hình ảnh khóa học</p>
+                        <div className="flex-1 aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
+                          <p className="text-gray-500">
+                            Không có hình ảnh khóa học
+                          </p>
                         </div>
                       )}
                     </FormControl>
@@ -388,7 +390,10 @@ export default function EditCourseContent({
                   />
                 </div>
               ) : null}
-              <div className="flex-1 flex items-center justify-center">
+              <div className="flex-1 flex items-center justify-center flex-col gap-2">
+                <span className="text-lg font-medium  w-full">
+                  Video giới thiệu
+                </span>
                 <div className="aspect-video rounded-lg bg-gray-100 w-full">
                   {currentVideo ? (
                     <iframe
@@ -433,7 +438,7 @@ export default function EditCourseContent({
                   </div>
                 ))
               ) : (
-                <p className="text-gray-500">
+                <p className="text-gray-500 bg-gray-100 p-5 rounded-md w-full flex items-center justify-center">
                   Khóa học của bạn chưa có bài học
                 </p>
               )}

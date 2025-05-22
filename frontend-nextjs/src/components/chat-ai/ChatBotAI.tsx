@@ -1,8 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { TbWorld } from "react-icons/tb";
-import { BsLightbulb } from "react-icons/bs";
+  // import { TbWorld } from "react-icons/tb";
+  // import { BsLightbulb } from "react-icons/bs";
 import { IoMicOutline } from "react-icons/io5";
 import { FaArrowUp } from "react-icons/fa";
 import { RxAvatar } from "react-icons/rx";
@@ -13,7 +13,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { FaPlus } from "react-icons/fa6";
+// import { FaPlus } from "react-icons/fa6";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Chatbot, ChatbotType } from "@/types/Type";
@@ -21,12 +21,12 @@ import Image from "next/image";
 import aiService from "@/assets/image/service/Chatbot_service.png";
 import { IoMdClose } from "react-icons/io";
 import { Button } from "../ui/button";
-import { ChatAIMode } from "@/constant/constant";
+// import { ChatAIMode } from "@/constant/constant";
 import { sendIoTQuestionToAi } from "@/services/ai/aiService";
 import { useChatBotAiContext } from "@/store/context/ChatBotAi";
 export default function ChatBotAI() {
   const {setOpenChatBotAi, isOpenChatBotAi} = useChatBotAiContext();
-  const [isModeChat, setModeChat] = useState<ChatAIMode>(ChatAIMode.IOT);
+  // const [isModeChat, setModeChat] = useState<ChatAIMode>(ChatAIMode.IOT);
   const [response, setResponse] = useState("");
 
   const form = useForm<ChatbotType>({
@@ -48,7 +48,7 @@ export default function ChatBotAI() {
     if (!question) {
       setResponse("");
     }
-  }, []);
+  }, [question]);
   return (
     <div
       className={`w-full bg-white p-5 rounded-sm flex items-center flex-col ${

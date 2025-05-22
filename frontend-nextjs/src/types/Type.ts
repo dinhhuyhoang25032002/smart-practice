@@ -203,7 +203,7 @@ const contentLessonSchema = z.object({
 });
 
 const indexItemSchema = z.object({
-  _id: z.string().optional(),
+  _id: z.string(),
   nameItem: z.string(),
 });
 

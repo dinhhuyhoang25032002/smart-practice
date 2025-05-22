@@ -1,9 +1,8 @@
 "use client";
-import { toastNotiSuccess } from "@/components/custom/ToastNotification";
-import { toastNotiFail } from "@/components/custom/ToastNotification";
+
 import { Button } from "@/components/ui/button";
 import { useSWRPrivate } from "@/hooks/useSWRCustom";
-import { ContentLesson, IndexItemProps, Lesson } from "@/types/CustomType";
+import { IndexItemProps, Lesson } from "@/types/CustomType";
 import { RiAddCircleLine, RiDeleteBack2Line } from "react-icons/ri";
 // import { fetchPrivateData } from "@/utils/fetcher/fetch-api";
 import { RiErrorWarningLine } from "react-icons/ri";
@@ -25,6 +24,8 @@ import Image from "next/image";
 import UploadFile from "@/components/custom/UploadFile";
 import EditLessonContentForm from "@/components/course/lessons/EditLessonContentForm";
 import SectionLesson from "@/components/course/section/SectionLesson";
+import Loading from "@/app/loading";
+import { v4 as uuidv4 } from "uuid";
 type EditLessonFormContentProps = {
   lessonId: string;
 };
@@ -49,18 +50,29 @@ export default function EditLessonFormContent({
       image: "",
     },
   });
-  const [editingLesson, setEditingLesson] = useState<Lesson | null>(null);
-  const [indexItems, setIndexItems] = useState<IndexItemProps[]>([]);
-  const [lessonContent, setLessonContent] = useState<ContentLesson[]>([]);
-  const [editingItemId, setEditingItemId] = useState<IndexItemProps | null>(
-    null
-  );
+  // const [editingLesson, setEditingLesson] = useState<Lesson | null>(null);
+
   const [newItemIndexContent, setNewItemIndexContent] = useState<string>("");
   const [addingToItemId, setAddingToItemId] = useState<string | null>(null);
-  const [inputValue, setInputValue] = useState("");
-  const { data, isLoading, mutate } = useSWRPrivate<Lesson>(
+
+  const { data, isLoading } = useSWRPrivate<Lesson>(
     `lesson?lessonId=${lessonId}`
   );
+  useEffect(() => {
+    // Reset các state phụ khi lessonId thay đổi
+    setAddingToItemId(null);
+    setNewItemIndexContent("");
+    // Nếu muốn reset form về mặc định khi chưa có data mới:
+    form.reset({
+      name: "",
+      indexItem: [],
+      content: [],
+      course: { _id: "", name: "" },
+      idFrontLesson: { _id: "", name: "" },
+      video: "",
+      image: "",
+    });
+  }, [form, lessonId]);
   useEffect(() => {
     if (data) {
       form.reset({
@@ -78,96 +90,84 @@ export default function EditLessonFormContent({
         video: data?.video || "",
         image: data?.linkImage || "",
       });
-      setEditingLesson(data);
-      setIndexItems(data?.indexItem || []);
-      setLessonContent(data?.content || []);
+      // setEditingLesson(data);
+
+      // setLessonContent(data?.content || []);
     }
   }, [data, form]);
-  //   const handleEditLesson = async (lessonId: string) => {
-  //     try {
-  //     //   setEditingLesson(response);
-  //     //   setLessonContent(response.content);
-  //       setIsEditing(true);
-  //     } catch (error) {
-  //       console.error(error);
-  //       toastNotiFail("Không thể tải thông tin bài học");
-  //     }
-  //   };
-  //   const handleSaveLesson = async () => {
-  //     if (!editingLesson) return;
-  //     try {
-  //       const response = await fetch(
-  //         `/api/course/${slug}/lesson/${editingLesson._id}`,
-  //         {
-  //           method: "PUT",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //           },
-  //           body: JSON.stringify({
-  //             name: editingLesson.name,
-  //             content: lessonContent,
-  //             indexItem: indexItems,
-  //           }),
-  //         }
-  //       );
-
-  //       if (!response.ok) throw new Error("Failed to update lesson");
-
-  //       await mutate();
-  //       setEditingLesson(null);
-  //       setIsEditing(false);
-  //       toastNotiSuccess("Cập nhật bài học thành công");
-  //     } catch (error) {
-  //       console.error(error);
-  //       toastNotiFail("Cập nhật bài học thất bại");
-  //     }
-  //   };
-
+  if (isLoading) return <Loading />;
   const onSubmit = (data: EditLessonFormType) => {
     console.log(data);
   };
   const handleAddIndexItem = (indexItem: IndexItemProps) => {
+    console.log(form.getValues("indexItem"));
     setAddingToItemId(indexItem._id);
   };
   const handleSaveNewItem = () => {
-    if (!addingToItemId || !newItemIndexContent.trim()) return;
+    if (!newItemIndexContent.trim()) return;
 
-    const updatedIndexItems = [...indexItems];
-    const updatedContent = [...lessonContent];
+    const updatedIndexItems = [...form.getValues("indexItem")];
+    const updatedContent = [...form.getValues("content")];
+
     const insertIndex =
       updatedIndexItems.findIndex((item) => item._id === addingToItemId) + 1;
     const newIndexItem = {
-      _id: `${insertIndex}`,
+      _id: uuidv4(),
       nameItem: newItemIndexContent.trim(),
     };
-    updatedIndexItems.splice(insertIndex, 0, newIndexItem);
-    updatedContent.splice(insertIndex, 0, {});
-    setIndexItems(updatedIndexItems);
-    setLessonContent(updatedContent);
-    form.setValue("indexItem", updatedIndexItems, { shouldValidate: true });
 
+    // Thêm mục lục mới
+    updatedIndexItems.splice(insertIndex, 0, newIndexItem);
+
+    // Thêm content mới tương ứng
+    updatedContent.splice(insertIndex, 0, {
+      contentText: [],
+      dataImage: undefined,
+      dataList: undefined,
+      dataList2: undefined,
+      dataMerge: undefined,
+      dataPlus: undefined,
+      codeSample: "",
+      dataVideo: undefined,
+      dataSlides: undefined,
+      dataTab: undefined,
+    });
+
+    form.setValue("indexItem", updatedIndexItems, { shouldValidate: true });
+    form.setValue("content", updatedContent, { shouldValidate: true });
     setAddingToItemId(null);
     setNewItemIndexContent("");
   };
   const handleDeleteIndexItem = (indexItemId: string) => {
-    const updatedIndexItems = indexItems.filter(
-      (item) => item._id !== indexItemId
-    );
-    setIndexItems(updatedIndexItems);
+    const updatedIndexItems = form
+      .getValues("indexItem")
+      .filter((item) => item._id !== indexItemId);
+
+    // Tìm vị trí index của mục lục bị xóa
+    const deleteIndex = form
+      .getValues("indexItem")
+      .findIndex((item) => item._id === indexItemId);
+
+    // Xóa content ở vị trí tương ứng
+    const updatedContent = [...form.getValues("content")];
+    if (deleteIndex !== -1) {
+      updatedContent.splice(deleteIndex, 1);
+    }
+
     form.setValue("indexItem", updatedIndexItems, { shouldValidate: true });
-    setEditingItemId(null);
+    form.setValue("content", updatedContent, { shouldValidate: true });
   };
 
   return (
     <div className="mt-8">
-      {editingLesson ? (
+      {data ? (
         <div className="space-y-4 border-t pt-4">
           <div className="flex gap-2 items-center">
             <h3 className="text-lg font-medium">Chỉnh sửa bài học:</h3>
           </div>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <div className="flex justify-between items-center flex-col bg-gray-100 p-4 rounded-md space-y-5">
+              <div className="flex justify-between items-center flex-col bg-gray-100 p-3  rounded-md space-y-5">
                 <div className="flex gap-3 w-full">
                   <FormField
                     control={form.control}
@@ -204,11 +204,11 @@ export default function EditLessonFormContent({
                     name="idFrontLesson.name"
                     render={({ field }) => (
                       <FormItem className="w-1/3">
-                        <FormLabel className="text-lg font-medium  ">
+                        <FormLabel className="text-lg font-medium ">
                           Tên bài học phía trước
                           <div className="flex items-center gap-1 group relative">
                             <RiErrorWarningLine className="" />
-                            <span className="text-sm text-red-500 hidden group-hover:block group-active:block absolute top-0 right-0 w-[200px] bg-white p-2 rounded-sm text-justify">
+                            <span className="text-sm text-red-500 hidden group-hover:block group-active:block absolute top-2 left-4 w-[200px] bg-white p-2 rounded-sm text-justify">
                               Nếu bài học này là bài học đầu tiên của khóa học,
                               thì trường này sẽ có nội dung giống tên bài học.
                             </span>
@@ -267,73 +267,114 @@ export default function EditLessonFormContent({
                   <div className="flex justify-between items-start w-full px-3">
                     <div className="flex flex-col w-[40%] space-y-5">
                       <span className="font-medium">Nội dung</span>
-                      <ul className="space-y-2">
-                        {indexItems.map((item, index) => {
-                          return (
-                            <li
-                              key={index}
-                              className="bg-white rounded-md shadow-sm hover:shadow-md transition-shadow"
-                            >
-                              <FormField
-                                control={form.control}
-                                name={`indexItem.${index}.nameItem`}
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormControl>
-                                      <div className="flex items-center gap-2 p-2">
-                                        <RiAddCircleLine
-                                          className="text-xl text-gray-500 hover:text-green-500 cursor-pointer transition-colors"
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleAddIndexItem(item);
-                                          }}
-                                        />
-                                        <Input
-                                          {...field}
-                                          className="flex-1 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0"
-                                          placeholder="Nhập tên mục lục"
-                                        />
-                                        <RiDeleteBack2Line
-                                          className="text-xl text-gray-500 hover:text-red-500 cursor-pointer transition-colors"
-                                          onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleDeleteIndexItem(item._id);
-                                          }}
-                                        />
-                                      </div>
-                                    </FormControl>
-                                    <FormMessage />
-                                  </FormItem>
+                      {form.watch("indexItem").length > 0 ? (
+                        <ul className="space-y-2">
+                          {form.watch("indexItem").map((item, index) => {
+                            return (
+                              <li
+                                key={index}
+                                className="bg-white rounded-md shadow-sm hover:shadow-md transition-shadow"
+                              >
+                                <FormField
+                                  control={form.control}
+                                  name={`indexItem.${index}.nameItem`}
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormControl>
+                                        <div className="flex items-center gap-2 p-2">
+                                          <RiAddCircleLine
+                                            className="text-xl text-gray-500 hover:text-green-500 cursor-pointer transition-colors"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              handleAddIndexItem(item);
+                                            }}
+                                          />
+                                          <Input
+                                            {...field}
+                                            className="flex-1 bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                                            placeholder="Nhập tên mục lục"
+                                          />
+                                          <RiDeleteBack2Line
+                                            className="text-xl text-gray-500 hover:text-red-500 cursor-pointer transition-colors"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              handleDeleteIndexItem(item._id);
+                                            }}
+                                          />
+                                        </div>
+                                      </FormControl>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+
+                                {addingToItemId === item._id && (
+                                  <div className="flex items-center gap-2 p-3 border-t border-gray-100">
+                                    <Input
+                                      className="flex-1"
+                                      placeholder="Nhập tên mục lục mới"
+                                      value={newItemIndexContent}
+                                      onChange={(e) =>
+                                        setNewItemIndexContent(e.target.value)
+                                      }
+                                    />
+
+                                    <Button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleSaveNewItem();
+                                      }}
+                                      className="bg-green-500 hover:bg-green-600"
+                                    >
+                                      Lưu
+                                    </Button>
+                                  </div>
                                 )}
-                              />
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      ) : addingToItemId ? (
+                        <div className="flex items-center gap-2 p-3 border-t border-gray-100">
+                          <Input
+                            className="flex-1"
+                            placeholder="Nhập tên mục lục mới"
+                            value={newItemIndexContent}
+                            onChange={(e) =>
+                              setNewItemIndexContent(e.target.value)
+                            }
+                          />
 
-                              {addingToItemId === item._id && (
-                                <div className="flex items-center gap-2 p-3 border-t border-gray-100">
-                                  <Input
-                                    className="flex-1"
-                                    placeholder="Nhập tên mục lục mới"
-                                    value={newItemIndexContent}
-                                    onChange={(e) =>
-                                      setNewItemIndexContent(e.target.value)
-                                    }
-                                  />
-
-                                  <Button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleSaveNewItem();
-                                    }}
-                                    className="bg-green-500 hover:bg-green-600"
-                                  >
-                                    Lưu
-                                  </Button>
-                                </div>
-                              )}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                      <span>Số lượng: {indexItems.length}</span>
+                          <Button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleSaveNewItem();
+                            }}
+                            className="bg-green-500 hover:bg-green-600"
+                          >
+                            Lưu
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 p-2">
+                          <span className="text-gray-500">
+                            Không có mục lục
+                          </span>
+                          <Button
+                            onClick={() => {
+                              handleAddIndexItem({
+                                _id: `${form.getValues("indexItem").length}a`,
+                                nameItem: "",
+                              });
+                            }}
+                          >
+                            Thêm mục lục
+                          </Button>
+                        </div>
+                      )}
+                      <span>
+                        Số lượng: {form.getValues("indexItem").length}
+                      </span>
                     </div>
                     <div className="flex flex-col w-[45%] space-y-5">
                       <span className="font-medium">Xem Trước</span>
@@ -341,7 +382,7 @@ export default function EditLessonFormContent({
                         <li className="py-2 hover:bg-[#eee] active:bg-[#eee] cursor-pointer rounded-sm pl-3 font-normal text-sm flex items-center gap-1 ">
                           <BsCameraVideo /> Mục lục
                         </li>
-                        {indexItems?.map((item, index) => {
+                        {form.watch("indexItem")?.map((item, index) => {
                           return (
                             <li
                               key={index}
@@ -362,30 +403,35 @@ export default function EditLessonFormContent({
                 <div className="w-full flex justify-center items-center flex-col gap-2">
                   <span className="text-lg font-medium">Nội dung bài học</span>
                   <div className="w-full flex justify-center items-center">
-                    <div className="flex flex-col gap-2  ">
-                      {lessonContent.map((item, index) => {
+                    <div className="flex flex-col gap-2  w-full ">
+                      {form.watch("content").map((item, index) => {
                         return (
                           <div
                             key={index}
-                            className="flex gap-10 items-start justify-between "
+                            className="flex items-start  justify-between"
                           >
-                            <div className="flex flex-col gap-2 w-[40%]">
+                            <div className="flex flex-col gap-2 w-[44%]">
                               <EditLessonContentForm
-                                header={indexItems[index]}
+                                header={form.watch("indexItem")[index]}
                                 control={form.control}
                                 index={index}
+                                contentText={item.contentText}
                                 dataImage={item.dataImage}
                                 dataList={item.dataList}
                                 dataList2={item.dataList2}
+                                form={form}
                                 dataMerge={item.dataMerge}
                                 dataPlus={item.dataPlus}
                                 codeSample={item.codeSample}
+                                dataVideo={item.dataVideo}
+                                dataSlides={item.dataSlides}
+                                dataTab={item.dataTab}
                               />
                             </div>
-                            <div className="flex flex-col gap-2 w-[55%]">
+                            <div className="flex flex-col gap-2 w-[54%] ">
                               <SectionLesson
                                 key={index}
-                                header={indexItems[index]}
+                                header={form.watch("indexItem")[index]}
                                 dataImage={item.dataImage}
                                 dataList2={item.dataList2}
                                 dataList={item.dataList}
@@ -412,14 +458,14 @@ export default function EditLessonFormContent({
                   >
                     Lưu thay đổi
                   </Button>
-                  <Button
+                  {/* <Button
                     onClick={() => {
                       setEditingLesson(null);
                     }}
                     variant="destructive"
                   >
                     Hủy
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
             </form>

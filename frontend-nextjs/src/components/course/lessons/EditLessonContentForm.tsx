@@ -1,32 +1,27 @@
 import { ContentLesson, IndexItemProps } from "@/types/CustomType";
-import Image from "next/image";
-import Slider from "react-slick";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@radix-ui/react-tabs";
-import AccordionExtra from "@/components/course/section/AccordionExtra";
-import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
-import { Suspense, useRef } from "react";
-import { Control } from "react-hook-form";
+import { useCallback } from "react";
+import { Control, UseFormReturn } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import "react-markdown-editor-lite/lib/index.css";
-import "highlight.js/styles/a11y-dark.css";
-
+import _ from "lodash";
+import CodeMirror from "@uiw/react-codemirror";
 import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { EditLessonFormType } from "@/types/Type";
-import MarkdownCodeEditor from "@/components/course/lessons/MarkdownCodeEditor";
+import { langs } from "@uiw/codemirror-extensions-langs";
+import { RiAddCircleLine, RiDeleteBack2Line } from "react-icons/ri";
+import { abcdef } from "@uiw/codemirror-themes-all";
 
 type SectionLessonProps = ContentLesson & {
   header?: IndexItemProps;
   control: Control<EditLessonFormType>;
   index: number;
+  form: UseFormReturn<EditLessonFormType>;
 };
-
 
 export default function EditLessonContentForm({
   dataImage,
@@ -34,6 +29,7 @@ export default function EditLessonContentForm({
   dataList,
   dataMerge,
   header,
+  form,
   dataPlus,
   dataSlides,
   dataTab,
@@ -43,17 +39,274 @@ export default function EditLessonContentForm({
   control,
   index,
 }: SectionLessonProps) {
-  const sliderRef = useRef<Slider | null>(null);
+  const handleAddContentText = useCallback(() => {
+    form.setValue(`content.${index}.contentText`, [
+      ...(form.getValues(`content.${index}.contentText`) || []),
+      "",
+    ]);
+  }, [form, index]);
 
-  const next = () => {
-    sliderRef.current?.slickNext();
-  };
-  const previous = () => {
-    sliderRef.current?.slickPrev();
-  };
+  const handleDeleteContentText = useCallback(
+    (indexContentText: number) => {
+      const contentText = form.getValues(`content.${index}.contentText`);
+      if (contentText) {
+        const newContentText = contentText.filter(
+          (_, i) => i !== indexContentText
+        );
+        form.setValue(`content.${index}.contentText`, newContentText);
+      }
+    },
+    [form, index]
+  );
+
+  const handleAddDataForDataPlus = useCallback(() => {
+    form.setValue(`content.${index}.dataPlus`, {
+      ...(form.getValues(`content.${index}.dataPlus`) || {
+        header: "",
+        data: [],
+      }),
+      data: [
+        ...(form.getValues(`content.${index}.dataPlus`)?.data || []),
+        { title: "", description: [] },
+      ],
+    });
+  }, [form, index]);
+
+  const handleDeleteDataForDataPlus = useCallback(
+    (indexDataPlus: number) => {
+      form.setValue(`content.${index}.dataPlus.data`, [
+        ...(form.getValues(`content.${index}.dataPlus.data`) || []).filter(
+          (_, i) => i !== indexDataPlus
+        ),
+      ]);
+    },
+    [form, index]
+  );
+
+  const handleDeleteDataPlus = useCallback(() => {
+    if (form.getValues(`content.${index}.dataPlus.data`)?.length > 0) {
+      form.setValue(`content.${index}.dataPlus.header`, undefined);
+      return;
+    }
+    form.setValue(`content.${index}.dataPlus`, undefined);
+  }, [form, index]);
+
+  const handleAddDataImage = useCallback(() => {
+    form.setValue(`content.${index}.dataImage`, {
+      ...(form.getValues(`content.${index}.dataImage`) || {}),
+      url: "",
+      title: "",
+    });
+  }, [form, index]);
+
+  const handleDeleteDataImage = useCallback(() => {
+    form.setValue(`content.${index}.dataImage`, undefined);
+  }, [form, index]);
+
+  const handleAddDataList = useCallback(() => {
+    form.setValue(`content.${index}.dataList`, {
+      ...(form.getValues(`content.${index}.dataList`) || {}),
+      data: [...(form.getValues(`content.${index}.dataList`)?.data || []), ""],
+    });
+  }, [form, index]);
+
+  const handleAddDataList2 = useCallback(() => {
+    form.setValue(`content.${index}.dataList2`, {
+      ...(form.getValues(`content.${index}.dataList2`) || {}),
+      data: [...(form.getValues(`content.${index}.dataList2`)?.data || []), ""],
+    });
+  }, [form, index]);
+
+  const handleDeleteDataList = useCallback(
+    (indexDataList: number) => {
+      form.setValue(`content.${index}.dataList.data`, [
+        ...(form.getValues(`content.${index}.dataList.data`) || []).filter(
+          (_, i) => i !== indexDataList
+        ),
+      ]);
+    },
+    [form, index]
+  );
+
+  const handleDeleteDataList2 = useCallback(
+    (indexDataList2: number) => {
+      form.setValue(`content.${index}.dataList2.data`, [
+        ...(form.getValues(`content.${index}.dataList2.data`) || []).filter(
+          (_, i) => i !== indexDataList2
+        ),
+      ]);
+    },
+    [form, index]
+  );
+
+  const handleAddDataMerge = useCallback(() => {
+    form.setValue(`content.${index}.dataMerge`, {
+      ...(form.getValues(`content.${index}.dataMerge`) || {
+        data: [],
+        image: "",
+        header: "",
+      }),
+      data: [
+        ...(form.getValues(`content.${index}.dataMerge`)?.data || []),
+        {
+          label: "",
+          description: [
+            {
+              title: "",
+              description: [""],
+            },
+          ],
+        },
+      ],
+    });
+    console.log(
+      "form.getValues(`content.${index}.dataMerge`):",
+      form.getValues(`content.${index}.dataMerge`)
+    );
+  }, [form, index]);
+
+  const handleAddDataVideo = useCallback(() => {
+    form.setValue(`content.${index}.dataVideo`, {
+      ...(form.getValues(`content.${index}.dataVideo`) || {}),
+      url: "",
+      title: "",
+    });
+  }, [form, index]);
+
+  const handleAddDataSlides = useCallback(() => {
+    form.setValue(`content.${index}.dataSlides`, {
+      ...(form.getValues(`content.${index}.dataSlides`) || {}),
+      title: form.getValues(`content.${index}.dataSlides.title`),
+      data: [
+        ...(form.getValues(`content.${index}.dataSlides`)?.data || []),
+        { image: "", description: "" },
+      ],
+    });
+
+    console.log(
+      "form.getValues(`content.${index}.dataSlides`):",
+      form.getValues(`content.${index}.dataSlides`)
+    );
+  }, [form, index]);
+
+  const handleDeleteDataSlides = useCallback(
+    (indexDataSlides: number) => {
+      form.setValue(`content.${index}.dataSlides.data`, [
+        ...(form.getValues(`content.${index}.dataSlides.data`) || []).filter(
+          (_, i) => i !== indexDataSlides
+        ),
+      ]);
+    },
+    [form, index]
+  );
+
+  const handleAddDataTab = useCallback(() => {
+    form.setValue(`content.${index}.dataTab`, {
+      ...(form.getValues(`content.${index}.dataTab`) || {}),
+      header: "",
+      data: [
+        ...(form.getValues(`content.${index}.dataTab`)?.data || []),
+        {
+          title: "",
+          image: "",
+        },
+      ],
+    });
+    console.log(
+      "form.getValues(`content.${index}.dataTab`):",
+      form.getValues(`content.${index}.dataTab`)
+    );
+  }, [form, index]);
+
+  const handleAddDataForDataTab = useCallback(() => {
+    form.setValue(`content.${index}.dataTab.data`, [
+      ...(form.getValues(`content.${index}.dataTab.data`) || []),
+      { title: "", image: "" },
+    ]);
+  }, [form, index]);
+
+  const handleDeleteDataForDataTab = useCallback(
+    (indexDataTab: number) => {
+      form.setValue(`content.${index}.dataTab.data`, [
+        ...(form.getValues(`content.${index}.dataTab.data`) || []).filter(
+          (_, i) => i !== indexDataTab
+        ),
+      ]);
+    },
+    [form, index]
+  );
+
+  const handleAddDataForDataMerge = useCallback(() => {
+    form.setValue(`content.${index}.dataMerge.data`, [
+      ...(form.getValues(`content.${index}.dataMerge.data`) || []),
+      { label: "", description: [] },
+    ]);
+  }, [form, index]);
+
+  const handleAddSubDescriptionForDataMerge = useCallback(
+    (indexDataMerge: number, indexs: number) => {
+      form.setValue(
+        `content.${index}.dataMerge.data.${indexDataMerge}.description.${indexs}.description`,
+        [
+          ...(form.getValues(
+            `content.${index}.dataMerge.data.${indexDataMerge}.description.${indexs}.description`
+          ) || []),
+          "",
+        ]
+      );
+    },
+    [form, index]
+  );
+
+  const handleDeleteSubDescriptionForDataMerge = useCallback(
+    (indexDataMerge: number, indexs: number, indexX: number) => {
+      form.setValue(
+        `content.${index}.dataMerge.data.${indexDataMerge}.description.${indexs}.description`,
+        [
+          ...(
+            form.getValues(
+              `content.${index}.dataMerge.data.${indexDataMerge}.description.${indexs}.description`
+            ) || []
+          ).filter((_, i) => i !== indexX),
+        ]
+      );
+    },
+    [form, index]
+  );
+
+  const handleAddDescriptionForDataMerge = useCallback(
+    (indexDataMerge: number) => {
+      form.setValue(
+        `content.${index}.dataMerge.data.${indexDataMerge}.description`,
+        [
+          ...(form.getValues(
+            `content.${index}.dataMerge.data.${indexDataMerge}.description`
+          ) || []),
+          { title: "", description: [] },
+        ]
+      );
+    },
+    [form, index]
+  );
+
+  const handleDeleteDescriptionForDataMerge = useCallback(
+    (indexDataMerge: number, indexs: number) => {
+      form.setValue(
+        `content.${index}.dataMerge.data.${indexDataMerge}.description`,
+        [
+          ...(
+            form.getValues(
+              `content.${index}.dataMerge.data.${indexDataMerge}.description`
+            ) || []
+          ).filter((_, i) => i !== indexs),
+        ]
+      );
+    },
+    [form, index]
+  );
 
   return (
-    <div className="flex flex-col justify-center items-center w-full ">
+    <div className="flex flex-col justify-center items-center w-full space-y-4">
       {/* header */}
       {header ? (
         <div className="mb-5 flex flex-col lg:gap-5 gap-4 w-full my-4 ">
@@ -69,229 +322,65 @@ export default function EditLessonContentForm({
           </div> */}
         </div>
       ) : null}
-
       {/* contentText & dataImage & dataPlus*/}
-      {contentText || dataImage || dataPlus ? (
-        <div
-          className={
-            contentText || dataPlus
-              ? "flex items-center justify-around flex-col lg:flex-row w-full gap-4 mb-4"
-              : "flex items-center justify-center w-full mb-8"
-          }
-        >
-          {(contentText || dataPlus) && (
-            <div
-              className={
-                dataImage
-                  ? `flex flex-col lg:w-[45%] w-full`
-                  : ` w-full flex flex-col lg:w-[55%]`
-              }
-            >
-              {contentText ? (
-                <ul className=" ">
-                  {contentText.length !== 0
-                    ? contentText.map((item, index) => {
-                        return (
-                          <li
-                            key={index}
-                            className="inline-flex items-center gap-2 lg:py-4 py-2"
-                          >
-                            <div className="lg:w-10 lg:h-10 w-8 h-8 rounded-full bg-blue-600 flex justify-center items-center text-white">
-                              {index + 1}
-                            </div>
-                            <p className="text-justify w-[88%]">{item}</p>
-                          </li>
-                        );
-                      })
-                    : null}
-                </ul>
-              ) : null}
-
-              {dataPlus && (
-                <div className="flex flex-col gap-1">
-                  <FormField
-                    control={control}
-                    name={`content.${index}.dataPlus.header`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="font-semibold text-base">
-                          Nhập tiêu đề
-                        </FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  {dataPlus?.data?.map((_, indexDataPlus) => {
-                    return (
-                      <div key={indexDataPlus}>
-                        <FormField
-                          control={control}
-                          name={`content.${index}.dataPlus.data.${indexDataPlus}.title`}
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="font-semibold text-base">
-                                Nhập tiêu đề
-                              </FormLabel>
-                              <FormControl>
-                                <Input {...field} placeholder="Nhập tiêu đề" />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={control}
-                          name={`content.${index}.dataPlus.data.${indexDataPlus}.description`}
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="font-semibold text-base">
-                                Nhập nội dung
-                              </FormLabel>
-                              <FormControl>
-                                <Input {...field} placeholder="Nhập nội dung" />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
-
-          {dataImage && (
-            <div
-              className={
-                contentText || dataPlus
-                  ? "lg:w-[55%] flex flex-col items-center justify-center w-full"
-                  : " w-full flex flex-col items-center justify-center"
-              }
-            >
-              {dataImage.url && (
+      {contentText && contentText.length > 0 ? (
+        <ul className="w-full">
+          {contentText.map((_, indexContentText) => {
+            return (
+              <li
+                key={indexContentText}
+                className="inline-flex items-center gap-2 py-3 hover:shadow-md shadow-sm bg-white w-full px-2 mb-2 rounded-sm"
+              >
+                <RiAddCircleLine
+                  className="text-base text-gray-500 hover:text-green-500 cursor-pointer transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleAddContentText();
+                  }}
+                />
                 <FormField
                   control={control}
-                  name={`content.${index}.dataImage.url`}
+                  name={`content.${index}.contentText.${indexContentText}`}
                   render={({ field }) => (
                     <FormItem className="w-full">
-                      <FormLabel className="font-semibold text-base">
-                        Nhập Link hình ảnh
-                      </FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="Nhập Link hình ảnh" />
+                        <Input
+                          {...field}
+                          placeholder="Nhập nội dung đoạn văn."
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-              )}
-              {dataImage.title && (
-                <FormField
-                  control={control}
-                  name={`content.${index}.dataImage.title`}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel className="font-semibold text-base">
-                        Nhập tên hình ảnh
-                      </FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="Nhập tên hình ảnh" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                <RiDeleteBack2Line
+                  className="text-base text-gray-500 hover:text-red-500 cursor-pointer transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteContentText(indexContentText);
+                  }}
                 />
-              )}
-            </div>
-          )}
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <div className="w-full h-full flex items-center justify-center gap-2 flex-col bg-white p-2 rounded-md">
+          <span className="text-gray-500">Không có nội dung</span>
+          <div className="flex items-center justify-center gap-2 w-full">
+            <Button onClick={handleAddContentText}>Thêm mới</Button>
+          </div>
         </div>
-      ) : null}
-
-      {/* dataList & dataList2 */}
-      {dataList || dataList2 ? (
-        <div className="flex flex-col items-center justify-center mb-4 w-full">
-          {dataList && (
-            <div className="mb-4 flex flex-col gap-4  w-full ">
-              <FormField
-                control={control}
-                name={`content.${index}.dataList.header`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="font-semibold text-base">
-                      Nhập tiêu đề
-                    </FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Nhập tiêu đề" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          )}
-          {dataList || dataList2 ? (
-            <div className=" flex justify-around w-full flex-col lg:flex-row gap-0 lg:gap-5">
-              {dataList && (
-                <ul>
-                  {dataList.data?.map((_, indexDataList) => {
-                    return (
-                      <li key={indexDataList}>
-                        <FormField
-                          control={control}
-                          name={`content.${index}.dataList.data.${indexDataList}`}
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormControl>
-                                <Input {...field} placeholder="Nhập nội dung" />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-              {dataList2 && (
-                <ul>
-                  {dataList2?.data?.map((_, indexDataList2) => {
-                    return (
-                      <li key={indexDataList2}>
-                        <FormField
-                          control={control}
-                          name={`content.${index}.dataList2.data.${indexDataList2}`}
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormControl>
-                                <Input {...field} placeholder="Nhập nội dung" />
-                              </FormControl>
-                            </FormItem>
-                          )}
-                        />
-                      </li>
-                    );
-                  })}
-                </ul>
-              )}
-            </div>
-          ) : null}
-        </div>
-      ) : null}
-
-      {/* dataMerge */}
-      {dataMerge ? (
-        <div className="flex flex-col items-center justify-center mb-8">
-          <div className="mb-8 flex flex-col gap-4  w-full ">
+      )}
+      {/* dataPlus */}
+      {!_.isEmpty(dataPlus) ? (
+        <div className="flex flex-col gap-1 w-full">
+          <div className="flex items-center gap-2 w-full bg-white p-2  rounded-md">
             <FormField
               control={control}
-              name={`content.${index}.dataMerge.header`}
+              name={`content.${index}.dataPlus.header`}
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="w-full ">
                   <FormControl>
                     <Input {...field} placeholder="Nhập tiêu đề" />
                   </FormControl>
@@ -299,289 +388,695 @@ export default function EditLessonContentForm({
                 </FormItem>
               )}
             />
+            <RiDeleteBack2Line
+              className="text-base text-gray-500 hover:text-red-500 cursor-pointer transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDeleteDataPlus();
+              }}
+            />
           </div>
-          <div className=" flex justify-around w-full flex-col sm:flex-row">
-            <div className="sm:w-[45%]  w-full">
-              {dataMerge.data?.map((item, indexDataMerge) => {
-                return (
-                  <div key={indexDataMerge}>
+          {dataPlus?.data && dataPlus.data.length > 0 ? (
+            dataPlus.data.map((_, indexDataPlus) => {
+              return (
+                <div
+                  key={indexDataPlus}
+                  className="w-full bg-white p-2 rounded-md flex items-center gap-2"
+                >
+                  <RiAddCircleLine
+                    className="text-base text-gray-500 hover:text-green-500 cursor-pointer transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAddDataForDataPlus();
+                    }}
+                  />
+                  <div className="flex flex-col gap-2 w-full">
                     <FormField
                       control={control}
-                      name={`content.${index}.dataMerge.data.${indexDataMerge}.label`}
+                      name={`content.${index}.dataPlus.data.${indexDataPlus}.title`}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="font-semibold text-base">
-                            Nhập tiêu đề
-                          </FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="Nhập tiêu đề" />
+                            <Input {...field} placeholder="Nhập title" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                    <div>
-                      {item?.description?.map((x, indexs) => {
-                        return (
-                          <div key={indexs}>
-                            <FormField
-                              control={control}
-                              name={`content.${index}.dataMerge.data.${indexDataMerge}.description.${indexs}.title`}
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormControl>
-                                    <Input
-                                      {...field}
-                                      placeholder="Nhập nội dung"
-                                    />
-                                  </FormControl>
-                                </FormItem>
-                              )}
-                            />
-                            <div>
-                              <FormField
-                                control={control}
-                                name={`content.${index}.dataMerge.data.${indexDataMerge}.description.${indexs}.description`}
-                                render={({ field }) => (
-                                  <FormItem>
-                                    <FormControl>
-                                      <Input
-                                        {...field}
-                                        placeholder="Nhập nội dung"
-                                      />
-                                    </FormControl>
-                                  </FormItem>
-                                )}
-                              />
-                              {x?.description?.map((_, indexX) => {
-                                return (
+                    <FormField
+                      control={control}
+                      name={`content.${index}.dataPlus.data.${indexDataPlus}.description`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input {...field} placeholder="Nhập description" />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <RiDeleteBack2Line
+                    className="text-base text-gray-500 hover:text-red-500 cursor-pointer transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteDataForDataPlus(indexDataPlus);
+                    }}
+                  />
+                </div>
+              );
+            })
+          ) : (
+            <div className="w-full h-full flex items-center justify-center gap-2 flex-col">
+              <span className="text-gray-500">Không có data cho dataPlus</span>
+              <div className="flex items-center gap-2 w-full">
+                <Button onClick={handleAddDataForDataPlus}>Thêm mới</Button>
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="w-full h-full flex items-center justify-center gap-2 flex-col bg-white p-2 rounded-md">
+          <span className="text-gray-500">Không có dataPlus</span>
+          <div className="flex gap-2 w-full items-center justify-center">
+            <Button onClick={handleAddDataForDataPlus}>Thêm mới</Button>
+          </div>
+        </div>
+      )}
+      {!_.isEmpty(dataImage) ? (
+        <div
+          className={
+            "flex  items-center justify-center w-full bg-white p-2 gap-3 rounded-md"
+          }
+        >
+          <div className="flex items-center gap-2 w-full flex-col">
+            <FormField
+              control={control}
+              name={`content.${index}.dataImage.url`}
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormControl>
+                    <Input {...field} placeholder="Nhập Link hình ảnh" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name={`content.${index}.dataImage.title`}
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormControl>
+                    <Input {...field} placeholder="Nhập tên hình ảnh" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <RiDeleteBack2Line
+            className="text-base text-gray-500 hover:text-red-500 cursor-pointer transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDeleteDataImage();
+            }}
+          />
+        </div>
+      ) : (
+        <div className="w-full h-full flex items-center justify-center gap-2 flex-col bg-white p-2 rounded-md">
+          <span className="text-gray-500">Không có dataImage</span>
+          <div className="flex items-center justify-center gap-2 w-full">
+            <Button onClick={handleAddDataImage}>Thêm mới</Button>
+          </div>
+        </div>
+      )}
+      {/* dataList & dataList2 */}
+
+      <div className="flex flex-col items-center justify-center mb-4 w-full">
+        <div className=" flex justify-between bg-white p-2 rounded-md w-full gap-2 ">
+          {dataList ? (
+            <div className="w-1/2 h-full flex items-center justify-center gap-2 flex-col">
+              <FormField
+                control={control}
+                name={`content.${index}.dataList.header`}
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Nhập tiêu đề cho dataList"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {!_.isEmpty(dataList.data) ? (
+                <ul className="w-full">
+                  {dataList.data?.map((_, indexDataList) => {
+                    return (
+                      <li
+                        key={indexDataList}
+                        className="flex items-center gap-2 mb-2 justify-between"
+                      >
+                        <RiAddCircleLine
+                          className="text-base text-gray-500 hover:text-green-500 cursor-pointer transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleAddDataList();
+                          }}
+                        />
+                        <FormField
+                          control={control}
+                          name={`content.${index}.dataList.data.${indexDataList}`}
+                          render={({ field }) => (
+                            <FormItem className="flex-1">
+                              <FormControl>
+                                <Input {...field} placeholder="Nhập nội dung" />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        <RiDeleteBack2Line
+                          className="text-base text-gray-500 hover:text-red-500 cursor-pointer transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteDataList(indexDataList);
+                          }}
+                        />
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : (
+                <div className="w-full h-full flex items-center justify-center gap-2 flex-col ">
+                  <span className="text-gray-500">Không có dataList</span>
+                  <div className="flex items-center gap-2 w-full justify-center">
+                    <Button onClick={handleAddDataList}>Thêm mới</Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center gap-2 flex-col">
+              <span className="text-gray-500">Không có dataList</span>
+              <div className="flex items-center gap-2 w-full justify-center">
+                <Button onClick={handleAddDataList}>Thêm mới</Button>
+              </div>
+            </div>
+          )}
+          {dataList2 ? (
+            <div className="w-1/2 h-full flex items-center justify-center gap-2 flex-col">
+              <FormField
+                control={control}
+                name={`content.${index}.dataList2.header`}
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Nhập tiêu đề cho dataList2"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {!_.isEmpty(dataList2.data) ? (
+                <ul className="w-full">
+                  {dataList2?.data?.map((_, indexDataList2) => {
+                    return (
+                      <li
+                        key={indexDataList2}
+                        className="flex items-center gap-2 mb-2 justify-between"
+                      >
+                        <RiAddCircleLine
+                          className="text-base text-gray-500 hover:text-green-500 cursor-pointer transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleAddDataList2();
+                          }}
+                        />
+                        <FormField
+                          control={control}
+                          name={`content.${index}.dataList2.data.${indexDataList2}`}
+                          render={({ field }) => (
+                            <FormItem className="flex-1">
+                              <FormControl>
+                                <Input {...field} placeholder="Nhập nội dung" />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        <RiDeleteBack2Line
+                          className="text-base text-gray-500 hover:text-red-500 cursor-pointer transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteDataList2(indexDataList2);
+                          }}
+                        />
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : (
+                <div className="w-full h-full flex items-center justify-center gap-2 flex-col">
+                  <span className="text-gray-500">Không có dataList2</span>
+                  <div className="flex items-center gap-2 w-full justify-center">
+                    <Button onClick={handleAddDataList2}>Thêm mới</Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="w-full h-full flex items-center justify-center gap-2 flex-col">
+              <span className="text-gray-500">Không có dataList2</span>
+              <div className="flex items-center gap-2 w-full justify-center">
+                <Button onClick={handleAddDataList2}>Thêm mới</Button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* dataMerge */}
+      {dataMerge ? (
+        <div className="flex flex-col items-center justify-center gap-4  w-full">
+          <div className=" flex flex-col gap-4  w-full ">
+            <FormField
+              control={control}
+              name={`content.${index}.dataMerge.header`}
+              render={({ field }) => (
+                <FormItem className="w-full bg-white p-2 rounded-md ">
+                  <FormControl>
+                    <Input {...field} placeholder="Nhập header" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="flex justify-around w-full flex-col gap-4">
+            <div className="w-full flex flex-col">
+              {dataMerge?.data && dataMerge.data.length > 0 ? (
+                dataMerge.data.map((item, indexDataMerge) => {
+                  return (
+                    <div
+                      key={indexDataMerge}
+                      className="w-full flex flex-col gap-4"
+                    >
+                      <FormField
+                        control={control}
+                        name={`content.${index}.dataMerge.data.${indexDataMerge}.label`}
+                        render={({ field }) => (
+                          <FormItem className="w-full bg-white p-2 rounded-md ">
+                            <FormControl>
+                              <Input {...field} placeholder="Nhập label" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <div className="flex flex-col gap-4">
+                        {item?.description && item?.description?.length > 0 ? (
+                          item?.description?.map((x, indexs) => {
+                            return (
+                              <div
+                                key={indexs}
+                                className="flex flex-col gap-2 bg-white p-2 rounded-md"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <RiAddCircleLine
+                                    className="text-base text-gray-500 hover:text-green-500 cursor-pointer transition-colors"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleAddDescriptionForDataMerge(
+                                        indexDataMerge
+                                      );
+                                    }}
+                                  />
                                   <FormField
                                     control={control}
-                                    key={indexX}
-                                    name={`content.${index}.dataMerge.data.${indexDataMerge}.description.${indexs}.description.${indexX}`}
+                                    name={`content.${index}.dataMerge.data.${indexDataMerge}.description.${indexs}.title`}
                                     render={({ field }) => (
-                                      <FormItem>
+                                      <FormItem className="w-full">
                                         <FormControl>
                                           <Input
                                             {...field}
-                                            placeholder="Nhập nội dung"
+                                            placeholder="Nhập title"
+                                            className="font-semibold"
                                           />
                                         </FormControl>
                                       </FormItem>
                                     )}
                                   />
-                                );
-                              })}
+                                  <RiDeleteBack2Line
+                                    className="text-base text-gray-500 hover:text-red-500 cursor-pointer transition-colors"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDeleteDescriptionForDataMerge(
+                                        indexDataMerge,
+                                        indexs
+                                      );
+                                    }}
+                                  />
+                                </div>
+
+                                {x?.description &&
+                                x?.description?.length > 0 ? (
+                                  <div>
+                                    {x?.description?.map((_, indexX) => {
+                                      return (
+                                        <div
+                                          key={indexX}
+                                          className="flex items-center gap-2 mb-2"
+                                        >
+                                          <RiAddCircleLine
+                                            className="text-base text-gray-500 hover:text-green-500 cursor-pointer transition-colors"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              handleAddSubDescriptionForDataMerge(
+                                                indexDataMerge,
+                                                indexs
+                                              );
+                                            }}
+                                          />
+                                          <FormField
+                                            control={control}
+                                            key={indexX}
+                                            name={`content.${index}.dataMerge.data.${indexDataMerge}.description.${indexs}.description.${indexX}`}
+                                            render={({ field }) => (
+                                              <FormItem className="w-full">
+                                                <FormControl>
+                                                  <Input
+                                                    {...field}
+                                                    placeholder="Nhập nội dung 1"
+                                                  />
+                                                </FormControl>
+                                              </FormItem>
+                                            )}
+                                          />
+                                          <RiDeleteBack2Line
+                                            className="text-base text-gray-500 hover:text-red-500 cursor-pointer transition-colors"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              handleDeleteSubDescriptionForDataMerge(
+                                                indexDataMerge,
+                                                indexs,
+                                                indexX
+                                              );
+                                            }}
+                                          />
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center gap-2 flex-col">
+                                    <span className="text-gray-500">
+                                      Không có sub description cho dataMerge
+                                    </span>
+                                    <div className="flex items-center gap-2 w-full justify-center">
+                                      <Button
+                                        onClick={() =>
+                                          handleAddSubDescriptionForDataMerge(
+                                            indexDataMerge,
+                                            indexs
+                                          )
+                                        }
+                                      >
+                                        Thêm mới
+                                      </Button>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center gap-2 flex-col">
+                            <span className="text-gray-500">
+                              Không có description cho dataMerge
+                            </span>
+                            <div className="flex items-center gap-2 w-full justify-center">
+                              <Button
+                                onClick={() =>
+                                  handleAddDescriptionForDataMerge(
+                                    indexDataMerge
+                                  )
+                                }
+                              >
+                                Thêm mới
+                              </Button>
                             </div>
                           </div>
-                        );
-                      })}
+                        )}
+                      </div>
                     </div>
+                  );
+                })
+              ) : (
+                <div className="w-full h-full flex items-center justify-center gap-2 flex-col">
+                  <span className="text-gray-500">
+                    Không có data cho dataMerge
+                  </span>
+                  <div className="flex items-center gap-2 w-full justify-center">
+                    <Button onClick={handleAddDataForDataMerge}>
+                      Thêm mới
+                    </Button>
                   </div>
-                );
-              })}
-            </div>
-            <div className="sm:w-[45%] w-full">
-              {dataMerge.image && (
-                <FormField
-                  control={control}
-                  name={`content.${index}.dataMerge.image`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="font-semibold text-base">
-                        Nhập Link hình ảnh
-                      </FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="Nhập Link hình ảnh" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                </div>
               )}
+            </div>
+            <div className="w-full bg-white p-2 rounded-md ">
+              <FormField
+                control={control}
+                name={`content.${index}.dataMerge.image`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Input {...field} placeholder="Nhập Link hình ảnh" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
           </div>
         </div>
-      ) : null}
-
+      ) : (
+        <div className="w-full h-full flex items-center justify-center gap-2 flex-col bg-white p-2 rounded-md">
+          <span className="text-gray-500">Không có dataMerge</span>
+          <div className="flex items-center gap-2 w-full justify-center">
+            <Button onClick={handleAddDataMerge}>Thêm mới</Button>
+          </div>
+        </div>
+      )}
       {/* dataTab */}
       {dataTab ? (
-        <div className="flex justify-center flex-col items-center w-full ">
-          {dataTab.header && (
-            <span className="sm:flex hidden justify-center items-center w-full text-xl font-semibold sm:mb-8 mb-4">
-              {dataTab.header}
-            </span>
-          )}
-
-          {dataTab && dataTab?.data?.length <= 2 ? (
-            <Tabs
-              defaultValue="0"
-              className="w-full flex flex-col items-center justify-center"
-            >
-              <TabsList className="w-fit bg-[#eee] h-fit flex justify-center rounded">
-                {dataTab?.data?.map((item, index) => {
-                  return (
-                    <TabsTrigger
-                      value={`${index}`}
-                      key={index}
-                      className=" whitespace-nowrap h-full rounded data-[state=active]:bg-blue-700 data-[state=active]:text-white p-4"
-                    >
-                      {item.title}
-                    </TabsTrigger>
-                  );
-                })}
-              </TabsList>
-              {dataTab?.data?.map((item, index) => {
+        <div className="flex justify-center flex-col items-center w-full gap-4">
+          <FormField
+            control={control}
+            name={`content.${index}.dataTab.header`}
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormControl>
+                  <Input {...field} placeholder="Nhập header" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {dataTab?.data?.length > 0 ? (
+            <div className="w-full flex justify-center items-center gap-4 flex-col">
+              {dataTab?.data?.map((_, indexDataTab) => {
                 return (
-                  <TabsContent
-                    value={`${index}`}
-                    className="w-full "
-                    key={index}
+                  <div
+                    key={indexDataTab}
+                    className="w-full flex items-center gap-2 bg-white p-2 rounded-md"
                   >
-                    <Suspense>
-                      <div className="flex justify-around items-center py-8 gap-4 w-full flex-col sm:flex-row">
-                        <p className="text-justify sm:w-[30%] block  w-full">
-                          {item.description}
-                        </p>
-
-                        {item.image ? (
-                          <div className="sm:w-[45%] items-center flex justify-center  w-full">
-                            <Image
-                              src={item.image}
-                              alt="data-image-123"
-                              width={900}
-                              height={500}
-                              className="sm:h-80 object-center object-contain w-[60%] h-52 "
-                            />
-                          </div>
-                        ) : null}
-                      </div>
-                    </Suspense>
-                  </TabsContent>
-                );
-              })}
-            </Tabs>
-          ) : null}
-
-          {dataTab && dataTab?.data?.length > 2 ? (
-            <div className="w-full">
-              {dataTab.data.map((item, index) => {
-                return (
-                  <div key={index} className="flex flex-col">
-                    <AccordionExtra
-                      content={item.title}
-                      description={item.description}
+                    <RiAddCircleLine
+                      className="text-base text-gray-500 hover:text-green-500 cursor-pointer transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddDataForDataTab();
+                      }}
                     />
-                    {item.image ? (
-                      <div className="sm:w-[45%] items-center flex justify-center w-full">
-                        <Image
-                          src={item.image}
-                          alt="data-image-123"
-                          width={900}
-                          height={500}
-                          className="sm:h-80 object-center object-contain w-[60%] h-52 "
-                        />
-                      </div>
-                    ) : null}
+                    <div className="flex gap-2 flex-col w-full">
+                      <FormField
+                        control={control}
+                        name={`content.${index}.dataTab.data.${indexDataTab}.title`}
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormControl>
+                              <Input {...field} placeholder="Nhập title" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={control}
+                        name={`content.${index}.dataTab.data.${indexDataTab}.image`}
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormControl>
+                              <Input
+                                {...field}
+                                placeholder="Nhập link hình ảnh"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <RiDeleteBack2Line
+                      className="text-base text-gray-500 hover:text-red-500 cursor-pointer transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteDataForDataTab(indexDataTab);
+                      }}
+                    />
                   </div>
                 );
               })}
             </div>
-          ) : null}
+          ) : (
+            <div className="w-full h-full flex items-center justify-center gap-2 flex-col bg-white p-2 rounded-md">
+              <span className="text-gray-500">Không có data cho dataTab</span>
+              <div className="flex items-center gap-2 w-full justify-center">
+                <Button onClick={handleAddDataTab}>Thêm mới</Button>
+              </div>
+            </div>
+          )}
         </div>
-      ) : null}
-
+      ) : (
+        <div className="w-full h-full flex items-center justify-center gap-2 flex-col bg-white p-2 rounded-md">
+          <span className="text-gray-500">Không có dataTab</span>
+          <div className="flex items-center gap-2 w-full justify-center">
+            <Button onClick={handleAddDataTab}>Thêm mới</Button>
+          </div>
+        </div>
+      )}
       {/* dataSlides */}
       {dataSlides ? (
         <div className="flex flex-col w-full items-center ">
-          {dataSlides.title && (
-            <span className="text-xl font-semibold"> {dataSlides.title} </span>
-          )}
+          <FormField
+            control={control}
+            name={`content.${index}.dataSlides.title`}
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormControl>
+                  <Input {...field} placeholder="Nhập title" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-          <div className="w-full flex justify-center items-center gap-4 flex-col lg:flex-row">
-            <Button
-              aria-label="previous-button"
-              className="px-5 py-5 rounded-full bg-black w-fit h-fit hidden lg:flex"
-              onClick={previous}
-            >
-              <FaAngleLeft className="text-2xl text-white" />
-            </Button>
-
-            {/* <div className="w-full lg:w-[80%] ">
-              <Slider {...newSettings} ref={sliderRef}>
-                {dataSlides?.data?.map((item, index) => {
-                  return (
-                    <div className="my-4 w-full " key={index}>
-                      <div className="w-full text-center flex flex-col items-center sm:gap-8 gap-2">
-                        <span className=" bg-blue-600 text-white px-3 py-2 rounded text-lg font-semibold">
-                          Step {index + 1}
-                        </span>
-                        <div className="w-full flex items-center gap-8 rounded-3xl justify-center">
-                          {item.image && (
-                            <Image
-                              src={item.image}
-                              alt="image-description-course"
-                              className="rounded-lg w-[85%] xl:h-[400px] h-[200px] object-cover object-center "
-                              width={900}
-                              height={900}
-                            />
-                          )}
-                        </div>
-                        <p
-                          className="text-justify sm:px-10 px-0"
-                          dangerouslySetInnerHTML={{
-                            __html: item.description as string,
-                          }}
-                        />
-                      </div>
+          <div className="w-full flex justify-center items-center gap-4 flex-col">
+            {dataSlides?.data?.length > 0 ? (
+              dataSlides?.data?.map((_, indexdataSlides) => {
+                return (
+                  <div
+                    className=" w-full flex items-center gap-2"
+                    key={indexdataSlides}
+                  >
+                    <RiAddCircleLine
+                      className="text-base text-gray-500 hover:text-green-500 cursor-pointer transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddDataSlides();
+                      }}
+                    />
+                    <div className="w-full flex items-center gap-2  justify-center flex-col p-2 rounded-md bg-white">
+                      <FormField
+                        control={control}
+                        name={`content.${index}.dataSlides.data.${indexdataSlides}.image`}
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormControl>
+                              <Input
+                                {...field}
+                                placeholder="Nhập link hình ảnh"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={control}
+                        name={`content.${index}.dataSlides.data.${indexdataSlides}.description`}
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormControl>
+                              <Input {...field} placeholder="Nhập nội dung" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                     </div>
-                  );
-                })}
-              </Slider>
-            </div> */}
-
-            <div className="lg:hidden flex justify-around items-center w-full">
-              <button
-                aria-label="previous-button"
-                className=" px-4 py-4 rounded-full bg-black w-fit h-fit  xs:p-2"
-                onClick={previous}
-              >
-                <FaAngleLeft className="text-2xl text-white" />
-              </button>
-              <button
-                className=" px-4 py-4 rounded-full bg-black w-fit h-fit xs:p-2 "
-                onClick={next}
-                aria-label="next-button"
-              >
-                <FaAngleRight className="text-2xl text-white" />
-              </button>
-            </div>
-            <Button
-              className=" hidden lg:flex px-5 py-5 rounded-full bg-black w-fit h-fit  "
-              onClick={next}
-              aria-label="next-button"
-            >
-              <FaAngleRight className="text-2xl text-white" />
-            </Button>
+                    <RiDeleteBack2Line
+                      className="text-base text-gray-500 hover:text-red-500 cursor-pointer transition-colors"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteDataSlides(indexdataSlides);
+                      }}
+                    />
+                  </div>
+                );
+              })
+            ) : (
+              <div className="w-full h-full flex items-center justify-center gap-2 flex-col bg-white p-2 rounded-md">
+                <span className="text-gray-500">Không có data dataSlides</span>
+                <div className="flex items-center gap-2 w-full justify-center">
+                  <Button onClick={handleAddDataSlides}>Thêm mới</Button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
-      ) : null}
-
+      ) : (
+        <div className="w-full h-full flex items-center justify-center gap-2 flex-col bg-white p-2 rounded-md">
+          <span className="text-gray-500">Không có dataSlides</span>
+          <div className="flex items-center gap-2 w-full justify-center">
+            <Button onClick={handleAddDataSlides}>Thêm mới</Button>
+          </div>
+        </div>
+      )}
       {/* codeSample */}
       {codeSample && (
-        <div className="w-full flex flex-col gap-4 sm:px-10 px-0 mb-4">
+        <div className="w-full gap-4 h-fit px-0 mb-4">
           <FormField
             control={control}
             name={`content.${index}.codeSample`}
             render={({ field }) => (
-              <FormItem>
-                <FormLabel className="font-semibold text-base">
-                  Code Editor
-                </FormLabel>
+              <FormItem className="w-full iteams-center flex">
                 <FormControl>
-                  <MarkdownCodeEditor
-                    value={field.value ||""}
-                    onChange={field.onChange}
+                  <CodeMirror
+                    className="w-full h-full rounded-2xl"
+                    theme={abcdef}
+                    height="490px"
+                    maxWidth="100%"
+                    autoFocus
+                    // readOnly={true}
+                    basicSetup={{
+                      foldGutter: true,
+                      dropCursor: true,
+                      allowMultipleSelections: true,
+                      indentOnInput: true,
+                      autocompletion: true,
+                    }}
+                    extensions={[langs.javascript()]}
+                    onChange={(value) => {
+                      console.log("value:", value);
+                    }}
+                    value={field.value || ""}
                   />
                 </FormControl>
                 <FormMessage />
@@ -590,25 +1085,40 @@ export default function EditLessonContentForm({
           />
         </div>
       )}
-
       {/* dataVideo */}
-      {dataVideo && (
-        <div className="w-full flex justify-center items-center  sm:my-10 my-4 flex-col lg:px-10">
-          <iframe
-            width="560"
-            className="rounded w-full h-fit xl:w-1/2  aspect-video"
-            height="315"
-            src={dataVideo.url}
-            title="YouTube video player"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-          ></iframe>
-          {dataVideo.title ? (
-            <span className=" sm:text-xl w-full font-semibold text-base text-center my-4">
-              {dataVideo.title}
-            </span>
-          ) : null}
+      {dataVideo ? (
+        <div className="w-full flex justify-center items-center gap-4 bg-white p-2 rounded-md  my-4 flex-col ">
+          <FormField
+            control={control}
+            name={`content.${index}.dataVideo.url`}
+            render={({ field }) => (
+              <FormItem className="w-full ">
+                <FormControl>
+                  <Input {...field} placeholder="Nhập link video" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name={`content.${index}.dataVideo.title`}
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormControl>
+                  <Input {...field} placeholder="Nhập title video" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+      ) : (
+        <div className="w-full h-full flex items-center justify-center gap-2 flex-col bg-white p-2 rounded-md">
+          <span className="text-gray-500">Không có dataVideo</span>
+          <div className="flex items-center gap-2 w-full justify-center">
+            <Button onClick={handleAddDataVideo}>Thêm mới</Button>
+          </div>
         </div>
       )}
     </div>

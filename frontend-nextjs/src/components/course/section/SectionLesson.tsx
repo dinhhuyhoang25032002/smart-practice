@@ -1,5 +1,5 @@
 import { ContentLesson, IndexItemProps } from "@/types/CustomType";
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import Slider from "react-slick";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@radix-ui/react-tabs";
 import AccordionExtra from "@/components/course/section/AccordionExtra";
@@ -8,6 +8,9 @@ import { settings } from "@/configs/settingSlider";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { Suspense, useRef } from "react";
 import { Button } from "@/components/ui/button";
+import { langs } from "@uiw/codemirror-extensions-langs";
+import CodeMirror from "@uiw/react-codemirror";
+import { abcdef } from "@uiw/codemirror-themes-all";
 type SectionLessonProps = ContentLesson & {
   header?: IndexItemProps;
 };
@@ -70,7 +73,7 @@ export default function SectionLesson({
   };
 
   return (
-    <div className="flex flex-col justify-center items-center w-full ">
+    <div className="flex flex-col justify-center items-center w-full">
       {/* header */}
       {header ? (
         <div className="mb-5 flex flex-col lg:gap-5 gap-4 w-full my-4 ">
@@ -426,29 +429,48 @@ export default function SectionLesson({
 
       {/* codeSample */}
       {codeSample && (
-        <div className="w-full flex sm:px-10 px-0 mb-4">
-          <p dangerouslySetInnerHTML={{ __html: codeSample }}></p>
+        <div className="w-full flex h-100 bg-green-500 px-0 mb-4 ">
+          <CodeMirror
+            className="w-full rounded-2xl "
+            theme={abcdef}
+            height="490px"
+            maxWidth="100%"
+            autoFocus
+            readOnly={true}
+            basicSetup={{
+              foldGutter: true,
+              dropCursor: true,
+              allowMultipleSelections: true,
+              indentOnInput: true,
+              autocompletion: true,
+            }}
+            extensions={[langs.javascript()]}
+          
+            value={codeSample || ""}
+          />
         </div>
       )}
 
       {/* dataVideo */}
       {dataVideo && (
         <div className="w-full flex justify-center items-center  sm:my-10 my-4 flex-col lg:px-10">
-          <iframe
-            width="560"
-            className="rounded w-full h-fit xl:w-1/2  aspect-video"
-            height="315"
-            src={dataVideo.url}
-            title="YouTube video player"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            referrerPolicy="strict-origin-when-cross-origin"
-            allowFullScreen
-          ></iframe>
-          {dataVideo.title ? (
+          {dataVideo.url && (
+            <iframe
+              width="560"
+              className="rounded w-full h-fit xl:w-1/2  aspect-video"
+              height="315"
+              src={dataVideo.url}
+              title="YouTube video player"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            ></iframe>
+          )}
+          {dataVideo.title && (
             <span className=" sm:text-xl w-full font-semibold text-base text-center my-4">
               {dataVideo.title}
             </span>
-          ) : null}
+          )}
         </div>
       )}
     </div>

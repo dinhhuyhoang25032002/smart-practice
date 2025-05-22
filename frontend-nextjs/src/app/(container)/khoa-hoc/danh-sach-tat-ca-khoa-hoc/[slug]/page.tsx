@@ -1,19 +1,19 @@
 "use client";
-import { ContentLesson, IndexItemProps } from "@/types/CustomType";
+// import { ContentLesson, IndexItemProps } from "@/types/CustomType";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import {
-  toastNotiSuccess,
-  toastNotiFail,
-} from "@/components/custom/ToastNotification";
+// import {
+//   toastNotiSuccess,
+//   toastNotiFail,
+// } from "@/components/custom/ToastNotification";
 import EditCourseContent from "@/components/course/form/EditCourseForm";
-import EditLessonFormContent from "@/components/course/lessons/EditLessonForm";
+// import EditLessonFormContent from "@/components/course/lessons/EditLessonForm";
 
 export default function EditLessonPage() {
-  const [editingLessonId, setEditingLessonId] = useState<string | null>(null);
-  const [editingLessonName, setEditingLessonName] = useState("");
+  // const [editingLessonId, setEditingLessonId] = useState<string | null>(null);
+  // const [editingLessonName, setEditingLessonName] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-  const [activeTab, setActiveTab] = useState("content");
+  // const [activeTab, setActiveTab] = useState("content");
 
   // const handleLessonNameChange = async (lessonId: string, newName: string) => {
   //   try {
@@ -66,8 +66,8 @@ export default function EditLessonPage() {
   // };
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="bg-white rounded-lg shadow-lg p-6">
+    <div className="bg-white">
+      <div className="rounded-lg shadow-lg p-6">
         <Button
           onClick={() => setIsEditing(!isEditing)}
           className={
