@@ -60,7 +60,13 @@ export class CourseService {
       return this.courseModel.findOne({ slug: slug }).select('name');
     }
     if (role === UserRole.TEACHER) {
-      return this.courseModel.findOne({ slug: slug }).populate({ path: 'lessons', select: 'name _id' });
+      const course = await this.courseModel.findOne({ slug: slug }).populate({ path: 'lessons', select: 'name _id' });
+      if (!course) return {
+        status: HttpStatus.NOT_FOUND,
+        message: 'Không tồn tại khóa học',
+      }
+
+      return course;
     }
     const dataCourse = await this.courseModel
       .findOne({ slug: slug })
@@ -197,9 +203,9 @@ export class CourseService {
 
   async handleCreateACourse(
     body: CreateCourseDto,
-    image: Express.Multer.File,
+
   ) {
-    const { name, code } = body;
+    const { name, code, } = body;
     const course = await this.courseModel.findOneWithDeleted({
       name, code
     });
@@ -213,28 +219,15 @@ export class CourseService {
           status: HttpStatus.CREATED
         };
       } else {
-        // Nếu khóa học đang tồn tại, xóa ảnh và báo lỗi
-        const fs = require('fs');
-        const path = require('path');
-        const imagePath = path.join(process.cwd(), image.path);
-        if (fs.existsSync(imagePath)) {
-          fs.unlinkSync(imagePath);
-        }
         return new BadRequestException('Khóa học đã tồn tại');
       }
     }
 
-    // Tạo khóa học mới nếu chưa tồn tại
-    const safeFolderName = slugify(name, { locale: "vi", lower: true });
-    const staticServerUrl = process.env.NEST_ENDPOINT_URL_COURSE || 'http://localhost:3000';
-    const imagePath = `${staticServerUrl}/${safeFolderName}/images/${image.filename}`;
-
     await this.courseModel.create({
       ...body,
-      image: imagePath,
       slug: slugify(name, { locale: "vi", lower: true }),
       type: CommodityType.COURSE,
-      isSearch: slugify(name, { locale: "vi", lower: false })
+      isSearch: removeAccents(name)
     });
 
     return {
@@ -242,6 +235,7 @@ export class CourseService {
       status: HttpStatus.CREATED
     };
   }
+
   async handleGetAllCourseDeleted() {
     const courseDeleted = await this.courseModel.findWithDeleted({ deleted: true }).select("name code lessons").lean().exec();
 
@@ -266,5 +260,16 @@ export class CourseService {
   async handleRestoreCourse(id: string) {
     await this.courseModel.restore({ _id: id });
     return { message: "Khôi phục khóa học thành công", status: HttpStatus.OK }
+  }
+
+  async handleUpdateCourse(id: string, body: CreateCourseDto) {
+    const updateCourse = await this.courseModel.findByIdAndUpdate(id, body);
+    if (!updateCourse) {
+      return {
+        status: HttpStatus.NOT_FOUND,
+        message: "Không tồn tại khóa học",
+      };
+    }
+    return { message: "Cập nhật khóa học thành công", status: HttpStatus.OK }
   }
 }

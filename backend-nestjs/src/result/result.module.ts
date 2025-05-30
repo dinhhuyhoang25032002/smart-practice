@@ -12,7 +12,7 @@ import { STARTTIME_MODEL, StartTimeSchema } from 'src/schema/starttime.schema';
     imports: [
         MulterModule.register({
             storage: diskStorage({
-                destination: './uploads', // Thư mục lưu file
+                destination: './tai-len', // Thư mục lưu file
                 filename: (req, file, cb) => {
                     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
                     cb(null, `${file.fieldname}-${uniqueSuffix}-${file.originalname}`);

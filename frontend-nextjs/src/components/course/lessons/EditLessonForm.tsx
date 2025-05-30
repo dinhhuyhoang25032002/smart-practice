@@ -26,11 +26,19 @@ import EditLessonContentForm from "@/components/course/lessons/EditLessonContent
 import SectionLesson from "@/components/course/section/SectionLesson";
 import Loading from "@/app/loading";
 import { v4 as uuidv4 } from "uuid";
+import { fetchPrivateData } from "@/utils/fetcher/fetch-api";
+import { Headers, HttpStatus } from "@/constant/constant";
+import {
+  toastNotiFail,
+  toastNotiSuccess,
+} from "@/components/custom/ToastNotification";
 type EditLessonFormContentProps = {
   lessonId: string;
+  nameCourse: string | undefined;
 };
 export default function EditLessonFormContent({
   lessonId,
+  nameCourse,
 }: EditLessonFormContentProps) {
   const form = useForm<EditLessonFormType>({
     resolver: zodResolver(EditLessonForm),
@@ -58,28 +66,14 @@ export default function EditLessonFormContent({
   const { data, isLoading } = useSWRPrivate<Lesson>(
     `lesson?lessonId=${lessonId}`
   );
-  useEffect(() => {
-    // Reset các state phụ khi lessonId thay đổi
-    setAddingToItemId(null);
-    setNewItemIndexContent("");
-    // Nếu muốn reset form về mặc định khi chưa có data mới:
-    form.reset({
-      name: "",
-      indexItem: [],
-      content: [],
-      course: { _id: "", name: "" },
-      idFrontLesson: { _id: "", name: "" },
-      video: "",
-      image: "",
-    });
-  }, [form, lessonId]);
+
   useEffect(() => {
     if (data) {
       form.reset({
         name: data?.name || "",
         course: {
           _id: data?.course?._id || "",
-          name: data?.course?.name || "",
+          name: data?.course?.name || nameCourse,
         },
         indexItem: data?.indexItem || [],
         content: data?.content || [],
@@ -90,14 +84,29 @@ export default function EditLessonFormContent({
         video: data?.video || "",
         image: data?.linkImage || "",
       });
-      // setEditingLesson(data);
-
-      // setLessonContent(data?.content || []);
     }
-  }, [data, form]);
+  }, [data, form, nameCourse]);
   if (isLoading) return <Loading />;
-  const onSubmit = (data: EditLessonFormType) => {
-    console.log(data);
+  const onSubmit = async (data: EditLessonFormType) => {
+   
+    try {
+      const res = await fetchPrivateData(`lesson/${lessonId}`, {
+        method: "PUT",
+        body: JSON.stringify(data),
+        headers: Headers,
+      });
+      if (res && res.status === HttpStatus.OK) {
+        toastNotiSuccess(res.message);
+        return;
+      }
+      if (res && res.status === HttpStatus.NOT_FOUND) {
+        toastNotiFail(res.message);
+        return;
+      }
+      toastNotiFail("Cập nhật khóa học thất bại");
+    } catch (error) {
+      console.log(error);
+    }
   };
   const handleAddIndexItem = (indexItem: IndexItemProps) => {
     console.log(form.getValues("indexItem"));
@@ -356,7 +365,7 @@ export default function EditLessonFormContent({
                           </Button>
                         </div>
                       ) : (
-                        <div className="flex items-center gap-2 p-2">
+                        <div className="flex items-center justify-between gap-2 p-2 bg-white rounded-md shadow-sm hover:shadow-md transition-shadow">
                           <span className="text-gray-500">
                             Không có mục lục
                           </span>

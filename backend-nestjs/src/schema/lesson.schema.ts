@@ -72,7 +72,6 @@ export type ContentLesson = {
   codeSample?: string
 }
 
-
 @Schema()
 class ItemSchema extends Document {
   @Prop({ required: true })
@@ -82,24 +81,30 @@ class ItemSchema extends Document {
 @Schema({ timestamps: true })
 export class Lesson extends Document {
 
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   name: string;
 
-  @Prop({ required: true })
-  linkImage: string;
+  @Prop({})
+  linkImage?: string;
 
-  @Prop({ type: Array<ContentLesson>, required: true })
-  content: ContentLesson[];
+  @Prop({ type: Array<ContentLesson>, })
+  content?: ContentLesson[];
 
-  @Prop({ type: [ItemSchema], required: true })
-  indexItem: ItemSchema[];
+  @Prop({ type: [ItemSchema], })
+  indexItem?: ItemSchema[];
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true })
-  course: ObjectId;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Course', })
+  course?: ObjectId;
 
-  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Lesson' })
-  idFrontLesson: ObjectId
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Lesson' })
+  idFrontLesson?: ObjectId
 
+  @Prop({ required: true, unique: true })
+  slug: string;
+
+  @Prop({ required: true, unique: true })
+  isSearch: string;
 }
 export const LESSON_MODEL = Lesson.name;
 export const LessonSchema = SchemaFactory.createForClass(Lesson);
+LessonSchema.index({ name: 1, slug: 1, isSearch: 1 },{name:"INDEXS_LESSON"});

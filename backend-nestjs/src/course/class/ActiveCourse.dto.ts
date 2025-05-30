@@ -25,6 +25,10 @@ export class CreateCourseDto {
     video?: string;
 
     @IsString()
+    @IsOptional()
+    image?: string;
+
+    @IsString()
     @IsNotEmpty()
     price: string;
 

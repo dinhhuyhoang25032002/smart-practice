@@ -21,6 +21,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { createMailerOptions } from 'src/helper/OAuth2';
 import { AttendanceModule } from './attendance/attendance.module';
+import { UpdatesModule } from './uploads/uploads.module';
 
 @Module({
   imports: [
@@ -51,7 +52,7 @@ import { AttendanceModule } from './attendance/attendance.module';
           return connection;
         }
       }
-    ), SuperviceModule, UserModule, AuthModule, CourseModule, EvaluateModule, LessonModule, StarttimeModule, ResultModule, DeadlineModule, TimeviewModule, AttendanceModule
+    ), SuperviceModule, UserModule, AuthModule, CourseModule, EvaluateModule, LessonModule, StarttimeModule, ResultModule, DeadlineModule, TimeviewModule, AttendanceModule, UpdatesModule
   ],
   controllers: [AppController,],
   providers: [AppService, AccessTokenStrategy, RefreshTokenStrategy],

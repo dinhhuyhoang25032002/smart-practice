@@ -1,10 +1,11 @@
-import { BadRequestException, Controller, Req, Get, HttpCode, HttpStatus, Query, UseGuards, Post, Body } from '@nestjs/common';
+import { BadRequestException, Controller, Req, Get, HttpCode, HttpStatus, Query, UseGuards, Post, Body, Patch, Param, Put, } from '@nestjs/common';
 import { ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { JwtAccessAuthGuard } from 'src/auth/guard/accessToken.guard';
 import { LessonService } from 'src/lesson/lesson.service';
 import { Request } from 'express';
 import { UserJWT } from 'src/types/CustomType';
 import { LessonDto } from './class/Lesson.dto';
+import { UserRole } from 'src/constant/constant';
 @ApiBearerAuth()
 @UseGuards(JwtAccessAuthGuard)
 @Controller('lesson')
@@ -41,7 +42,25 @@ export class LessonController {
 
     @Post()
     @HttpCode(HttpStatus.CREATED)
-    async createALesson(@Body() content: LessonDto) {
+    async createALesson(@Body() content: LessonDto, @Req() req: Request) {
+        const { role } = req.user as UserJWT
+        if (role !== UserRole.TEACHER) {
+            throw new BadRequestException();
+        }
+
         return this.lessonService.handleCreateLesson(content);
+    }
+
+    @Put(':id')
+    @HttpCode(HttpStatus.OK)
+    async updateLesson(@Param('id') id: string, @Body() content: LessonDto,
+        @Req() req: Request
+    ) {
+        const { role } = req.user as UserJWT
+        if (role !== UserRole.TEACHER) {
+            throw new BadRequestException();
+        }
+
+        return this.lessonService.handleUpdateLesson(id, content);
     }
 }

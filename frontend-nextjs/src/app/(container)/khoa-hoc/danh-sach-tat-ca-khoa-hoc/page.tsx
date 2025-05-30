@@ -29,7 +29,7 @@ import ForbiddenResourceError from "@/components/custom/ForbiddenResourceError";
 import { LuFolderPlus } from "react-icons/lu";
 import { fetchPrivateData } from "@/utils/fetcher/fetch-api";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toastNotiSuccess } from "@/components/custom/ToastNotification";
 import { Button } from "@/components/ui/button";
 import CreateCourseForm from "@/components/course/form/CreateCourseForm";
@@ -47,27 +47,24 @@ export default function CreateACourse() {
   const [isOpen, setOpen] = useState(false);
   const [isOpenDelete, setOpenDelete] = useState(false);
 
-  const { data, isLoading } = useSWRPrivate<Array<Course>>(
+  const { data, isLoading, mutate } = useSWRPrivate<Array<Course>>(
     `/course/all-course`,
     {
       headers: Headers,
     }
   );
-  const [courses, setCourses] = useState<Array<Course>>();
-  useEffect(() => {
-    setCourses(data);
-  }, [data]);
+
   if (user.role && user.role !== UserRole.TEACHER)
     return <ForbiddenResourceError />;
   if (isLoading) return <Loading />;
 
   const handleDeleteCourse = async (id: string) => {
-    setCourses(courses?.filter((item) => item._id !== id));
     const res = await fetchPrivateData(`course?_id=${id}`, {
       method: "DELETE",
       headers: Headers,
     });
     if (res && res.status === HttpStatus.OK) {
+      mutate();
       toastNotiSuccess(res.message);
     }
   };
@@ -77,10 +74,7 @@ export default function CreateACourse() {
     });
     if (res.status === HttpStatus.OK) {
       toastNotiSuccess(res.message);
-      const courses = await fetchPrivateData(`/course/all-course`, {
-        headers: Headers,
-      });
-      setCourses(courses);
+      mutate();
     }
   };
   return (
@@ -109,7 +103,7 @@ export default function CreateACourse() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {courses?.length === 0 ? (
+              {data?.length === 0 ? (
                 <TableRow className=" h-[200px]">
                   <TableCell
                     className="font-medium text-center text-xl text-muted-foreground"
@@ -119,7 +113,7 @@ export default function CreateACourse() {
                   </TableCell>
                 </TableRow>
               ) : (
-                courses?.map((item) => (
+                data?.map((item) => (
                   <TableRow key={item._id}>
                     <TableCell className="font-medium">{item.code}</TableCell>
                     <TableCell>{item.name}</TableCell>

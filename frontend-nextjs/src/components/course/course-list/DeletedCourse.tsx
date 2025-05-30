@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import { LuArchiveRestore } from "react-icons/lu";
 import {
   Table,
@@ -22,28 +21,26 @@ type CourseDeleted = {
 };
 type DeletedCourseProps = {
   handleRestoreCourse: (id: string) => Promise<void>;
-  
 };
 export default function DeletedCourse({
   handleRestoreCourse,
-  
 }: DeletedCourseProps) {
-  const { data, isLoading } = useSWRPrivate<CourseDeleted>(
+  const { data, isLoading, mutate } = useSWRPrivate<CourseDeleted>(
     `course/all-course-deleted`
   );
-  const [courseDeleted, setCourseDeleted] = useState<Array<Course>>();
-  useEffect(() => {
-    setCourseDeleted(data?.data);
-  }, [data]);
+
   const handleRestoreCourseAndSetState = async (id: string) => {
     try {
       await handleRestoreCourse(id);
-      setCourseDeleted(courseDeleted?.filter((item) => item._id !== id));
+      mutate();
     } catch (error) {
       console.log(error);
       toastNotiFail("Đã có lỗi xảy ra khi khôi phục lại khóa học");
     }
   };
+  if (isLoading) {
+    return <Loading />;
+  }
   return (
     <div className="flex items-center justify-center w-full flex-col gap-2">
       <span className="text-2xl font-semibold uppercase">
@@ -62,9 +59,7 @@ export default function DeletedCourse({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {isLoading ? (
-            <Loading />
-          ) : courseDeleted?.length === 0 ? (
+          {data?.data.length === 0 ? (
             <TableRow className=" h-[200px]">
               <TableCell
                 className="font-medium text-center text-xl text-muted-foreground"
@@ -74,7 +69,7 @@ export default function DeletedCourse({
               </TableCell>
             </TableRow>
           ) : (
-            courseDeleted?.map((item) => (
+            data?.data?.map((item) => (
               <TableRow key={item._id}>
                 <TableCell className="font-medium">{item.code}</TableCell>
                 <TableCell>{item.name}</TableCell>

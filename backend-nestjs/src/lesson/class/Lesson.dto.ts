@@ -136,25 +136,29 @@ export class ContentLessonDto {
   @ApiProperty({ required: false })
   codeSample?: string;
 }
+export class idFrontLessonType {
+  _id: string;
+  name?: string
+}
 
 export class LessonDto {
   @ApiProperty()
   readonly name: string;
 
   @ApiProperty()
-  readonly linkImage: string;
+  readonly linkImage?: string;
 
   @ApiProperty({ type: [ContentLessonDto] })
-  readonly content: ContentLessonDto[];
+  readonly content?: ContentLessonDto[];
 
   @ApiProperty({ type: [ItemDto] })
-  readonly indexItem: ItemDto[];
+  readonly indexItem?: ItemDto[];
 
   @ApiProperty()
   readonly course: string;
 
-  @ApiProperty()
-  readonly idFrontLesson: string;
+  @ApiProperty({ type: idFrontLessonType })
+  readonly idFrontLesson?: idFrontLessonType;
 }
 
 export class UpdateLesson extends PartialType(LessonDto) { }

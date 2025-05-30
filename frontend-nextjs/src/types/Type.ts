@@ -125,10 +125,7 @@ export const EditCourseForm = z.object({
   price: z.string().min(1, "Giá khóa học không được để trống"),
   type: z.string().min(1, "Loại khóa học không được để trống"),
   video: z.string().optional(),
-  image:
-    typeof window !== "undefined"
-      ? z.instanceof(File, { message: "Vui lòng chọn ảnh khóa học" }).optional()
-      : z.any().optional(),
+  image: z.string().optional(),
 });
 export type EditCourseFormType = z.TypeOf<typeof EditCourseForm>;
 
@@ -225,3 +222,11 @@ export const EditLessonForm = z.object({
 });
 
 export type EditLessonFormType = z.infer<typeof EditLessonForm>;
+
+
+export const AddLessonForm = z.object({
+  name: z.string().min(1, "Tên bài học không được để trống"),
+  course: z.string().min(1, "Tên bài học không được để trống"),
+});
+export type AddLessonFormType = z.infer<typeof AddLessonForm>;
+

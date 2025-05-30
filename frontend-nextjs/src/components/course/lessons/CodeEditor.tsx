@@ -1,6 +1,7 @@
 "use client";
 import CodeMirror from "@uiw/react-codemirror";
 import { abcdef, githubLight } from "@uiw/codemirror-themes-all";
+import { MdContentCopy } from "react-icons/md";
 import {
   Select,
   SelectContent,
@@ -36,7 +37,10 @@ type CodeEditorProps = {
   readOnly?: boolean;
   code: string;
 };
-export default function CodeEditor({ readOnly = false, code }: CodeEditorProps) {
+export default function CodeEditor({
+  readOnly = false,
+  code,
+}: CodeEditorProps) {
   const [language, setLanguage] = useState<string>(Languages[0].value);
   const [theme, setTheme] = useState(themes[0].value);
 
@@ -85,25 +89,37 @@ export default function CodeEditor({ readOnly = false, code }: CodeEditorProps) 
           </div>
         </div>
       )}
-      <CodeMirror
-        className="w-full h-full rounded-2xl"
-        theme={theme === Themes.DARK ? abcdef : githubLight}
-        height="490px"
-        autoFocus
-        readOnly={readOnly}
-        basicSetup={{
-          foldGutter: true,
-          dropCursor: true,
-          allowMultipleSelections: true,
-          indentOnInput: true,
-          autocompletion: true,
-        }}
-        extensions={[languageExtension(language)]}
-        onChange={(value) => {
-          console.log("value:", value);
-        }}
-        value={code}
-      />
+      <div className="w-full relative">
+        {readOnly ? (
+          <div
+            className=" absolute top-6 active:opacity-70 cursor-pointer right-2 p-2 bg-gray-400 z-20 flex rounded-xs"
+            onClick={async () => {
+              await navigator.clipboard.writeText(code);
+            }}
+          >
+            <MdContentCopy className=" text-xl text-gray-600" />
+          </div>
+        ) : null}
+        <CodeMirror
+          className="w-full h-full rounded-2xl"
+          theme={theme === Themes.DARK ? abcdef : githubLight}
+          height="490px"
+          autoFocus
+          readOnly={readOnly}
+          basicSetup={{
+            foldGutter: true,
+            dropCursor: true,
+            allowMultipleSelections: true,
+            indentOnInput: true,
+            autocompletion: true,
+          }}
+          extensions={[languageExtension(language)]}
+          onChange={(value) => {
+            console.log(value);
+          }}
+          value={code}
+        />
+      </div>
       {readOnly ? null : (
         <div
           className={`w-full h-[300px] flex p-5 gap-2 overflow-y-auto rounded-md font-mono font-medium

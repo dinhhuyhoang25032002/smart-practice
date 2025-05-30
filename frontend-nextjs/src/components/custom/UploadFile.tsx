@@ -6,11 +6,20 @@ import { Button } from "@/components/ui/button";
 import { IoMdClose } from "react-icons/io";
 import { fetchPrivateData } from "@/utils/fetcher/fetch-api";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { HttpStatus, ModeUpload } from "@/constant/constant";
+import {
   toastNotiFail,
   toastNotiSuccess,
 } from "@/components/custom/ToastNotification";
 
 import Image from "next/image";
+import { Input } from "@/components/ui/input";
 
 export type ImgInfo = {
   name: string;
@@ -26,7 +35,9 @@ export default function UploadFile() {
   const [previewUrl, setPreviewUrl] = useState<string>();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
-
+  const [isMode, setMode] = useState(ModeUpload[0].value);
+  const [isName, setName] = useState("");
+  const [url, setUrl] = useState("");
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (!acceptedFiles.length) return;
     const file = acceptedFiles[0];
@@ -77,27 +88,37 @@ export default function UploadFile() {
       toastNotiFail("Vui lòng chọn tệp tin trước khi gửi!");
       return;
     }
-
+    if (!isName) {
+      toastNotiFail("Vui lòng nhập tên mục cần cập nhật trước khi gửi!");
+      return;
+    }
+    if (!isMode) {
+      toastNotiFail("Vui lòng chọn loại sản phẩm cần cập nhật trước khi gửi!");
+      return;
+    }
     try {
       setIsSubmitting(true);
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("mode", isMode);
+      formData.append("name", isName);
+      formData.append("image", file);
       //   formData.append("lessonId", id);
 
-      const res = await fetchPrivateData("#", {
+      const res = await fetchPrivateData("uploads", {
         body: formData,
         method: "POST",
       });
 
-      if (res.status === 400 || res.status === 403) {
-        toastNotiFail(res.message);
+      if (res.status === HttpStatus.CREATED) {
+        toastNotiSuccess(res.message);
+        setUrl(res.url);
+        setFile(undefined);
+        setImgInfo(undefined);
+        setPreviewUrl(undefined);
         return;
       }
 
-      toastNotiSuccess(res.message);
-      setFile(undefined);
-      setImgInfo(undefined);
-      setPreviewUrl(undefined);
+      toastNotiFail(res.message);
     } catch (err) {
       console.error(err);
       toastNotiFail("Có lỗi xảy ra khi gửi bài tập!");
@@ -186,12 +207,40 @@ export default function UploadFile() {
         className="flex flex-col w-full bg-white items-center justify-center space-y-6 p-6 rounded-lg shadow-lg"
       >
         <div className="text-center space-y-2">
-          <h2 className="text-2xl font-semibold text-gray-800">Tải file hoặc ảnh.</h2>
+          <h2 className="text-2xl font-semibold text-gray-800">
+            Tải file hoặc ảnh.
+          </h2>
           <p className="text-sm text-gray-600">
             Tải lên hình ảnh của nội dung bài học để cập nhật.
           </p>
         </div>
-
+        <div className=" w-full  flex flex-col gap-3 items-end p-3">
+          <Select
+            onValueChange={(value) => setMode(value)}
+            defaultValue={ModeUpload[0].value}
+          >
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Chọn mục cần thêm" />
+            </SelectTrigger>
+            <SelectContent>
+              {ModeUpload.map((item, index) => (
+                <SelectItem value={item.value} key={index}>
+                  {item.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Input
+            placeholder="Nhập tên khóa học hoặc tên bài học"
+            onChange={(e) => setName(e.target.value)}
+          />
+          {url && (
+            <Input
+              placeholder="Nhập tên khóa học hoặc tên bài học"
+              defaultValue={url}
+            />
+          )}
+        </div>
         <div
           {...getRootProps()}
           className={`w-full h-40 flex flex-col justify-center items-center rounded-lg border-2 border-dashed transition-colors cursor-pointer

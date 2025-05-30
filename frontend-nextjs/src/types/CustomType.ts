@@ -1,7 +1,7 @@
 
 
 type dataContentSide = {
-  image: string ;
+  image: string;
   description?: string;
 };
 type dataSlide = {
@@ -20,7 +20,7 @@ type dataPlus = {
 
 type dataTabContent = {
   title: string;
-  image?: string ;
+  image?: string;
   description?: Array<string>;
 };
 
@@ -48,13 +48,13 @@ type dataVideo = {
   title?: string;
 };
 type dataImage = {
-  url: string ;
+  url: string;
   title?: string;
 };
 type dataMergeProps = {
   header?: string;
   data?: dataContentMerge[];
-  image?: string ;
+  image?: string;
 };
 
 export type ContentLesson = {
@@ -72,6 +72,7 @@ export type ContentLesson = {
 export type ContentLessonMerge = ContentLesson & { _id: string };
 
 export type Lesson = {
+  _id: string
   content: Array<ContentLesson>;
   name: string;
   linkImage: string;

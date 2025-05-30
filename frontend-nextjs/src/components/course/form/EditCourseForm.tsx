@@ -10,32 +10,39 @@ import {
 import { useForm } from "react-hook-form";
 import { RiPenNibLine } from "react-icons/ri";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { EditCourseForm, EditCourseFormType } from "@/types/Type";
+import {
+  AddLessonFormType,
+  EditCourseForm,
+  EditCourseFormType,
+} from "@/types/Type";
 import Image from "next/image";
 import { NumericFormat } from "react-number-format";
 import { Input } from "@/components/ui/input";
 import { useParams } from "next/navigation";
 import { CourseContent } from "@/types/CustomType";
-import { useCallback, useState, useEffect } from "react";
-// import { Headers } from "@/constant/constant";
+import { useState, useEffect, useCallback } from "react";
 import { useSWRPrivate } from "@/hooks/useSWRCustom";
-// import { toastNotiFail } from "@/components/custom/ToastNotification";
-import { useDropzone } from "react-dropzone";
 import Loading from "@/app/loading";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-// import { toastNotiSuccess } from "@/components/custom/ToastNotification";
 import { IoMdClose } from "react-icons/io";
-import { IoCloudUploadOutline } from "react-icons/io5";
 import EditLessonFormContent from "../lessons/EditLessonForm";
+import AddLesson from "../lessons/AddLesson";
+import NotFound from "@/app/not-found";
+import _ from "lodash";
+import { fetchPrivateData } from "@/utils/fetcher/fetch-api";
+import { toastNotiFail } from "@/components/custom/ToastNotification";
+import { Headers, HttpStatus } from "@/constant/constant";
+import { toastNotiSuccess } from "@/components/custom/ToastNotification";
+// import UploadFile from "@/components/custom/UploadFile";
 type EditCourseContentProps = {
   isEditing: boolean;
   setIsEditing: (isEditing: boolean) => void;
 };
 export default function EditCourseContent({
   isEditing,
-}: // setIsEditing,
-EditCourseContentProps) {
+  setIsEditing,
+}: EditCourseContentProps) {
   const form = useForm<EditCourseFormType>({
     resolver: zodResolver(EditCourseForm),
     defaultValues: {
@@ -45,17 +52,17 @@ EditCourseContentProps) {
       price: "",
       type: "",
       video: "",
-      image: null,
+      image: "",
     },
   });
   const params = useParams();
   const [previewImage, setPreviewImage] = useState<string>("");
   const [currentVideo, setCurrentVideo] = useState<string>("");
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+
   const [isEditingLesson, setIsEditingLesson] = useState<boolean>(false);
   const [lessonId, setLessonId] = useState<string>("");
   const slug = params.slug;
-  const { data, isLoading, } = useSWRPrivate<CourseContent>(
+  const { data, isLoading, mutate } = useSWRPrivate<CourseContent>(
     `course/${slug}`
   );
   useEffect(() => {
@@ -68,7 +75,7 @@ EditCourseContentProps) {
         price: data.price?.toString() || "",
         type: data.type || "",
         video: data.video || "",
-        //  image: data.image ? new File([], data.image) : null,
+        image: data.image || "",
       });
       if (data.image) {
         setPreviewImage(data.image);
@@ -78,75 +85,63 @@ EditCourseContentProps) {
       }
     }
   }, [data, form]);
-  const onDropImage = useCallback(
-    (acceptedFiles: File[]) => {
-      if (!acceptedFiles.length) return;
-      const file = acceptedFiles[0];
-      setSelectedImage(file);
-      const reader = new FileReader();
-      reader.onload = () => {
-        const result = reader.result as string;
-        setPreviewImage(result);
-        form.setValue("image", file, { shouldValidate: true });
-      };
-      reader.readAsDataURL(file);
+
+  const onSubmitCreateALesson = useCallback(
+    async (data: AddLessonFormType) => {
+      console.log(data);
+      const res = await fetchPrivateData(`lesson`, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (res && res.status !== HttpStatus.OK) {
+        toastNotiFail(res.message);
+        return;
+      }
+      await mutate();
+      toastNotiSuccess("Thêm bài học thành công");
+
+      console.log(res);
     },
-    [form]
+    [mutate]
   );
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: onDropImage,
-    accept: {
-      "image/*": [".png", ".jpg", ".jpeg", ".gif"],
-    },
-    multiple: false,
-  });
   const onSubmit = async (values: EditCourseFormType) => {
     console.log(values);
-    // try {
-    //   const formDataToSend = new FormData();
+    try {
+      const response = await fetchPrivateData(`/course/update/${data?._id}`, {
+        method: "PUT",
+        body: JSON.stringify(values),
+        headers: Headers,
+      });
 
-    //   // Thêm các trường thông tin
-    //   Object.entries(values).forEach(([key, value]) => {
-    //     formDataToSend.append(key, value);
-    //   });
-
-    //   // Thêm ảnh nếu có
-    //   if (selectedImage) {
-    //     formDataToSend.append("image", selectedImage);
-    //   }
-
-    //   const response = await fetch(`/api/course/${slug}`, {
-    //     method: "PUT",
-    //     headers: {
-    //       ...Headers,
-    //     },
-    //     body: formDataToSend,
-    //   });
-
-    //   if (!response.ok) throw new Error("Failed to update course");
-
-    //   await mutate(); // Cập nhật lại data
-    //   setIsEditing(false);
-    //   setSelectedImage(null);
-    //   toastNotiSuccess("Cập nhật khóa học thành công");
-    // } catch (error) {
-    //   console.error(error);
-    //   toastNotiFail("Cập nhật khóa học thất bại");
-    // }
+      if (response && response.status === HttpStatus.OK) {
+        await mutate(); // Cập nhật lại data
+        setIsEditing(false);
+        toastNotiSuccess(response.message);
+        return;
+      }
+      if (response && response.status === HttpStatus.NOT_FOUND) {
+        toastNotiFail(response.message);
+        return;
+      }
+      toastNotiFail("Cập nhật khóa học thất bại");
+    } catch (error) {
+      console.error(error);
+      toastNotiFail("Cập nhật khóa học thất bại");
+    }
   };
   const handleOpenEditLesson = (lessonId: string) => {
     setIsEditingLesson(true);
     setLessonId(lessonId);
   };
-
-  const handleDeleteImage = () => {
-    setSelectedImage(null);
-    setPreviewImage(data?.image || "");
-    form.setValue("image", null, { shouldValidate: true });
-  };
-
   if (isLoading) return <Loading />;
+  if ((data && "status" in data) || _.isEmpty(data)) {
+    return <NotFound />;
+  }
+
   return (
     <div className="space-y-5">
       <Form {...form}>
@@ -257,92 +252,58 @@ EditCourseContentProps) {
               </FormItem>
             )}
           />
-          <div className="flex justify-between items-start gap-10 ">
-            <div className="space-y-5 w-1/2 flex ">
-              <FormField
-                control={form.control}
-                name="image"
-                render={() => (
-                  <FormItem className=" w-full">
-                    <FormLabel className="text-lg font-medium">
-                      Ảnh khóa học
-                    </FormLabel>
-                    <FormControl className="">
-                      {isEditing ? (
-                        <div
-                          {...getRootProps()}
-                          className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:border-blue-500 transition-colors flex items-center justify-center"
-                        >
-                          <input
-                            type="file"
-                            {...getInputProps()}
-                            onChange={(e) => {
-                              if (e.target.files?.[0]) {
-                                onDropImage([e.target.files[0]]);
-                              }
-                            }}
+          <div className="flex justify-between items-start gap-10 h-full ">
+            <div className="space-y-5 w-1/2 flex h-full  ">
+              {isEditing ? (
+                <div className="flex items-center flex-col flex-1 gap-5">
+                  <FormField
+                    control={form.control}
+                    name="image"
+                    render={({ field }) => (
+                      <FormItem className=" w-full">
+                        <FormLabel className="text-lg font-medium">
+                          Ảnh khóa học
+                        </FormLabel>
+                        <FormControl className="">
+                          <Input
+                            {...field}
+                            placeholder="Nhập link ảnh khóa học"
                           />
-                          {previewImage ? (
-                            <div className="aspect-video space-y-2 relative w-full h-full flex flex-col items-center justify-center">
-                              <Button
-                                type="button"
-                                onClick={handleDeleteImage}
-                                className="absolute -top-2 -right-2 w-8 h-8 bg-white hover:bg-gray-100 rounded-full shadow-md"
-                              >
-                                <IoMdClose className="text-gray-600" />
-                              </Button>
-                              <Image
-                                src={previewImage}
-                                alt="Preview"
-                                width={500}
-                                priority
-                                height={500}
-                                className="mx-auto object-contain w-full h-full"
-                              />
-                              {selectedImage && (
-                                <p className="text-sm text-gray-500 flex flex-col">
-                                  <span>Tên ảnh: {selectedImage.name}</span>
-                                  <span>
-                                    Kích thước:{" "}
-                                    {Math.round(selectedImage.size / 1024)} KB
-                                  </span>
-                                </p>
-                              )}
-                            </div>
-                          ) : isDragActive ? (
-                            <p className="text-blue-500">Thả ảnh vào đây...</p>
-                          ) : (
-                            <p className="text-gray-500 inline-flex items-center gap-2">
-                              <IoCloudUploadOutline className="text-2xl text-gray-400" />
-                              Kéo hoặc chọn ảnh khóa học
-                            </p>
-                          )}
-                        </div>
-                      ) : previewImage ? (
-                        <div className="relative w-full flex-1 flex items-center justify-center ">
-                          <div className="w-full h-full aspect-video  rounded-lg flex items-center justify-center p-5">
-                            <Image
-                              src={previewImage}
-                              alt="Course image"
-                              priority
-                              width={500}
-                              height={500}
-                              className="object-contain w-auto h-auto border-2 border-gray-300 rounded-lg"
-                            />
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="flex-1 aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
-                          <p className="text-gray-500">
-                            Không có hình ảnh khóa học
-                          </p>
-                        </div>
-                      )}
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Image
+                    src={form.watch("image") as string}
+                    alt="Không có ảnh hoặc bị lỗi."
+                    priority
+                    width={500}
+                    height={500}
+                    className="aspect-video border-2 text-center text-gray-500 leading-24 font-medium border-gray-300 rounded-lg w-full"
+                  />
+                </div>
+              ) : previewImage ? (
+                <div className="w-full flex items-center justify-center ">
+                  <div className="w-full  flex flex-col rounded-lg items-center gap-2">
+                    <span className="text-lg font-medium w-full">
+                      Ảnh khóa học
+                    </span>
+                    <Image
+                      src={previewImage}
+                      alt="Không có ảnh hoặc bị lỗi."
+                      priority
+                      width={500}
+                      height={500}
+                      className=" w-full  aspect-video border-2 border-gray-300 rounded-lg"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="flex-1 aspect-video bg-gray-100 rounded-lg flex items-center justify-center">
+                  <p className="text-gray-500">Không có hình ảnh khóa học</p>
+                </div>
+              )}
             </div>
 
             <div className="space-y-5 w-1/2">
@@ -389,69 +350,93 @@ EditCourseContentProps) {
                     )}
                   />
                 </div>
-              ) : null}
-              <div className="flex-1 flex items-center justify-center flex-col gap-2">
-                <span className="text-lg font-medium  w-full">
-                  Video giới thiệu
-                </span>
-                <div className="aspect-video rounded-lg bg-gray-100 w-full">
-                  {currentVideo ? (
-                    <iframe
-                      src={currentVideo}
-                      allowFullScreen
-                      title="YouTube course video player"
-                      className="w-full h-full rounded-lg"
-                    />
-                  ) : (
-                    <div className="w-full h-full rounded-lg bg-gray-100 flex items-center justify-center">
-                      <p className="text-gray-500">
-                        Khóa học của bạn chưa có video
-                      </p>
-                    </div>
-                  )}
+              ) : (
+                <div className="flex-1 flex items-center justify-center flex-col gap-2">
+                  <span className="text-lg font-medium  w-full">
+                    Video giới thiệu
+                  </span>
                 </div>
+              )}
+              <div className="aspect-video rounded-lg bg-gray-100 w-full">
+                {currentVideo ? (
+                  <iframe
+                    src={currentVideo}
+                    allowFullScreen
+                    title="YouTube course video player"
+                    className="w-full h-full rounded-lg"
+                  />
+                ) : (
+                  <div className="w-full h-full rounded-lg bg-gray-100 flex items-center justify-center">
+                    <p className="text-gray-500">
+                      Khóa học của bạn chưa có video
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
 
-          <div className="space-y-2">
-            <span className="text-lg font-medium">Danh sách các bài học </span>
-            <div className="flex flex-wrap gap-4 justify-between items-center w-full p-5">
-              {data && data?.lessons?.length > 0 ? (
-                data?.lessons.map((lesson) => (
-                  <div
-                    key={lesson._id}
-                    className="flex items-center justify-between gap-2 w-[45%] rounded-md bg-gray-100 p-4"
-                  >
-                    <div className="flex items-center justify-between gap-2 w-full">
-                      <span className="text-sm font-medium">{lesson.name}</span>
-                      <div className="flex items-center gap-2">
-                        {isEditing && (
-                          <Button
-                            onClick={() => handleOpenEditLesson(lesson._id)}
-                          >
-                            <RiPenNibLine />
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-500 bg-gray-100 p-5 rounded-md w-full flex items-center justify-center">
-                  Khóa học của bạn chưa có bài học
-                </p>
-              )}
-            </div>
-          </div>
           {isEditing && (
-            <Button type="submit" className="bg-green-500 hover:bg-green-600">
-              Lưu thay đổi
-            </Button>
+            <div className="flex items-center justify-end">
+              <Button type="submit" className="bg-green-500 hover:bg-green-600">
+                Lưu thay đổi
+              </Button>
+            </div>
           )}
         </form>
       </Form>
-      {isEditingLesson && <EditLessonFormContent lessonId={lessonId} />}
+      <div className="space-y-2 bg-white p-3">
+        <span className="text-lg font-medium">Danh sách các bài học </span>
+        <div className="flex flex-wrap gap-4 justify-between items-center w-full p-5 ">
+          {data &&
+            data?.lessons?.length > 0 &&
+            data?.lessons.map((lesson) => (
+              <div
+                key={lesson._id}
+                className="flex items-center justify-between gap-2 w-[45%] rounded-md bg-gray-100 p-4"
+              >
+                <div className="flex items-center justify-between gap-2 w-full">
+                  <span className="text-sm font-medium">{lesson.name}</span>
+                  <div className="flex items-center gap-2">
+                    {isEditing && (
+                      <Button onClick={() => handleOpenEditLesson(lesson._id)}>
+                        <RiPenNibLine />
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          <div className="w-full flex items-center justify-center bg-gray-100 flex-col p-5">
+            {data && data?.lessons?.length > 0 ? (
+              <p className="text-gray-500  p-5 rounded-md w-full flex items-center justify-center">
+                Khóa học của bạn đang có {data?.lessons?.length} bài học
+              </p>
+            ) : (
+              <p className="text-gray-500  p-5 rounded-md w-full flex items-center justify-center">
+                Khóa học của bạn chưa có bài học
+              </p>
+            )}
+            {isEditing && (
+              <div className="flex items-center justify-center gap-5  w-1/3 bg-white rounded-md p-2">
+                <AddLesson
+                  courseId={data?._id}
+                  onSubmit={onSubmitCreateALesson}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      {isEditingLesson && (
+        <EditLessonFormContent
+          lessonId={lessonId}
+          nameCourse={data?.name}
+          key={lessonId}
+        />
+      )}
+
+      {/* <UploadFile/> */}
     </div>
   );
 }

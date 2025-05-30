@@ -33,7 +33,13 @@ export enum Role {
 }
 
 export const staticFolders = [
-  { path: 'uploads', prefix: '/uploads' },
-  { path: 'courses', prefix: '/courses' },
-  { path: 'lessons', prefix: '/lessons' },
+  { path: 'tai-len', prefix: '/tai-len' },
+  { path: 'khoa-hoc', prefix: '/khoa-hoc' },
+  { path: 'bai-hoc', prefix: '/bai-hoc' },
 ];
+
+
+export enum UpdateMode {
+  COURSE = "COURSE",
+  LESSON = "LESSON"
+}

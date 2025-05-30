@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { SoftDeleteModel } from 'mongoose-delete';
 import { LESSON_MODEL, Lesson } from 'src/schema/lesson.schema';
@@ -10,6 +10,8 @@ import { COURSE_MODEL, Course } from 'src/schema/course.schema';
 import { LessonDto } from './class/Lesson.dto';
 import { TimeView, TIMEVIEW_MODEL } from 'src/schema/timeview.schema';
 import { USER_MODEL, User } from 'src/schema/user.schema';
+import slugify from 'slugify';
+import removeAccents from 'remove-accents';
 @Injectable()
 export class LessonService {
     constructor(
@@ -92,21 +94,32 @@ export class LessonService {
     }
 
     async handleCreateLesson(contentLesson: LessonDto) {
-        const { course } = contentLesson;
+        const { course, name } = contentLesson;
 
-        const courseData = await this.courseModel.findById(course).lean().exec();
+        const courseData = await this.courseModel.findById(course).exec();
+
         if (!courseData) {
-            return { message: 'Không tồn tại khóa học để thêm.' };
+            return { message: 'Không tồn tại khóa học để thêm.', status: HttpStatus.NOT_FOUND };
         }
 
-        const lessonCreated = await new this.lessonModel(contentLesson).save();
+        const isLessonExisted = await this.lessonModel.findOne({ name: name }).lean().exec();
+        if (isLessonExisted) {
+            return { message: 'Bài học đã tồn tại.', status: HttpStatus.BAD_REQUEST };
+        }
+        const newContentLesson = {
+            ...contentLesson,
+            slug: slugify(name, { lower: true, locale: "vi" }),
+            isSearch: removeAccents(name)
+        }
+        const lessonCreated = await new this.lessonModel(newContentLesson).save();
+
         const listLessons = courseData.lessons;
         const lessonId = lessonCreated.id;
         if (!listLessons.includes(lessonId)) {
             listLessons.push(lessonId);
-            await courseData?.save();
+            await courseData.save();
         }
-        return { message: 'Đã cập nhật bài học mới' };
+        return { message: 'Đã cập nhật bài học mới', status: HttpStatus.CREATED };
     }
 
     async handleGetAllSections(lessonId: string, userId: string) {
@@ -188,4 +201,27 @@ export class LessonService {
             ...startTime
         };
     }
+
+    async handleUpdateLesson(id: string, content: LessonDto) {
+        const newContent = {
+            ...content,
+            idFrontLesson: content.idFrontLesson._id
+        }
+       
+        const updateLesson = await this.lessonModel.findByIdAndUpdate(id, newContent);
+        if (!updateLesson) {
+            return {
+                status: HttpStatus.NOT_FOUND,
+                message: "Không tồn tại bài học",
+            };
+        }
+        return {
+            status: HttpStatus.OK,
+            message: "Đã cập nhật bài học",
+        };
+    }
 }
+
+
+
+

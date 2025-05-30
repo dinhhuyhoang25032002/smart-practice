@@ -1,18 +1,17 @@
-import { Controller, HttpCode, HttpStatus, Query, Get, Patch, Param, UseGuards, BadRequestException, Post, Body, Req, ForbiddenException, Delete, UseInterceptors, UploadedFile, } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiQuery } from '@nestjs/swagger';
+import { Controller, HttpCode, HttpStatus, Query, Get, Patch, Param, UseGuards, BadRequestException, Post, Body, Req, ForbiddenException, Delete, UseInterceptors, UploadedFile, Put, } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { JwtAccessAuthGuard } from 'src/auth/guard/accessToken.guard';
 import { CourseService } from 'src/course/course.service';
 import { Request } from "express"
 import { UserJWT } from 'src/types/CustomType';
 import { ActiveCourseDto, CreateCourseDto } from 'src/course/class/ActiveCourse.dto';
 import { UserRole } from 'src/constant/constant';
-import { FileInterceptor, FileFieldsInterceptor } from '@nestjs/platform-express';
+// 
 @ApiBearerAuth()
 @UseGuards(JwtAccessAuthGuard)
 @Controller('course')
 
 export class CourseController {
-
     constructor(
         private readonly courseService: CourseService
     ) { }
@@ -98,16 +97,11 @@ export class CourseController {
     }
 
     @Post("create-course")
-    @UseInterceptors(FileInterceptor("image"))
-    @ApiConsumes('multipart/form-data')
     @HttpCode(HttpStatus.CREATED)
     async createACourse(
         @Body() body: CreateCourseDto,
-        @UploadedFile() image: Express.Multer.File,
     ) {
-        console.log(image);
-
-        return this.courseService.handleCreateACourse(body, image);
+        return this.courseService.handleCreateACourse(body);
     }
 
     @Patch("restore/:id")
@@ -118,6 +112,21 @@ export class CourseController {
         return this.courseService.handleRestoreCourse(id)
     }
 
+    @Put("update/:id")
+    @HttpCode(HttpStatus.OK)
+    async updateCourse(
+        @Param("id") id: string,
+        @Body() body: CreateCourseDto,
+        @Req() req: Request
+    ) {
+        const { role } = req.user as UserJWT
+        if (role !== UserRole.TEACHER) {
+            return new BadRequestException();
+        }
+        console.log(id);
+        
+        return this.courseService.handleUpdateCourse(id, body)
+    }
 
     @Delete()
     @HttpCode(HttpStatus.OK)

@@ -12,7 +12,7 @@ export const REGEX =
 
 export const Headers: HeadersInit | undefined = {
   "Content-Type": "application/json",
-  accept: "application/json",
+  "accept": "application/json",
 };
 export enum StatusAttendance {
   ON_TIME = "ON_TIME",
@@ -27,6 +27,7 @@ export const HttpStatus = {
   INTERNAL_SERVER_ERROR: 500,
   CREATED: 201,
   BADREQUEST: 400,
+  NOT_FOUND: 404,
 };
 
 export const Languages = [
@@ -51,14 +52,29 @@ export const Languages = [
     value: "c",
   },
 ];
+
 export enum Themes {
   DARK = "dark",
   LIGHT = "light",
 }
 
+export const ModeUpload = [
+  {
+    value: "COURSE",
+    name: "Khóa học"
+  },
+  {
+    value: "LESSON",
+    name: "Bài học"
+  },
+  {
+    value: "DEVICE",
+    name: "Thiết bị"
+  }
+]
 
-export const codeExample = 
-`// Khai báo các thư viện cần thiết 
+export const codeExample =
+  `// Khai báo các thư viện cần thiết 
 #include <ArduinoJson.h> 
 #include <SoftwareSerial.h> 
 #include "DHT.h"  
