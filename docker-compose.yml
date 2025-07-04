@@ -3,8 +3,8 @@ services:
     build: ./frontend-nextjs
     container_name: nextjs_app
     ports:
-      - "3101:3101"
-    restart: always
+      - "3101:3000"
+    restart: unless-stopped
     depends_on:
       - nestjs
   nestjs:
@@ -12,14 +12,14 @@ services:
     container_name: nestjs_app
     ports:
       - "3001:3001"
-    restart: always
+    restart: unless-stopped
     depends_on:
       - "mongodb"
 
   nginx:
     container_name: nginx
     image: nginx:alpine
-    restart: always
+    restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"

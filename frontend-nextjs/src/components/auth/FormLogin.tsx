@@ -24,7 +24,10 @@ import { useSearchParams } from "next/navigation";
 import { decodeUrl } from "@/utils/encryption-url";
 // import { useAuthStore } from "@/store/auth/AuthStore";
 import { useState } from "react";
-import { toastNotiFail, toastNotiSuccess } from "@/components/custom/ToastNotification";
+import {
+  toastNotiFail,
+  toastNotiSuccess,
+} from "@/components/custom/ToastNotification";
 import { useUserContext } from "@/store/context/AuthContext";
 
 export default function LoginForm() {
@@ -71,7 +74,7 @@ export default function LoginForm() {
     } else {
       form.reset();
       setOpenSheet(false);
-      toastNotiSuccess("Đăng nhập thành công!")
+      toastNotiSuccess("Đăng nhập thành công!");
     }
   }
   const handleLoginWithGoogle = async () => {
@@ -111,6 +114,7 @@ export default function LoginForm() {
                 <FormControl className=" ">
                   <div className="relative">
                     <Input
+                      id={field.name}
                       placeholder="Nhập mật khẩu"
                       {...field}
                       type={isShowPassword === true ? "text" : "password"}

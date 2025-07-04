@@ -14,9 +14,9 @@ RUN npm run build
 FROM base AS production
 WORKDIR /app
 COPY package*.json ./
-COPY ./courses ./courses
-COPY ./lessons ./lessons
-COPY ./uploads ./uploads
+COPY ./khoa-hoc ./khoa-hoc
+COPY ./bai-hoc ./bai-hoc
+COPY ./tai-len ./tai-len
 RUN npm ci --omit=dev
 ENV NODE_ENV=production
 COPY --from=builder /app/dist ./dist

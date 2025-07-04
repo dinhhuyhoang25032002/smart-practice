@@ -25,7 +25,6 @@ export default function Home() {
       <MainLayout>
         <div>
           {renderHomepage(user.role)}
-          {}
           {isOpenChatBotAi && (
             <div className="fixed bottom-10 z-50 right-12 w-[500px]">
               <ChatBotAI />

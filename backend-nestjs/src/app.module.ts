@@ -36,22 +36,33 @@ import { UpdatesModule } from './uploads/uploads.module';
       inject: [ConfigService],
       useFactory: createMailerOptions
     }),
-    MongooseModule.forRoot(process.env.URL_DATABASE,
-      {
-        connectionFactory(connection: Connection, name: string) {
-          {
-            const { host, port, name } = connection
-            connection && console.log("Connect Database successfully: ", `mongodb://${host}:${port}/${name}`);
-          }
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
+        const uri = configService.get<string>('URL_DATABASE');
+        return {
+          uri,
+          connectionFactory: (connection: Connection) => {
 
-          connection.plugin(MongooseDelete,
-            {
-              deletedBy: true, deletedByType: String, deletedAt: true,
-              overrideMethods: 'all'
+            connection.plugin(MongooseDelete, { overrideMethods: 'all', deletedAt: true });
+            
+            connection.on('error', (err) => {
+              console.error(`MongoDB connection error: ${err}`);
             });
-          return connection;
-        }
-      }
+            connection.on('connected', () => {
+              console.log('MongoDB connection established successfully');
+            });
+            
+            connection.on('disconnected', () => {
+              console.log('MongoDB connection disconnected');
+            });
+            return connection;
+          },
+        };
+      },
+      inject: [ConfigService],
+    }
+      
     ), SuperviceModule, UserModule, AuthModule, CourseModule, EvaluateModule, LessonModule, StarttimeModule, ResultModule, DeadlineModule, TimeviewModule, AttendanceModule, UpdatesModule
   ],
   controllers: [AppController,],

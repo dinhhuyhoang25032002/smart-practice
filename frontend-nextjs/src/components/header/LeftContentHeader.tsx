@@ -225,7 +225,7 @@ export default function LeftContentHeader() {
       </div>
 
       <div
-        className="text-xl p-2 cursor-pointer hover:bg-[#eee] active:bg-[#eee] rounded-full hidden sm:hidden lg:hidden"
+        className="text-xl p-2  hover:bg-[#eee] active:bg-[#eee] rounded-full hidden sm:hidden lg:hidden"
         onClick={() => setOpenSearch(true)}
       >
         <IoIosSearch />

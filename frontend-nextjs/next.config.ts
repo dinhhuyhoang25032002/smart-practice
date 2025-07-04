@@ -2,6 +2,11 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
+  output: "standalone",
+  server: {
+    port: 3101,
+    host: "0.0.0.0", // Quan trọng cho Docker
+  },
   images: {
     remotePatterns: [
       {
