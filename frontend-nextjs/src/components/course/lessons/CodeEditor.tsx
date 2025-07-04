@@ -45,11 +45,16 @@ export default function CodeEditor({
   const [theme, setTheme] = useState(themes[0].value);
 
   return (
-    <div className="w-full flex justify-center items-center gap-5 flex-col py-10 px-10 bg-gray-100">
+    <div className="w-full flex justify-center items-center gap-5 flex-col py-10 px-10 bg-gray-100 rounded">
       {readOnly ? null : (
         <div className="w-full h-fit flex justify-between">
           <div className="flex justify-end gap-2">
-            <Button className="bg-green-500 text-white">Chạy</Button>
+            <Button className="border border-gray-200 bg-white rounded-md text-black  hover:bg-gray-300">
+              Chạy
+            </Button>
+            <Button className="border border-gray-200 bg-white rounded-md text-black   hover:bg-gray-300">
+              Nạp code
+            </Button>
           </div>
           <div className="flex justify-end gap-2">
             <Select
@@ -114,7 +119,7 @@ export default function CodeEditor({
             autocompletion: true,
           }}
           extensions={[languageExtension(language)]}
-          onChange={(value) => {
+          onChange={(value: string) => {
             console.log(value);
           }}
           value={code}

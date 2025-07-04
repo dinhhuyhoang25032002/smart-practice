@@ -12,7 +12,7 @@ export const REGEX =
 
 export const Headers: HeadersInit | undefined = {
   "Content-Type": "application/json",
-  "accept": "application/json",
+  accept: "application/json",
 };
 export enum StatusAttendance {
   ON_TIME = "ON_TIME",
@@ -32,6 +32,10 @@ export const HttpStatus = {
 
 export const Languages = [
   {
+    name: "C",
+    value: "c",
+  },
+  {
     name: "Python",
     value: "python",
   },
@@ -47,10 +51,6 @@ export const Languages = [
     name: "C++",
     value: "cpp",
   },
-  {
-    name: "C",
-    value: "c",
-  },
 ];
 
 export enum Themes {
@@ -61,20 +61,19 @@ export enum Themes {
 export const ModeUpload = [
   {
     value: "COURSE",
-    name: "Khóa học"
+    name: "Khóa học",
   },
   {
     value: "LESSON",
-    name: "Bài học"
+    name: "Bài học",
   },
   {
     value: "DEVICE",
-    name: "Thiết bị"
-  }
-]
+    name: "Thiết bị",
+  },
+];
 
-export const codeExample =
-  `// Khai báo các thư viện cần thiết 
+export const codeExample = `// Khai báo các thư viện cần thiết 
 #include <ArduinoJson.h> 
 #include <SoftwareSerial.h> 
 #include "DHT.h"  
@@ -138,4 +137,4 @@ lcd.print(humidity);
 // Chuyển đổi đối tượng JsonDocument thành chuỗi JSON và gửi nó qua cổng nối tiếp ảo   
 serializeJson(doc, mySerial); 
 }
-`
+`;

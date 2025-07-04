@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { langs } from "@uiw/codemirror-extensions-langs";
 import CodeMirror from "@uiw/react-codemirror";
 import { abcdef } from "@uiw/codemirror-themes-all";
+import CodeEditor from "../lessons/CodeEditor";
 type SectionLessonProps = ContentLesson & {
   header?: IndexItemProps;
 };
@@ -429,9 +430,10 @@ export default function SectionLesson({
 
       {/* codeSample */}
       {codeSample && (
-        <div className="w-full flex h-100 bg-green-500 px-0 mb-4 ">
-          <CodeMirror
-            className="w-full rounded-2xl "
+        <div className="w-full flex h-fit px-0 mb-4 flex-col">
+          <CodeEditor code={codeSample} readOnly={false} />
+          {/* <CodeMirror
+            className="w-full rounded-2xl"
             theme={abcdef}
             height="490px"
             maxWidth="100%"
@@ -445,9 +447,8 @@ export default function SectionLesson({
               autocompletion: true,
             }}
             extensions={[langs.javascript()]}
-          
             value={codeSample || ""}
-          />
+          /> */}
         </div>
       )}
 

@@ -101,7 +101,7 @@ export const fetchPrivateData = async (url: string, options?: RequestInit) => {
 
                 localStorage.removeItem("isAuth")
                 localStorage.removeItem("s")
-                window.location.href = "/dang-nhap";
+                window.location.href = "/";
                 toastNotiFail("Unauthorized: Please log in again.");
                 return
             }

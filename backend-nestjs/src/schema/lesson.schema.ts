@@ -99,12 +99,12 @@ export class Lesson extends Document {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Lesson' })
   idFrontLesson?: ObjectId
 
-  @Prop({ required: true, unique: true })
-  slug: string;
+  // @Prop({ required: true, unique: true })
+  // slug: string;
 
-  @Prop({ required: true, unique: true })
-  isSearch: string;
+  // @Prop({ required: true, unique: true })
+  // isSearch: string;
 }
 export const LESSON_MODEL = Lesson.name;
 export const LessonSchema = SchemaFactory.createForClass(Lesson);
-LessonSchema.index({ name: 1, slug: 1, isSearch: 1 },{name:"INDEXS_LESSON"});
+// LessonSchema.index({ name: 1, slug: 1, isSearch: 1 },{name:"INDEXS_LESSON"});

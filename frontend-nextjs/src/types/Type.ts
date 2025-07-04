@@ -133,10 +133,12 @@ export type EditCourseFormType = z.TypeOf<typeof EditCourseForm>;
 // Định nghĩa các schema con
 const dataSlideSchema = z.object({
   title: z.string().optional(),
-  data: z.array(z.object({
-    image: z.string(),
-    description: z.string().optional(),
-  })),
+  data: z.array(
+    z.object({
+      image: z.string(),
+      description: z.string().optional(),
+    })
+  ),
 });
 
 const dataContentPlusSchema = z.object({
@@ -204,11 +206,14 @@ const indexItemSchema = z.object({
   nameItem: z.string(),
 });
 
-
 export const EditLessonForm = z.object({
   name: z.string().min(1, "Tên bài học không được để trống"),
-  content: z.array(contentLessonSchema).min(1, "Nội dung bài học không được để trống"),
-  indexItem: z.array(indexItemSchema).min(1, "Mục lục bài học không được để trống"),
+  content: z
+    .array(contentLessonSchema)
+    .min(1, "Nội dung bài học không được để trống"),
+  indexItem: z
+    .array(indexItemSchema)
+    .min(1, "Mục lục bài học không được để trống"),
   course: z.object({
     _id: z.string().optional(),
     name: z.string(),
@@ -223,10 +228,30 @@ export const EditLessonForm = z.object({
 
 export type EditLessonFormType = z.infer<typeof EditLessonForm>;
 
-
 export const AddLessonForm = z.object({
   name: z.string().min(1, "Tên bài học không được để trống"),
   course: z.string().min(1, "Tên bài học không được để trống"),
 });
 export type AddLessonFormType = z.infer<typeof AddLessonForm>;
 
+export const CreateSteamProjectForm = z
+  .object({
+    name: z.string().min(1, "Tên dự án không được để trống"),
+    description: z.string().min(1, "Mô tả dự án không được để trống"),
+    startDate: z.coerce.date({
+        required_error: "Vui lòng chọn ngày bắt đầu.", 
+    }).refine((date) => date > new Date(), {
+        message: "Ngày bắt đầu phải sau ngày hiện tại",
+    }),
+    endDate: z.coerce.date({
+        required_error: "Vui lòng chọn ngày kết thúc.",
+    }).refine((date) => date > new Date(), {
+        message: "Ngày kết thúc phải sau ngày hiện tại",
+    }),
+  })
+  .refine((data) => data.endDate > data.startDate, {
+    message: "Ngày kết thúc phải sau ngày bắt đầu",
+    path: ["endDate"],
+  });
+
+export type CreateSteamProjectFormType = z.infer<typeof CreateSteamProjectForm>;

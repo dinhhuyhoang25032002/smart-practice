@@ -136,3 +136,24 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+@layer utilities {
+  @keyframes gradient-flow {
+    0% {
+      background-position: 200% 45%;
+    }
+
+    /* 50% {
+      background-position: 100% 50%;
+    } */
+
+    100% {
+      background-position: -200% 45%;
+    }
+  }
+  .animate-gradient-flow {
+    animation: gradient-flow var(--animation-duration, 5s) linear infinite;
+    background-size: 200% auto;
+  }
+}

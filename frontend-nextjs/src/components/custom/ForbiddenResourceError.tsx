@@ -14,7 +14,7 @@ export default function ForbiddenResourceError({
     if (!namebtn) {
       router.back();
     }
-    router.push("/dang-nhap");
+    router.push("/");
   };
   return (
     <div className="w-full h-full min-h-[500px] flex justify-center items-center flex-col gap-10">

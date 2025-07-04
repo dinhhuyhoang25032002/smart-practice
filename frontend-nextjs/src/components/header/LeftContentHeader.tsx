@@ -52,7 +52,7 @@ export default function LeftContentHeader() {
     [_id, router, setOpenSheet]
   );
   return (
-    <div className="content-left w-full flex justify-between items-center h-full  ">
+    <div className="content-left w-full flex justify-between items-center h-full">
       <div className="flex items-center gap-3">
         <div
           onClick={() => setIsOpenMenu(!isOpenMenu)}
@@ -191,8 +191,17 @@ export default function LeftContentHeader() {
           className="cursor-pointer"
           onClick={(e) => handleRedirect(e, "/khoa-hoc")}
         >
-          <span className=" font-semibold  hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
-           Khoá học
+          <span className=" font-medium hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
+            Khoá học Steam
+          </span>
+        </Link>
+        <Link
+          href=""
+          className="cursor-pointer"
+          onClick={(e) => handleRedirect(e, "/du-an-steam")}
+        >
+          <span className="font-medium hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
+            Dự án Steam
           </span>
         </Link>
         <Link
@@ -205,7 +214,7 @@ export default function LeftContentHeader() {
             )
           }
         >
-          <span className=" font-semibold  hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
+          <span className="font-medium hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
             Kết quả
           </span>
         </Link>

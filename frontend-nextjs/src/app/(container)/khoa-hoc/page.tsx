@@ -2,7 +2,6 @@
 import { useUserContext } from "@/store/context/AuthContext";
 import { useSWRPrivate } from "@/hooks/useSWRCustom";
 import type { CourseInfor } from "@/types/CustomType";
-
 import Image from "next/image";
 import slugify from "slugify";
 import {
@@ -13,7 +12,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
 import Link from "next/link";
 import MainLayout from "@/components/main-layout";
 import ActiveCourse from "@/components/course/form/ActiveCourse";

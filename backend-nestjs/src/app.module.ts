@@ -21,6 +21,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { AttendanceModule } from './attendance/attendance.module';
 import { UpdatesModule } from './uploads/uploads.module';
+import { ArduinoModule } from './arduino/arduino.module';
 
 @Module({
   imports: [
@@ -89,6 +90,7 @@ import { UpdatesModule } from './uploads/uploads.module';
     TimeviewModule,
     AttendanceModule,
     UpdatesModule,
+    ArduinoModule,
   ],
   controllers: [AppController],
   providers: [AppService, AccessTokenStrategy, RefreshTokenStrategy],
