@@ -35,7 +35,7 @@ export class ArduinoService {
       sketchFolderPath,
       `${sketchFolderName}.ino`,
     );
-    const arduinoCli = path.join(__dirname, '..', 'arduino-cli'); // Đường dẫn đến arduino-cli
+    const arduinoCli = path.join(process.cwd(), 'arduino-cli'); // Đường dẫn đến arduino-cli
     console.log(arduinoCli);
 
     try {
@@ -45,7 +45,7 @@ export class ArduinoService {
 
       // --- 3. Xây dựng và thực thi lệnh arduino-cli ---
       // Thay 'arduino-cli' bằng đường dẫn tuyệt đối nếu cần
-      const command = `${arduinoCli} compile --fqbn ${board} --output-dir ${sketchFolderPath}/build ${sketchFolderPath}`;
+      const command = `${arduinoCli} compile --fqbn ${board} --output-dir ${this.BUILDS_DIR} ${sketchFolderPath}`;
 
       const result = await this.executeCommand(command);
 
@@ -67,7 +67,7 @@ export class ArduinoService {
       });
     } finally {
       // --- 5. Dọn dẹp thư mục tạm ---
-     await fs.rm(sketchFolderPath, { recursive: true, force: true });
+     //await fs.rm(sketchFolderPath, { recursive: true, force: true });
     }
   }
   private executeCommand(
@@ -92,7 +92,7 @@ export class ArduinoService {
       throw new BadRequestException('Invalid Build ID format.');
     }
 
-    const fileName = `${buildId}.ino.${fileType}`;
+    const fileName = `sketch_${buildId}.ino.${fileType}`;
     const filePath = path.join(this.BUILDS_DIR, buildId, 'output', fileName);
 
     try {

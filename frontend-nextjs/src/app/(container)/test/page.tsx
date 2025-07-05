@@ -1,10 +1,15 @@
-import CodeEditor from "@/components/course/lessons/CodeEditor";
-import React from "react";
+import path from "path";
+import TestPageComponent from "./path";
+
+
 
 export default function TestPage() {
-  return (
-    <div>
-      <CodeEditor code={"sdfsdfsad1234"} />
-    </div>
+  // Logic này chạy an toàn trên server
+  const hexFilePath = path.join(
+    process.cwd(),
+    "sketch_d99ce797-7af4-4945-993d-77b8d6d58295.ino.hex"
   );
+
+  // Truyền đường dẫn đã được xử lý xuống client component dưới dạng prop
+  return <TestPageComponent serverCalculatedPath={hexFilePath} />;
 }
