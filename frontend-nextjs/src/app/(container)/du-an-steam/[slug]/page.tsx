@@ -9,6 +9,7 @@ import SectionSteamProjectDetail from "@/components/steam-project/SectionSteamPr
 import NotFound from "@/app/not-found";
 
 import SectionTaskList from "@/components/steam-project/SectionTaskList";
+import SectionSteamMemberList from "@/components/steam-project/SectionSteamMemberList";
 export type ResSteamProjectDetail = {
   status: number;
   message: string;
@@ -54,6 +55,10 @@ export default function Page() {
         )}
         <div className="w-full">
           <SectionTaskList />
+        </div>
+
+        <div className="w-full">
+          <SectionSteamMemberList members={members} />
         </div>
       </div>
     </div>

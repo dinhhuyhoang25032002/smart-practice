@@ -37,7 +37,13 @@ import { fetchPrivateData } from "@/utils/fetcher/fetch-api";
 import { Headers, HttpStatus } from "@/constant/constant";
 import { toast } from "sonner";
 import { useState } from "react";
-export default function CreateSteamTask() {
+import { KeyedMutator } from "swr";
+import { ResSteamTask } from "../SectionTaskList";
+type CreateSteamTaskProps = {
+  mutate: KeyedMutator<ResSteamTask>;
+};
+
+export default function CreateSteamTask({ mutate }: CreateSteamTaskProps) {
   const projectId = useSearchParams().get("q");
   const [isOpen, setOpen] = useState(false);
   const form = useForm<CreateSteamTaskType>({
@@ -45,7 +51,7 @@ export default function CreateSteamTask() {
     defaultValues: {
       name: "",
       deadline: undefined,
-      createdDate: undefined,
+      startDate: undefined,
       description: "",
     },
   });
@@ -68,6 +74,7 @@ export default function CreateSteamTask() {
     form.reset();
     toast.success(res.message);
     setOpen(false);
+    mutate();
     return;
   };
   return (
@@ -128,7 +135,7 @@ export default function CreateSteamTask() {
               <div className="flex-1 flex gap-4 justify-between ">
                 <FormField
                   control={form.control}
-                  name="createdDate"
+                  name="startDate"
                   render={({ field }) => (
                     <FormItem className="flex flex-col w-1/2">
                       <FormLabel>Ngày bắt đầu</FormLabel>

@@ -280,7 +280,7 @@ export const CreateSteamTaskForm = z
   .object({
     name: z.string().min(1, "Tên dự án không được để trống"),
     description: z.string().min(1, "Mô tả dự án không được để trống"),
-    createdDate: z
+    startDate: z
       .date({
         required_error: "Vui lòng chọn ngày bắt đầu.",
         invalid_type_error: "Ngày bắt đầu không hợp lệ.",
@@ -300,8 +300,8 @@ export const CreateSteamTaskForm = z
   .refine(
     (data) => {
       // Đảm bảo cả hai đều là ngày hợp lệ trước khi so sánh
-      if (data.createdDate instanceof Date && data.deadline instanceof Date) {
-        return data.deadline >= data.createdDate;
+      if (data.startDate instanceof Date && data.deadline instanceof Date) {
+        return data.deadline >= data.startDate;
       }
       return true; // Bỏ qua nếu một trong hai không hợp lệ
     },
@@ -311,3 +311,8 @@ export const CreateSteamTaskForm = z
     }
   );
 export type CreateSteamTaskType = z.infer<typeof CreateSteamTaskForm>;
+
+export const InviteMemberForm = z.object({
+  teamNumber: z.string().min(1, "Số đội không được để trống"),
+});
+export type InviteMemberFormType = z.infer<typeof InviteMemberForm>;

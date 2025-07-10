@@ -79,7 +79,13 @@ export class SteamService {
         message: 'Dự án đã được tạo trước đó.',
       };
     }
-    await this.steamModel.create({ ...data, leader: userId });
+    const project = await this.steamModel.create({ ...data, leader: userId });
+    this.notificationsGateway.sendNotificationToUser(
+      '66a8f90c26f73f84d88c8146',
+      {
+        message: `Đã có thêm nhiệm vụ mới được tạo ra trong dự án ${project.name}`,
+      },
+    );
     return {
       status: HttpStatus.CREATED,
       message: 'Tạo dự án steam thành công!',
@@ -125,9 +131,7 @@ export class SteamService {
       status: STATUS_TASK.TO_DO,
       creator: userId,
     });
-    this.notificationsGateway.sendNotificationToProject(projectId, {
-      message: `Đã có thêm nhiệm vụ mới được tạo ra trong dự án ${project.name}`,
-    });
+
     return {
       status: HttpStatus.CREATED,
       message: 'Tạo nhiệm vụ thành công!',

@@ -17,6 +17,7 @@ export type UserPropsContext = {
   image?: string;
   dateOfBirth?: string;
   courses?: Array<Course>;
+  projects: Array<string>;
 };
 
 type AuthContextType = {
@@ -34,6 +35,7 @@ const initialUser: UserPropsContext = {
   address: "",
   dateOfBirth: "",
   courses: [],
+  projects: [],
 };
 
 export const AuthContext = createContext<AuthContextType>({

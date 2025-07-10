@@ -13,7 +13,7 @@ export default function SectionSteamProjectDetail({ leader, description, listMem
                 </div>
                 <div className="flex justify-between items-center gap-5">
                     <div className="flex flex-col gap-2 w-1/2  h-full">
-                        <span>Người tạo: {leader?.fullname}</span>
+                        <span>Trưởng dự án: {leader?.fullname}</span>
                         <Textarea
                             readOnly
                             defaultValue={description}

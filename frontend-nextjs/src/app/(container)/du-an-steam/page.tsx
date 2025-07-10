@@ -37,7 +37,7 @@ export default function Page() {
         </div>
         {isCreateProject && (
           <div className="w-full flex items-center justify-center ">
-            <div className="w-1/2  p-8 border border-[#F07F29] rounded bg-white shadow-md">
+            <div className="w-1/2   p-8 border border-[#F07F29] rounded bg-white shadow-md">
               <CreateSteamProject
                 setIsCreateProject={setIsCreateProject}
                 mutate={mutate}

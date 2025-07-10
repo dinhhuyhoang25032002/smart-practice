@@ -33,7 +33,7 @@ export class CreateSteamTaskDto {
   @IsDate()
   @IsNotEmpty()
   @Type(() => Date)
-  createdDate: Date;
+  startDate: Date;
 
   @IsDate()
   @IsNotEmpty()

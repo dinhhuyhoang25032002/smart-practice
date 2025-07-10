@@ -272,7 +272,10 @@ export type SteamProjectInfo = {
         fullname: string;
       }
     | undefined;
-  listMember: Array<string>;
+  listMember: Array<{
+    _id: string;
+    fullname: string;
+  }>;
   description: string;
   startDate: string;
   endDate: string;
@@ -280,11 +283,12 @@ export type SteamProjectInfo = {
 
 export type SteamTaskInfo = {
   _id?: string;
-  createdDate: string;
+  createdAt: string;
   deadline: string;
   creator: string;
   name: string;
   projectId: string;
+  startTime: string;
   description: string;
   status: string;
   submitTime?: string;

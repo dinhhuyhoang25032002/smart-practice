@@ -16,7 +16,9 @@ import CreateSteamTask from "./form/CreateSteamTask";
 import { useSWRPrivate } from "@/hooks/useSWRCustom";
 import { useSearchParams } from "next/navigation";
 import { SteamTaskInfo } from "@/types/CustomType";
-type ResSteamTask = {
+import { format } from "date-fns";
+import { MdAssignmentAdd } from "react-icons/md";
+export type ResSteamTask = {
   status: number;
   message: string;
   data: Array<SteamTaskInfo>;
@@ -26,10 +28,8 @@ export default function SectionTaskList() {
   const { data, isLoading, mutate } = useSWRPrivate<ResSteamTask>(
     `steam/get-steam-tasks?projectId=${projectId}`
   );
-  console.log(data);
-  const [name, status, createdDate, implementer,, submitTime] = useMemo(() => {
-    return [];
-  }, [data]);
+  if (isLoading) return <div>Loading...</div>;
+
   return (
     <div className="bg-white  rounded w-full flex flex-col gap-5 justify-center items-center p-10 ">
       <span className="text-xl font-semibold">Danh sách nhiệm vụ</span>
@@ -40,10 +40,10 @@ export default function SectionTaskList() {
         <Button className="bg-white text-black border border-gray-500 rounded hover:bg-[#041ec4] hover:text-white">
           <IoCode className="rotate-z-90" /> Xem
         </Button>
-        <CreateSteamTask />
+        <CreateSteamTask mutate={mutate} />
       </div>
       <div className="w-full">
-        <Table className="table-fixed">
+        <Table className="table-auto">
           <TableCaption className="hidden">
             A list of your recent invoices.
           </TableCaption>
@@ -56,23 +56,50 @@ export default function SectionTaskList() {
               <TableHead>Thời gian nhận</TableHead>
               <TableHead>Thời gian hoàn thành</TableHead>
               <TableHead>Thời hạn</TableHead>
+              <TableHead className="text-center">Phân công</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {Array.from({ length: 24 }).map((item, index) => (
-              <TableRow
-                className={index + 1 > 10 ? "bg-green-100 " : "bg-amber-100"}
-                key={index}
-              >
-                <TableCell>Tạo tài liệu {index + 1}</TableCell>
-                <TableCell>Hoàn thành</TableCell>
-                <TableCell>25/07/25</TableCell>
-                <TableCell>Trần Tuấn Trường</TableCell>
-                <TableCell>26/07/2025</TableCell>
-                <TableCell>29/07/2025</TableCell>
-                <TableCell>30/07/2025</TableCell>
+            {data?.data.length !== 0 ? (
+              data?.data.map((item) => (
+                <TableRow
+                  // className={index + 1 > 10 ? "bg-green-100 " : "bg-amber-100"}
+                  key={item._id}
+                >
+                  <TableCell>{item.name}</TableCell>
+                  <TableCell>{item.status}</TableCell>
+                  <TableCell>{format(item.createdAt, "dd/MM/yyyy")}</TableCell>
+                  {item.implementer ? (
+                    <TableCell>{item.implementer}</TableCell>
+                  ) : (
+                    <TableCell>Chưa có thông tin</TableCell>
+                  )}
+                  {item.startTime ? (
+                    <TableCell>{item.startTime}</TableCell>
+                  ) : (
+                    <TableCell>Chưa có thông tin</TableCell>
+                  )}
+                  {item.submitTime ? (
+                    <TableCell>{item.submitTime}</TableCell>
+                  ) : (
+                    <TableCell>Chưa có thông tin</TableCell>
+                  )}
+                  <TableCell>{format(item.deadline, "dd/MM/yyyy")}</TableCell>
+                  <TableCell className="flex justify-center items-center">
+                    <MdAssignmentAdd />
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={7}
+                  className="text-center font-semibold text-gray-700 h-[200px]"
+                >
+                  Không có nhiệm vụ nào.
+                </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </div>

@@ -48,31 +48,45 @@ export class NotificationsGateway
   handleDisconnect(client: Socket) {
     console.log(`Client disconnected: ${client.id}`);
   }
-  @UseGuards(JwtSocketGuard)
+  // @UseGuards(JwtSocketGuard)
   handleConnection(client: Socket, ...args: any[]) {
     console.log(`Client connected: ${client.id}`);
     console.dir(client.handshake.auth, { depth: null });
   }
 
-  @SubscribeMessage('joinProjectRooms')
-  handleJoinProjectRooms(client: Socket, data: { projectIds: string[] }) {
-    const idsToJoin = data.projectIds;
+  @SubscribeMessage('joinProjectRoom')
+  handleJoinProjectRooms(client: Socket, data: { roomId: string }) {
+    const roomId = data.roomId;
+    console.log(data);
+
     // console.log(`Client ${client.id} joining rooms for projects:`, projectIds);
-    if (Array.isArray(idsToJoin)) {
-      idsToJoin.forEach((projectId) => {
-        client.join(projectId);
-      });
-      console.log(`Client ${client.id} successfully joined rooms:`, idsToJoin);
-      // Optional: Gửi lại phản hồi cho client biết đã thành công
-      return {
-        event: 'joinedRooms',
-        data: { status: 'success', rooms: idsToJoin },
-      };
-    } else {
-      console.error('The received projectIds is not an array!');
-      // Optional: Gửi lại lỗi cho client
+    if (!roomId) {
+      console.error('No roomId provided in the data!');
       return { event: 'error', data: 'Invalid data format' };
     }
+    // Tham gia vào phòng với ID là roomId
+    client.join(roomId);
+    console.log(`Client ${client.id} successfully joined room: ${roomId}`);
+    // Optional: Gửi lại phản hồi cho client biết đã thành công
+    return {
+      event: 'joinedRoom',
+      data: { status: 'success', room: roomId },
+    };
+    // if (Array.isArray(idsToJoin)) {
+    //   idsToJoin.forEach((projectId) => {
+    //     client.join(projectId);
+    //   });
+    //   console.log(`Client ${client.id} successfully joined rooms:`, idsToJoin);
+    //   // Optional: Gửi lại phản hồi cho client biết đã thành công
+    //   return {
+    //     event: 'joinedRooms',
+    //     data: { status: 'success', rooms: idsToJoin },
+    //   };
+    // } else {
+    //   console.error('The received projectIds is not an array!');
+    //   // Optional: Gửi lại lỗi cho client
+    //   return { event: 'error', data: 'Invalid data format' };
+    // }
   }
 
   sendNotificationToProject(projectId: string, notification: any) {
@@ -80,6 +94,6 @@ export class NotificationsGateway
   }
 
   sendNotificationToUser(userId: string, notification: any) {
-    this.server.to(userId).emit('notification', notification);
+    this.server.to("66a8f90c26f73f84d88c8146").emit('notification', notification);
   }
 }

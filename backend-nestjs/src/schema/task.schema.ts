@@ -8,16 +8,22 @@ export class Task extends Document {
   implementer: string;
 
   @Prop({ required: true })
-  createdDate: string;
-
-  @Prop({ required: true })
   name: string;
+
+  @Prop()
+  receiptDate: string;
 
   @Prop()
   submitTime: string;
 
   @Prop({ required: true })
+  startDate: string;
+
+  @Prop({ required: true })
   deadline: string;
+
+  @Prop()
+  startTime: string;
 
   @Prop()
   description: string;
