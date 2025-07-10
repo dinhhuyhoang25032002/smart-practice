@@ -1,5 +1,3 @@
-
-
 type dataContentSide = {
   image: string;
   description?: string;
@@ -68,11 +66,11 @@ export type ContentLesson = {
   dataList?: dataListProps;
   dataList2?: dataListProps;
   codeSample?: string;
-}
+};
 export type ContentLessonMerge = ContentLesson & { _id: string };
 
 export type Lesson = {
-  _id: string
+  _id: string;
   content: Array<ContentLesson>;
   name: string;
   linkImage: string;
@@ -85,7 +83,7 @@ export type Lesson = {
   idFrontLesson: {
     _id: string;
     name: string;
-  }
+  };
 };
 
 export type SolutionContent = {
@@ -101,12 +99,13 @@ export type SolutionContent = {
 };
 
 export type CourseContent = SolutionContent & {
-  code: string, lessons: Array<{
-    _id: string,
-    name: string,
-    linkImage: string,
-  }>
-}
+  code: string;
+  lessons: Array<{
+    _id: string;
+    name: string;
+    linkImage: string;
+  }>;
+};
 
 type EvaluaDashboard = {
   lessonId: string;
@@ -262,4 +261,32 @@ export type Document = {
 export type UploadResponse = {
   message: string;
   file_id: number;
+};
+
+export type SteamProjectInfo = {
+  _id?: string;
+  name: string;
+  leader:
+    | {
+        _id: string;
+        fullname: string;
+      }
+    | undefined;
+  listMember: Array<string>;
+  description: string;
+  startDate: string;
+  endDate: string;
+};
+
+export type SteamTaskInfo = {
+  _id?: string;
+  createdDate: string;
+  deadline: string;
+  creator: string;
+  name: string;
+  projectId: string;
+  description: string;
+  status: string;
+  submitTime?: string;
+  implementer?: string;
 };

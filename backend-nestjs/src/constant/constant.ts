@@ -38,8 +38,14 @@ export const staticFolders = [
   { path: 'bai-hoc', prefix: '/bai-hoc' },
 ];
 
-
 export enum UpdateMode {
-  COURSE = "COURSE",
-  LESSON = "LESSON"
+  COURSE = 'COURSE',
+  LESSON = 'LESSON',
+}
+
+export enum STATUS_TASK {
+  TO_DO = 'TO_DO',
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
 }

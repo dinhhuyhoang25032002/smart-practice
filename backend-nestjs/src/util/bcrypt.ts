@@ -1,4 +1,4 @@
-import * as bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 
 export const hardData = async (password: string): Promise<string> => {
     return await bcrypt.genSalt(parseInt(`${process.env.SALT_ROUNDS}`))

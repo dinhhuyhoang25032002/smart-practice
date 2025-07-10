@@ -5,6 +5,7 @@ import { fetchPrivateData } from "@/utils/fetcher/fetch-api";
 import { createContext, useEffect, useState, useContext } from "react";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
+import { toast } from "sonner";
 type Course = { productionId: string };
 
 export type UserPropsContext = {
@@ -91,11 +92,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const isLogged = handleGetIsAuth();
   const pathname = usePathname();
   useEffect(() => {
-    // if (!_id || !act || !isLogged) {
-    //   if (pathname === "/dang-nhap") {
-    //     return;
-    //   }
-
+    if (!_id || !act || !isLogged) {
+      toast.warning("Hãy đăng nhập lại!");
+      return;
+    }
     //   router.push("/dang-nhap");
     //   return;
     // }

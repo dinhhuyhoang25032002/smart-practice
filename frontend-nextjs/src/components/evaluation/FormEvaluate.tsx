@@ -12,15 +12,12 @@ import {
 import { EvaluateForm, EvaluationType } from "@/types/Type";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-
-import moment from "moment";
-import "moment/locale/vi";
 import { Button } from "@/components/ui/button";
 import { useUserContext } from "@/store/context/AuthContext";
 import { fetchPrivateData } from "@/utils/fetcher/fetch-api";
 import { toastNotiSuccess } from "@/components/custom/ToastNotification";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
-moment.locale("vi");
+
 type FormEvaluateProps = {
   nameStudent: string | undefined;
   lessonId: string | undefined;

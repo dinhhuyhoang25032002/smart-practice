@@ -1,11 +1,25 @@
 "use client";
+import Loading from "@/app/loading";
 import CreateSteamProject from "@/components/steam-project/form/CreateSteamProjectForm";
 import SectionSteamProjectList from "@/components/steam-project/SectionSteamProjectList";
 import { Button } from "@/components/ui/button";
+import { useSWRPrivate } from "@/hooks/useSWRCustom";
+import { SteamProjectInfo } from "@/types/CustomType";
 import { useState } from "react";
 import { FaRegSquarePlus } from "react-icons/fa6";
+export type ResListSteamProjects = {
+  status: number;
+  message: string;
+  data: Array<SteamProjectInfo>;
+};
 export default function Page() {
   const [isCreateProject, setIsCreateProject] = useState(false);
+  const { data, isLoading, mutate } = useSWRPrivate<ResListSteamProjects>(
+    `steam/get-steam-project-list`
+  );
+  if (isLoading) {
+    return <Loading />;
+  }
   return (
     <div className="w-full flex justify-center items-center p-10">
       <div className="flex flex-col items-center gap-4 w-full ">
@@ -24,13 +38,16 @@ export default function Page() {
         {isCreateProject && (
           <div className="w-full flex items-center justify-center ">
             <div className="w-1/2  p-8 border border-[#F07F29] rounded bg-white shadow-md">
-              <CreateSteamProject setIsCreateProject={setIsCreateProject} />
+              <CreateSteamProject
+                setIsCreateProject={setIsCreateProject}
+                mutate={mutate}
+              />
             </div>
           </div>
         )}
 
-        <div className="w-full mt-10">
-          <SectionSteamProjectList />
+        <div className="w-full mt-10 px-10">
+          <SectionSteamProjectList data = {data?.data} />
         </div>
       </div>
     </div>

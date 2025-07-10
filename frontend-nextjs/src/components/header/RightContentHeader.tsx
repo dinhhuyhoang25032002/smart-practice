@@ -26,7 +26,7 @@ export default function RightContentHeader() {
       <div className="flex items-center gap-10 justify-center">
         {_id ? (
           <div className="flex items-center gap-2">
-            <span className="hidden xl:flex">Xin Chào, {user?.fullname} </span>
+            <span className="hidden xl:flex">Xin Chào, {user?.fullname}</span>
             <TooltipAvatar />
           </div>
         ) : (

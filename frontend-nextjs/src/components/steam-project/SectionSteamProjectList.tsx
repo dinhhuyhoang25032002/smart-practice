@@ -9,9 +9,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
-export default function SectionSteamProjectList() {
+import Link from "next/link";
+import { SteamProjectInfo } from "@/types/CustomType";
+import { format } from "date-fns";
+type SectionSteamProjectListProps = {
+  data: Array<SteamProjectInfo> | undefined;
+};
+export default function SectionSteamProjectList({
+  data,
+}: SectionSteamProjectListProps) {
   return (
-    <div className="w-full bg-red-50 px-10">
+    <div className="w-full bg-red-50 px-10 rounded ">
       <Table className="table-auto">
         <TableCaption className="caption-top text-xl font-semibold mb-4 text-black">
           Những dự án đã khởi tạo.
@@ -27,44 +35,37 @@ export default function SectionSteamProjectList() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow>
-            <TableCell className="font-medium">Dự án Steam 1</TableCell>
-            <TableCell>Chưa hoàn thành</TableCell>
-            <TableCell className="">6/6/2025</TableCell>
-            <TableCell>6/11/2025</TableCell>
-            <TableCell className="text-center">25</TableCell>
-            <TableCell className=" flex flex-col justify-center items-center">
-              <span className="inline-block ">
-                {14} / {24} bài đã nộp.
-              </span>
-              <div className="flex items-center gap-2 w-full justify-center">
-                <Progress
-                  className=" w-[60%] h-2 rounded-full  "
-                  value={Math.round((14 / 24) * 100)}
-                />
-                <span> {Math.round((14 / 24) * 100)}%</span>
-              </div>
-            </TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="font-medium">Dự án Steam 1</TableCell>
-            <TableCell>Chưa hoàn thành</TableCell>
-            <TableCell className="">6/6/2025</TableCell>
-            <TableCell>6/11/2025</TableCell>
-            <TableCell className="text-center">25</TableCell>
-            <TableCell className=" flex flex-col justify-center items-center">
-              <span className="inline-block ">
-                {14} / {24} bài đã nộp.
-              </span>
-              <div className="flex items-center gap-2 w-full justify-center">
-                <Progress
-                  className=" w-[60%] h-2 rounded-full  "
-                  value={Math.round((14 / 24) * 100)}
-                />
-                <span> {Math.round((14 / 24) * 100)}%</span>
-              </div>
-            </TableCell>
-          </TableRow>
+          {data?.map((item) => (
+            <TableRow key={item._id}>
+              <TableCell className="font-medium">
+                <Link href={`/du-an-steam/du-an-1?q=${item._id}`}>
+                  {item.name}
+                </Link>
+              </TableCell>
+              <TableCell>Chưa hoàn thành</TableCell>
+              <TableCell className="">
+                {format(new Date(item.startDate), "dd/MM/yyyy")}
+              </TableCell>
+              <TableCell>
+                {format(new Date(item.endDate), "dd/MM/yyyy")}
+              </TableCell>
+              <TableCell className="text-center">
+                {item.listMember.length}
+              </TableCell>
+              <TableCell className=" flex flex-col justify-center items-center">
+                <span className="inline-block ">
+                  {14} / {24} bài đã nộp.
+                </span>
+                <div className="flex items-center gap-2 w-full justify-center">
+                  <Progress
+                    className=" w-[60%] h-2 rounded-full  "
+                    value={Math.round((14 / 24) * 100)}
+                  />
+                  <span> {Math.round((14 / 24) * 100)}%</span>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </div>

@@ -8,6 +8,7 @@ import "react-pdf/dist/Page/TextLayer.css";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ChatBotAiProvider } from "@/store/context/ChatBotAi";
+import { SocketProvider } from "@/store/context/SocketContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,7 +36,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <AuthProvider>
-          <ChatBotAiProvider>{children}</ChatBotAiProvider>
+          <SocketProvider>
+            <ChatBotAiProvider>{children}</ChatBotAiProvider>
+          </SocketProvider>
         </AuthProvider>
         <Toaster />
       </body>

@@ -238,20 +238,76 @@ export const CreateSteamProjectForm = z
   .object({
     name: z.string().min(1, "Tên dự án không được để trống"),
     description: z.string().min(1, "Mô tả dự án không được để trống"),
-    startDate: z.coerce.date({
-        required_error: "Vui lòng chọn ngày bắt đầu.", 
-    }).refine((date) => date > new Date(), {
+    startDate: z
+      .date({
+        required_error: "Vui lòng chọn ngày bắt đầu.",
+        invalid_type_error: "Ngày bắt đầu không hợp lệ.",
+      })
+      .refine((date) => date > new Date(), {
         message: "Ngày bắt đầu phải sau ngày hiện tại",
-    }),
-    endDate: z.coerce.date({
+      }),
+    endDate: z
+      .date({
         required_error: "Vui lòng chọn ngày kết thúc.",
-    }).refine((date) => date > new Date(), {
+        invalid_type_error: "Ngày kết thúc không hợp lệ.",
+      })
+      .refine((date) => date > new Date(), {
         message: "Ngày kết thúc phải sau ngày hiện tại",
-    }),
+      }),
   })
-  .refine((data) => data.endDate > data.startDate, {
-    message: "Ngày kết thúc phải sau ngày bắt đầu",
-    path: ["endDate"],
-  });
+  .refine(
+    (data) => {
+      // Đảm bảo cả hai đều là ngày hợp lệ trước khi so sánh
+      if (data.startDate instanceof Date && data.endDate instanceof Date) {
+        return data.endDate >= data.startDate;
+      }
+      return true; // Bỏ qua nếu một trong hai không hợp lệ
+    },
+    {
+      message: "Ngày kết thúc phải sau hoặc bằng ngày bắt đầu",
+      path: ["endDate"], // Lỗi sẽ hiển thị ở trường endDate
+    }
+  );
 
 export type CreateSteamProjectFormType = z.infer<typeof CreateSteamProjectForm>;
+
+export const SearchUserForm = z.object({
+  email: z.string().email("Email không hợp lệ"),
+});
+export type SearchUserFormType = z.infer<typeof SearchUserForm>;
+
+export const CreateSteamTaskForm = z
+  .object({
+    name: z.string().min(1, "Tên dự án không được để trống"),
+    description: z.string().min(1, "Mô tả dự án không được để trống"),
+    createdDate: z
+      .date({
+        required_error: "Vui lòng chọn ngày bắt đầu.",
+        invalid_type_error: "Ngày bắt đầu không hợp lệ.",
+      })
+      .refine((date) => date > new Date(), {
+        message: "Ngày bắt đầu phải sau ngày hiện tại",
+      }),
+    deadline: z
+      .date({
+        required_error: "Vui lòng chọn ngày kết thúc.",
+        invalid_type_error: "Ngày kết thúc không hợp lệ.",
+      })
+      .refine((date) => date > new Date(), {
+        message: "Ngày kết thúc phải sau ngày hiện tại",
+      }),
+  })
+  .refine(
+    (data) => {
+      // Đảm bảo cả hai đều là ngày hợp lệ trước khi so sánh
+      if (data.createdDate instanceof Date && data.deadline instanceof Date) {
+        return data.deadline >= data.createdDate;
+      }
+      return true; // Bỏ qua nếu một trong hai không hợp lệ
+    },
+    {
+      message: "Ngày kết thúc phải sau hoặc bằng ngày bắt đầu",
+      path: ["deadline"], // Lỗi sẽ hiển thị ở trường endDate
+    }
+  );
+export type CreateSteamTaskType = z.infer<typeof CreateSteamTaskForm>;

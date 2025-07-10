@@ -22,6 +22,8 @@ export class RefreshTokenStrategy extends PassportStrategy(
 
   private static extractJWT(req: Request): string | null {
     if (req.cookies && 'token' in req.cookies && req.cookies.token.length > 0) {
+      console.log(req.cookies.token);
+      
       return req.cookies.token;
     }
     return null;

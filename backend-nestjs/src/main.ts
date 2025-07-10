@@ -14,13 +14,13 @@ import { staticFolders } from './constant/constant';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    bodyParser: true,
+    // bodyParser: true,
     cors: ConfigCors,
-    rawBody: true,
+    //  rawBody: true,
   });
   const configService = app.get(ConfigService);
   app.setGlobalPrefix('/v1/api');
-  app.useGlobalPipes(new ValidationPipe({ transform: false }));
+  app.useGlobalPipes(new ValidationPipe({ transform: false, whitelist: true }));
   // app.use(
   //   session({
   //     secret: configService.get('SESSION_SECRET_KEY'),
@@ -34,9 +34,9 @@ async function bootstrap() {
   //   }));
   app.use(passport.initialize());
   //app.use(passport.session());
-  app.useBodyParser('json', { limit: '1gb' });
-  app.useBodyParser('text', { limit: '1gb' });
-  app.useBodyParser('urlencoded', { limit: '1gb', extended: true });
+  // app.useBodyParser('json', { limit: '1gb' });
+  // app.useBodyParser('text', { limit: '1gb' });
+  // app.useBodyParser('urlencoded', { limit: '1gb', extended: true });
   app.use(cookieParser());
 
   // Cấu hình cho upload file lớn

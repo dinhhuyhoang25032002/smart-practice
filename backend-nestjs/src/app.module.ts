@@ -22,9 +22,26 @@ import { ConfigService } from '@nestjs/config';
 import { AttendanceModule } from './attendance/attendance.module';
 import { UpdatesModule } from './uploads/uploads.module';
 import { ArduinoModule } from './arduino/arduino.module';
+import { SteamModule } from './steam/steam.module';
+import { NotificationModule } from './notification/notification.module';
+import { CacheModule } from '@nestjs/cache-manager';
+import { createKeyv } from '@keyv/redis';
+import { JwtSocketStrategy } from './auth/strategy/accessSocket.strategy';
 
 @Module({
   imports: [
+    CacheModule.registerAsync({
+      isGlobal: true,
+      useFactory: async () => {
+        return {
+          stores: [
+            createKeyv('redis://localhost:6379', {
+              namespace: 'smart-lab',
+            }),
+          ],
+        };
+      },
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       expandVariables: true,
@@ -91,8 +108,15 @@ import { ArduinoModule } from './arduino/arduino.module';
     AttendanceModule,
     UpdatesModule,
     ArduinoModule,
+    SteamModule,
+    NotificationModule,
   ],
   controllers: [AppController],
-  providers: [AppService, AccessTokenStrategy, RefreshTokenStrategy],
+  providers: [
+    AppService,
+    AccessTokenStrategy,
+    RefreshTokenStrategy,
+    JwtSocketStrategy,
+  ],
 })
 export class AppModule {}
