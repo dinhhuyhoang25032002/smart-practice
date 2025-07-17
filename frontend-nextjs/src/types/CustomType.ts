@@ -1,3 +1,5 @@
+import { ROLE_STEAM_PROJECT, STATUS_TASK } from "@/constant/constant";
+
 type dataContentSide = {
   image: string;
   description?: string;
@@ -262,7 +264,14 @@ export type UploadResponse = {
   message: string;
   file_id: number;
 };
-
+export type MemberInfor = {
+  completedTasks: number;
+  memberId: { _id: string; fullname: string };
+  role: ROLE_STEAM_PROJECT;
+  teamNumber: string;
+  totalTasks: number;
+  createdAt: string;
+};
 export type SteamProjectInfo = {
   _id?: string;
   name: string;
@@ -272,10 +281,7 @@ export type SteamProjectInfo = {
         fullname: string;
       }
     | undefined;
-  listMember: Array<{
-    _id: string;
-    fullname: string;
-  }>;
+  listMember: Array<MemberInfor>;
   description: string;
   startDate: string;
   endDate: string;
@@ -290,7 +296,7 @@ export type SteamTaskInfo = {
   projectId: string;
   startTime: string;
   description: string;
-  status: string;
+  status: STATUS_TASK;
   submitTime?: string;
   implementer?: string;
 };

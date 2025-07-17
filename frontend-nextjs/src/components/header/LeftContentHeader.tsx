@@ -185,7 +185,7 @@ export default function LeftContentHeader() {
         </div>
       </div>
 
-      <div className="hidden lg:flex items-center gap-20 text-xl">
+      <div className="hidden lg:flex items-center flex-1  justify-around  text-xl">
         <Link
           href=""
           className="cursor-pointer"
@@ -202,6 +202,15 @@ export default function LeftContentHeader() {
         >
           <span className="font-medium hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
             Dự án Steam
+          </span>
+        </Link>
+        <Link
+          href=""
+          className="cursor-pointer"
+          onClick={(e) => handleRedirect(e, "/khoa-hoc")}
+        >
+          <span className=" font-medium hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
+           Học bổng Steam
           </span>
         </Link>
         <Link

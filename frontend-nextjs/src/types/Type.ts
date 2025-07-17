@@ -314,5 +314,6 @@ export type CreateSteamTaskType = z.infer<typeof CreateSteamTaskForm>;
 
 export const InviteMemberForm = z.object({
   teamNumber: z.string().min(1, "Số đội không được để trống"),
+  role: z.string().min(1, "Số đội không được để trống"),
 });
 export type InviteMemberFormType = z.infer<typeof InviteMemberForm>;

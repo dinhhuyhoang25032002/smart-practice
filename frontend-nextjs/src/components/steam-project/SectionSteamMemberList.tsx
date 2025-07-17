@@ -8,19 +8,29 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import InviteMemberForm from "./form/InviteMember";
+import { MemberInfor } from "@/types/CustomType";
+import { ROLE_STEAM_PROJECT } from "@/constant/constant";
+
 type SectionSteamMemberListProps = {
-  members?: Array<{ _id: string; fullname: string }>;
+  members?: Array<MemberInfor>;
+};
+const modelMap: Record<keyof typeof ROLE_STEAM_PROJECT, string> = {
+  LEADER: "Trưởng dự án", // Bạn nên thêm cả key LEADER vào đây
+  LEADER_TEAM: "Trưởng nhóm",
+  MEMBER: "Thành viên",
 };
 export default function SectionSteamMemberList({
   members,
 }: SectionSteamMemberListProps) {
   return (
     <div className="bg-white rounded w-full flex flex-col gap-5 justify-center items-center p-10">
-      <div className="flex items-center justify-center w-full flex-col gap-3">    
+      <div className="flex items-center justify-center w-full flex-col gap-3">
         <span className="text-xl font-semibold">
           Danh sách thành viên trong dự án
         </span>
-        <div className="w-full flex justify-end"><InviteMemberForm/></div>
+        <div className="w-full flex justify-end">
+          <InviteMemberForm />
+        </div>
       </div>
       <Table className="table-fixed">
         <TableCaption className="hidden">
@@ -29,22 +39,46 @@ export default function SectionSteamMemberList({
         <TableHeader>
           <TableRow>
             <TableHead className="">Họ và tên</TableHead>
-            <TableHead>Nhóm</TableHead>
-            <TableHead>Vai trò</TableHead>
-            <TableHead>Số nhiệm vụ đã nhận</TableHead>
-            <TableHead>Số nhiệm vụ đã hoàn thành</TableHead>
-            <TableHead>Ngày tham gia</TableHead>
+            <TableHead className="text-center">Nhóm</TableHead>
+            <TableHead className="text-center">Vai trò</TableHead>
+            <TableHead className="text-center">Số nhiệm vụ đảm nhận</TableHead>
+            <TableHead className="text-center">
+              Số nhiệm vụ đã hoàn thành
+            </TableHead>
+            <TableHead className="text-center">Ngày tham gia</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow>
-            <TableCell className="font-medium">Trần Tuấn Trường</TableCell>
-            <TableCell>1</TableCell>
-            <TableCell>Nhóm trưởng</TableCell>
-            <TableCell>4</TableCell>
-            <TableCell>2</TableCell>
-            <TableCell>10/07/2025</TableCell>
-          </TableRow>
+          {members && members?.length > 0 ? (
+            members.map((member) => (
+              <TableRow key={member.memberId._id}>
+                <TableCell className="font-medium">
+                  {member.memberId.fullname}
+                </TableCell>
+                <TableCell className="text-center">
+                  {member.teamNumber}
+                </TableCell>
+                <TableCell className="text-center">
+                  {modelMap[member.role]}
+                </TableCell>
+                <TableCell className="text-center">
+                  {member.totalTasks}
+                </TableCell>
+                <TableCell className="text-center">
+                  {member.completedTasks}
+                </TableCell>
+                <TableCell className="text-center">
+                  {new Date(member.createdAt).toLocaleDateString("vi-VN")}
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={6} className="text-center">
+                Chưa có thành viên nào trong dự án.
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
     </div>

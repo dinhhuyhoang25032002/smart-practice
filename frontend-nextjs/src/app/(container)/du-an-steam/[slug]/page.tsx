@@ -17,7 +17,7 @@ export type ResSteamProjectDetail = {
 };
 export default function Page() {
   const id = useSearchParams().get("q");
-  const { data, isLoading, mutate } = useSWRPrivate<ResSteamProjectDetail>(
+  const { data, isLoading } = useSWRPrivate<ResSteamProjectDetail>(
     `steam/${id}`
   );
 
@@ -34,6 +34,7 @@ export default function Page() {
     }, [data]);
   if (!isLoading && !data?.data) return <NotFound />;
   if (isLoading) return <Loading />;
+  console.log(members);
 
   return (
     <div className=" w-screen max-w-full min-h-screen flex p-20 py-10 justify-center bg-gray-100">
@@ -54,7 +55,7 @@ export default function Page() {
           </div>
         )}
         <div className="w-full">
-          <SectionTaskList />
+          <SectionTaskList members={members} />
         </div>
 
         <div className="w-full">

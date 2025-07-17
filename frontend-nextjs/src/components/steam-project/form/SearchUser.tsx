@@ -85,7 +85,6 @@ export default function SearchUser({
                         </div>
                       )
                     ) : null}
-                    <div></div>
                   </div>
                 </FormControl>
                 <FormMessage />
