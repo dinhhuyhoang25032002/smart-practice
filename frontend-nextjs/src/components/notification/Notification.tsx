@@ -10,6 +10,7 @@ export type NotificationData = {
   message: string;
   // Thêm các thuộc tính khác nếu có
   projectId: string;
+  notificationId: string;
   // Thêm các thuộc tính khác của notification nếu có
   teamNumber?: string; // Nếu có thể là undefined
   role: string;
@@ -21,7 +22,7 @@ export default function Notification() {
   const { projects, _id } = user;
   const [isOpenNotification, setOpenNotification] = useState(false);
   const [notifications, setNotifications] = useState<Array<NotificationData>>(
-    []
+    [],
   );
 
   // DEBUG: Đặt console.log ở đây để xem giá trị mới mỗi khi component re-render
@@ -36,7 +37,7 @@ export default function Notification() {
       console.log("Joining rooms for user:", _id);
       if (projects && projects.length > 0) {
         projects.forEach((item) =>
-          socket.emit("joinProjectRoom", { roomId: item })
+          socket.emit("joinProjectRoom", { roomId: item }),
         );
       }
       socket.emit("joinProjectRoom", { roomId: _id });
@@ -69,18 +70,18 @@ export default function Notification() {
   }, [socket, projects, _id]); // Dependencies đã chính xác
 
   return (
-    <div className="w-fit  relative">
+    <div className="relative w-fit">
       <h3
-        className="text-lg font-bold cursor-pointer w-fit hover:bg-[#eee] p-2 rounded-full"
+        className="w-fit cursor-pointer rounded-full p-2 text-lg font-bold hover:bg-[#eee]"
         onClick={() => setOpenNotification(!isOpenNotification)}
       >
-        <PiBellRinging className="text-2xl " />
+        <PiBellRinging className="text-2xl" />
         {/* <span className="absolute right-0 bottom-0 size-3 text-white p-1 flex justify-center items-center font-normal bg-red-500 rounded-full">
           {notifications.length}
         </span> */}
       </h3>
       {isOpenNotification && (
-        <div className="absolute -bottom-9 right-0  bg-white w-96 min-h-32 top-10 flex justify-center items-center rounded shadow border ">
+        <div className="absolute top-10 right-0 -bottom-9 flex min-h-64 w-[450px] items-start overflow-y-auto rounded border bg-white shadow">
           <NotificationContent
             notifications={notifications}
             setNotifications={setNotifications}

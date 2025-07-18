@@ -9,7 +9,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { SteamService } from './steam.service';
-import { CreateSteamProjectDto, CreateSteamTaskDto } from './class/steam.dto';
+import {
+  CreateSteamProjectDto,
+  CreateSteamTaskDto,
+  InviteSteamMemberDto,
+  PartialInviteSteamMemberDto,
+} from './class/steam.dto';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAccessAuthGuard } from 'src/auth/guard/accessToken.guard';
 import { Request } from 'express';
@@ -34,6 +39,7 @@ export class SteamController {
     const { sub } = req.user as UserJWT;
     return this.steamService.handleGetSteamTasks(sub, projectId);
   }
+
   @Get(':id')
   async getSteamProjectDetail(@Param('id') id: string) {
     return this.steamService.handleGetSteamProjectDetail(id);
@@ -52,5 +58,34 @@ export class SteamController {
   async createSteamTask(@Body() body: CreateSteamTaskDto, @Req() req: Request) {
     const { sub } = req.user as UserJWT;
     return this.steamService.handleCreateSteamTask(body, sub);
+  }
+
+  @Post('invite-steam-member')
+  async inviteSteamMember(
+    @Body()
+    body: InviteSteamMemberDto,
+    @Req() req: Request,
+  ) {
+    const { sub } = req.user as UserJWT;
+
+    return this.steamService.handleInviteSteamMember(body, sub);
+  }
+
+  @Post('access-steam-project')
+  async accessSteamProject(
+    @Body() body: PartialInviteSteamMemberDto,
+    @Req() req: Request,
+  ) {
+    const { sub } = req.user as UserJWT;
+    return this.steamService.handleAccessSteamProject(sub, body);
+  }
+
+  @Post('assign-steam-task')
+  async assignSteamTask(
+    @Body() body: { taskId: string; memberId: string; projectId: string },
+    @Req() req: Request,
+  ) {
+    const { sub } = req.user as UserJWT;
+    return this.steamService.handleAssignSteamTask(sub, body);
   }
 }

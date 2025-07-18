@@ -8,6 +8,7 @@ import {
     ValidationPipe,
     Res,
     ParseEnumPipe,
+    Delete,
   } from '@nestjs/common';
   import { Response } from 'express';
   import { ArduinoService } from './arduino.service';
@@ -19,16 +20,49 @@ import {
     constructor(private readonly arduinoService: ArduinoService) {}
   
     /**
-     * API 1: Endpoint để tạo một build mới
+     * Test route
+     */
+    @Get('test')
+    async test() {
+      return {
+        message: 'Arduino controller is working!',
+        timestamp: new Date().toISOString()
+      };
+    }
+
+    /**
+     * API 1: Lấy danh sách board được hỗ trợ
+     */
+    @Get('boards')
+    async getSupportedBoards() {
+      return {
+        success: true,
+        boards: this.arduinoService.getSupportedBoards()
+      };
+    }
+
+    /**
+     * API 2: Endpoint để tạo một build mới
      */
     @Post('builds')
-    @UsePipes(new ValidationPipe())
+    // @UsePipes(new ValidationPipe())
     async createNewBuild(@Body() compileCodeDto: CompileCodeDto) {
       return this.arduinoService.createBuild(compileCodeDto);
     }
+
+    /**
+     * API 3: Lấy thông tin build
+     */
+    @Get('builds/:buildId')
+    async getBuildInfo(@Param('buildId') buildId: string) {
+      return {
+        success: true,
+        build: await this.arduinoService.getBuildInfo(buildId)
+      };
+    }
   
     /**
-     * API 2: Endpoint để tải file từ một build đã có
+     * API 4: Endpoint để tải file từ một build đã có
      * :fileType phải là 'hex' hoặc 'bin'
      */
     @Get('builds/:buildId/:fileType')
@@ -42,10 +76,9 @@ import {
         fileType,
       );
       
-      const fileName = path.basename(filePath); // Lấy tên file từ đường dẫn
+      const fileName = path.basename(filePath);
   
       res.set({
-        // Dùng kiểu 'application/octet-stream' cho các file nhị phân nói chung
         'Content-Type': 'application/octet-stream', 
         'Content-Disposition': `attachment; filename="${fileName}"`,
       });

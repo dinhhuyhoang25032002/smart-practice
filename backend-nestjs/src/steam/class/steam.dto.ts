@@ -1,5 +1,13 @@
+import { PartialType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsDate, IsMongoId, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsDate,
+  IsMongoId,
+  IsNegative,
+  IsNotEmpty,
+  IsPositive,
+  IsString,
+} from 'class-validator';
 
 export class CreateSteamProjectDto {
   @IsString()
@@ -42,4 +50,30 @@ export class CreateSteamTaskDto {
 
   @IsMongoId({ message: 'projectId must be a valid MongoDB ObjectId' })
   projectId: string;
+}
+
+export class InviteSteamMemberDto {
+  @IsMongoId({ message: 'projectId must be a valid MongoDB ObjectId' })
+  @IsNotEmpty()
+  projectId: string;
+
+  @IsMongoId({ message: 'memberId must be a valid MongoDB ObjectId' })
+  @IsNotEmpty()
+  memberId: string;
+
+  @IsPositive({ message: 'teamNumber must be a positive number' })
+  @Type(() => Number)
+  teamNumber: number;
+
+  @IsString()
+  @IsNotEmpty()
+  role: string;
+}
+
+export class PartialInviteSteamMemberDto extends PartialType(
+  InviteSteamMemberDto,
+) {
+  @IsMongoId({ message: 'projectId must be a valid MongoDB ObjectId' })
+  @IsNotEmpty()
+  notificationId: string;
 }

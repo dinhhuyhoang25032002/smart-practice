@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { IoCode } from "react-icons/io5";
+import Link from "next/link";
 import { CiFilter } from "react-icons/ci";
 import CreateSteamTask from "./form/CreateSteamTask";
 import { useSWRPrivate } from "@/hooks/useSWRCustom";
@@ -25,7 +26,11 @@ import { useSearchParams } from "next/navigation";
 import { MemberInfor, SteamTaskInfo } from "@/types/CustomType";
 import { format } from "date-fns";
 import { MdAssignmentAdd } from "react-icons/md";
-import { STATUS_TASK } from "@/constant/constant";
+import { Headers, STATUS_TASK } from "@/constant/constant";
+import { fetchPrivateData } from "@/utils/fetcher/fetch-api";
+import { KeyedMutator } from "swr";
+import { ResSteamProjectDetail } from "@/app/(container)/du-an-steam/[slug]/page";
+import slugify from "slugify";
 export type ResSteamTask = {
   status: number;
   message: string;
@@ -43,40 +48,39 @@ const MapStatus = {
 export default function SectionTaskList({ members }: SectionTaskListProps) {
   const projectId = useSearchParams().get("q");
   const { data, isLoading, mutate } = useSWRPrivate<ResSteamTask>(
-    `steam/get-steam-tasks?projectId=${projectId}`
+    `steam/get-steam-tasks?projectId=${projectId}`,
   );
   if (isLoading) return <div>Loading...</div>;
   const handleOnSubmit = async (value: string, taskId?: string) => {
     if (!value) return;
     try {
-      const response = await fetch(`/api/steam/assign-task`, {
+      const response = await fetchPrivateData(`steam/assign-steam-task`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({
-          taskId,
-          implementer: value,
+          projectId: projectId,
+          taskId: taskId,
+          memberId: value,
         }),
+        headers: Headers,
       });
-      const result = await response.json();
-      if (result.status === 200) {
+
+      if (response.status === 200) {
         mutate();
       } else {
-        console.error(result.message);
+        console.error(response.message);
       }
     } catch (error) {
       console.error("Error assigning task:", error);
     }
   };
   return (
-    <div className="bg-white  rounded w-full flex flex-col gap-5 justify-center items-center p-10 ">
+    <div className="flex w-full flex-col items-center justify-center gap-5 rounded bg-white p-10">
       <span className="text-xl font-semibold">Danh sách nhiệm vụ</span>
-      <div className="flex gap-5 items-center w-full justify-end ">
-        <Button className="bg-white text-black border border-gray-500 rounded hover:bg-[#041ec4] hover:text-white ">
+      <div className="flex w-full items-center justify-end gap-5">
+        <Button className="rounded border border-gray-500 bg-white text-black hover:bg-[#041ec4] hover:text-white">
           <CiFilter /> Bộ lọc
         </Button>
-        <Button className="bg-white text-black border border-gray-500 rounded hover:bg-[#041ec4] hover:text-white">
+        <Button className="rounded border border-gray-500 bg-white text-black hover:bg-[#041ec4] hover:text-white">
           <IoCode className="rotate-z-90" /> Xem
         </Button>
         <CreateSteamTask mutate={mutate} />
@@ -105,18 +109,26 @@ export default function SectionTaskList({ members }: SectionTaskListProps) {
                   // className={index + 1 > 10 ? "bg-green-100 " : "bg-amber-100"}
                   key={item._id}
                 >
-                  <TableCell>{item.name}</TableCell>
+                  <TableCell>
+                    <Link
+                      href={`/du-an-steam/nhiem-vu/${slugify(item.name, { lower: true, locale: "vi" })}`}
+                    >
+                      {item.name}
+                    </Link>
+                  </TableCell>
                   <TableCell className="text-center">
                     {MapStatus[item.status]}
                   </TableCell>
                   <TableCell>{format(item.createdAt, "dd/MM/yyyy")}</TableCell>
                   {item.implementer ? (
-                    <TableCell>{item.implementer}</TableCell>
+                    <TableCell>{item.implementer.fullname}</TableCell>
                   ) : (
                     <TableCell>Chưa có thông tin</TableCell>
                   )}
                   {item.startTime ? (
-                    <TableCell>{item.startTime}</TableCell>
+                    <TableCell>
+                      {format(item.startTime, "dd/MM/yyyy")}
+                    </TableCell>
                   ) : (
                     <TableCell>Chưa có thông tin</TableCell>
                   )}
@@ -128,27 +140,31 @@ export default function SectionTaskList({ members }: SectionTaskListProps) {
                   <TableCell className="text-center">
                     {format(item.deadline, "dd/MM/yyyy")}
                   </TableCell>
-                  <TableCell className="flex justify-center items-center">
+                  <TableCell className="flex items-center justify-center">
                     {/* <MdAssignmentAdd /> */}
-                    <Select
-                      onValueChange={(value: string) =>
-                        handleOnSubmit(value, item?._id)
-                      }
-                    >
-                      <SelectTrigger className="">
-                        <SelectValue placeholder="Chọn thành viên" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {members?.map((member) => (
-                          <SelectItem
-                            key={member.memberId._id}
-                            value={member.memberId._id}
-                          >
-                            {member.memberId.fullname}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    {item.implementer?._id ? (
+                      <span>Đã phân công </span>
+                    ) : (
+                      <Select
+                        onValueChange={(value: string) =>
+                          handleOnSubmit(value, item._id)
+                        }
+                      >
+                        <SelectTrigger className="">
+                          <SelectValue placeholder="Chọn thành viên" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {members?.map((member) => (
+                            <SelectItem
+                              key={member.memberId._id}
+                              value={member.memberId._id}
+                            >
+                              {member.memberId.fullname}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
                   </TableCell>
                 </TableRow>
               ))
@@ -156,7 +172,7 @@ export default function SectionTaskList({ members }: SectionTaskListProps) {
               <TableRow>
                 <TableCell
                   colSpan={7}
-                  className="text-center font-semibold text-gray-700 h-[200px]"
+                  className="h-[200px] text-center font-semibold text-gray-700"
                 >
                   Không có nhiệm vụ nào.
                 </TableCell>

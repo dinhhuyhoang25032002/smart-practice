@@ -12,7 +12,7 @@ export default function HomePageForStudent() {
           src={bgHomePageForStudent}
           alt="image-bg-homepage-student"
         />
-        <div className="text-white text-2xl lg:text-6xl font-semibold z-20 mt-[-50px]">
+        <div className="text-white text-2xl z-10 lg:text-6xl font-semibold  mt-[-50px]">
           NỀN TẢNG THỰC HÀNH SỐ AIoT
         </div>
       </div>

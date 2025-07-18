@@ -17,8 +17,8 @@ export type ResSteamProjectDetail = {
 };
 export default function Page() {
   const id = useSearchParams().get("q");
-  const { data, isLoading } = useSWRPrivate<ResSteamProjectDetail>(
-    `steam/${id}`
+  const { data, isLoading, mutate } = useSWRPrivate<ResSteamProjectDetail>(
+    `steam/${id}`,
   );
 
   const [nameProject, leader, members, description, startDate, endDate] =
@@ -37,9 +37,9 @@ export default function Page() {
   console.log(members);
 
   return (
-    <div className=" w-screen max-w-full min-h-screen flex p-20 py-10 justify-center bg-gray-100">
-      <div className=" flex flex-col items-center w-full space-y-5">
-        <span className="text-3xl font-bold uppercase animate-gradient-flow [--animation-duration:20s] bg-[linear-gradient(to_right,#24348C_0%,#F07F29_25%,#24348C_50%,#F07F29_75%,#24348C_100%)] bg-clip-text text-transparent  bg-[length:200%_auto]">
+    <div className="flex min-h-screen w-screen max-w-full justify-center bg-gray-100 p-20 py-10">
+      <div className="flex w-full flex-col items-center space-y-5">
+        <span className="animate-gradient-flow bg-[linear-gradient(to_right,#24348C_0%,#F07F29_25%,#24348C_50%,#F07F29_75%,#24348C_100%)] bg-[length:200%_auto] bg-clip-text text-3xl font-bold text-transparent uppercase [--animation-duration:20s]">
           {nameProject}
         </span>
         {data?.data && (
@@ -59,7 +59,7 @@ export default function Page() {
         </div>
 
         <div className="w-full">
-          <SectionSteamMemberList members={members} />
+          <SectionSteamMemberList members={members}  />
         </div>
       </div>
     </div>

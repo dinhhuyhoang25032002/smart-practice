@@ -11,9 +11,6 @@ export class Task extends Document {
   name: string;
 
   @Prop()
-  receiptDate: string;
-
-  @Prop()
   submitTime: string;
 
   @Prop({ required: true })

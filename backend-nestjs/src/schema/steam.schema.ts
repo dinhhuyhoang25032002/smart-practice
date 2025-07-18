@@ -1,5 +1,24 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
+@Schema({ _id: false, timestamps: true }) // _id: false để Mongoose không tự tạo _id cho object con này
+export class MemberItem extends Document {
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true })
+  memberId: string; // hoặc mongoose.Types.ObjectId
+
+  @Prop({ type: Number, required: true })
+  teamNumber: number;
+
+  @Prop({ type: Number, default: 0 })
+  totalTasks: number;
+
+  @Prop({ type: Number, default: 0 })
+  completedTasks: number;
+
+  @Prop({ required: true })
+  role: string;
+}
+
+export const MemberItemSchema = SchemaFactory.createForClass(MemberItem);
 @Schema({ timestamps: true })
 export class Steam extends Document {
   @Prop({ required: true })
@@ -9,12 +28,12 @@ export class Steam extends Document {
   leader: string;
 
   @Prop({
-    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    type: [MemberItemSchema],
     default: [],
   })
-  listMember: Array<string>;
+  listMember: MemberItem[];
 
-  @Prop()  
+  @Prop()
   description: string;
 
   @Prop({ required: true })

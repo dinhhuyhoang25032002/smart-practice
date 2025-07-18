@@ -7,7 +7,7 @@ import { Upload, Monitor, Code, Settings, TestTube } from "lucide-react";
 import ArduinoUploader from "@/components/arduino/ArduinoUploader";
 import SerialMonitor from "@/components/arduino/SerialMonitor";
 import SerialTest from "@/components/arduino/SerialTest";
-
+ 
 export default function ArduinoUploaderPage() {
   return (
     <div className="min-h-screen bg-gray-50">

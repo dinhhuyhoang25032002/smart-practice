@@ -298,5 +298,8 @@ export type SteamTaskInfo = {
   description: string;
   status: STATUS_TASK;
   submitTime?: string;
-  implementer?: string;
+  implementer?: {
+    _id: string;
+    fullname: string;
+  } | null;
 };

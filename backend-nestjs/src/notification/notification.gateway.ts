@@ -90,10 +90,10 @@ export class NotificationsGateway
   }
 
   sendNotificationToProject(projectId: string, notification: any) {
-    this.server.to(projectId).emit('notification', notification);
+    this.server.to(projectId).emit(`notification`, notification);
   }
 
   sendNotificationToUser(userId: string, notification: any) {
-    this.server.to("66a8f90c26f73f84d88c8146").emit('notification', notification);
+    this.server.to(userId).emit(`notification`, notification);
   }
 }

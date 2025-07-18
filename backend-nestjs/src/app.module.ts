@@ -49,6 +49,7 @@ import { JwtSocketStrategy } from './auth/strategy/accessSocket.strategy';
     }),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
+      
       useFactory: async (configService: ConfigService) => ({
         transport: {
           service: 'gmail',

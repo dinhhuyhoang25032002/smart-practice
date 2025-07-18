@@ -13,10 +13,10 @@ export default function NotificationContent({
   setNotifications,
 }: NotificationContentProps) {
   const handleJoinProject = async (data: NotificationData) => {
-    const { projectId, teamNumber, role } = data;
+    const { projectId, teamNumber, role, notificationId } = data;
     const res = await fetchPrivateData(`steam/access-steam-project`, {
       method: "POST",
-      body: JSON.stringify({ projectId, teamNumber, role }),
+      body: JSON.stringify({ projectId, teamNumber, role, notificationId }),
       headers: Headers,
     });
 
@@ -31,8 +31,8 @@ export default function NotificationContent({
       prevNotifications.filter(
         (notification) =>
           notification.projectId !== projectId &&
-          notification.teamNumber !== teamNumber
-      )
+          notification.teamNumber !== teamNumber,
+      ),
     );
     // Có thể thêm logic để chuyển hướng người dùng đến trang dự án hoặc cập nhật giao diện
   };
@@ -41,14 +41,16 @@ export default function NotificationContent({
       {notifications.map((item, index) => (
         <div
           key={index}
-          className="p-2 border-b border-gray-300 flex items-center gap-5"
+          className="flex items-center gap-5 border-b border-gray-300 p-2"
         >
-          <p className="font-semibold">{item.message}</p>
+          <p className="text-base font-normal">{item.message}</p>
           <Button onClick={() => handleJoinProject(item)}>Tham gia</Button>
         </div>
       ))}
     </div>
   ) : (
-    <p className="text-gray-500">Chưa có thông báo nào.</p>
+    <p className="my-auto w-full text-center text-gray-500">
+      Chưa có thông báo nào.
+    </p>
   );
 }

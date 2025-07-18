@@ -1,23 +1,19 @@
 import { Global, Module } from '@nestjs/common';
 import { NotificationController } from './notification.controller';
-
 import { NotificationsGateway } from './notification.gateway';
-import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { NotificationService } from './notification.service';
+import { MongooseModule } from '@nestjs/mongoose';
+import {
+  NOTIFICATION_MODEL,
+  NotificationSchema,
+} from 'src/schema/notification.schema';
 @Global()
 @Module({
   imports: [
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => {
-        return {
-          secret: configService.get('ACCESSTOKEN_SECRET_KEY'),
-        };
-      },
-      inject: [ConfigService],
-    }),
-  ],
+    MongooseModule.forFeature([
+      { name: NOTIFICATION_MODEL, schema: NotificationSchema },
+    ]),
+  ], // Add your notification schema here if needed
   controllers: [NotificationController],
   providers: [NotificationsGateway, NotificationService],
   exports: [NotificationsGateway],
