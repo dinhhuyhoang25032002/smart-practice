@@ -38,13 +38,13 @@ const LinkPricesHeader: LinkHeader[] = [
 
 export default function OptionProduct() {
   return (
-    <div className="option-product text-base sm:w-full xs:h-[600px] sm:h-[600px] overflow-y-auto  xs:w-full rounded shadow-xl px-5 py-5 font-normal text-black flex xs:gap-0 gap-4 flex-col xs:px-2 xs:py-2">
-      <div className="flex gap-4 xs:flex-col xs:gap-2 sm:flex-col ">
-        <div className="courses rounded-sm cursor-pointer pl-2 py-0.5 flex flex-col gap-4 xs:gap-2">
-          <span className=" hover:text-[#1464cc] font-semibold">
+    <div className="option-product xs:h-[600px] xs:w-full xs:gap-0 xs:px-2 xs:py-2 flex flex-col gap-4 overflow-y-auto rounded px-5 py-5 text-base font-normal text-black shadow-xl sm:h-[600px] sm:w-full">
+      <div className="xs:flex-col xs:gap-2 flex gap-4 sm:flex-col">
+        <div className="courses xs:gap-2 flex cursor-pointer flex-col gap-4 rounded-sm py-0.5 pl-2">
+          <span className="font-semibold hover:text-[#1464cc]">
             Giải pháp/Dịch vụ
           </span>
-          <div className=" flex flex-col gap-4 xs:gap-2">
+          <div className="xs:gap-2 flex flex-col gap-4">
             {LinkSolutionHeader.map((item, index) => {
               return (
                 <Link
@@ -53,22 +53,22 @@ export default function OptionProduct() {
                     {
                       locale: "vi",
                       lower: true,
-                    }
+                    },
                   )}`}
                   key={index}
                 >
-                  <span className=" hover:text-[#1464cc]">{item.nameLink}</span>
+                  <span className="hover:text-[#1464cc]">{item.nameLink}</span>
                 </Link>
               );
             })}
           </div>
         </div>
 
-        <div className="courses rounded-sm cursor-pointer px-2 py-0.5 flex flex-col gap-4 xs:gap-2">
-          <span className=" hover:text-[#1464cc] font-semibold">
+        <div className="courses xs:gap-2 flex cursor-pointer flex-col gap-4 rounded-sm px-2 py-0.5">
+          <span className="font-semibold hover:text-[#1464cc]">
             Thiết bị/Kít
           </span>
-          <div className=" flex flex-col gap-4 xs:gap-2">
+          <div className="xs:gap-2 flex flex-col gap-4">
             {LinkDevicesHeader.map((item, index) => {
               return (
                 <Link
@@ -77,22 +77,22 @@ export default function OptionProduct() {
                     {
                       locale: "vi",
                       lower: true,
-                    }
+                    },
                   )}`}
                   key={index}
                 >
-                  <span className=" hover:text-[#1464cc]">{item.nameLink}</span>
+                  <span className="hover:text-[#1464cc]">{item.nameLink}</span>
                 </Link>
               );
             })}
           </div>
         </div>
 
-        <div className="courses cursor-pointer px-2  rounded-sm py-0.5 gap-4 flex flex-col xs:gap-2">
-          <span className=" hover:text-[#1464cc] font-semibold">
+        <div className="courses xs:gap-2 flex cursor-pointer flex-col gap-4 rounded-sm px-2 py-0.5">
+          <span className="font-semibold hover:text-[#1464cc]">
             Khoá học thực hành
           </span>
-          <div className="flex flex-col gap-4 xs:gap-2">
+          <div className="xs:gap-2 flex flex-col gap-4">
             {LinkCourseHeader.map((item, index) => {
               return (
                 <Link
@@ -101,20 +101,20 @@ export default function OptionProduct() {
                     {
                       locale: "vi",
                       lower: true,
-                    }
+                    },
                   )}`}
                   key={index}
                 >
-                  <span className=" hover:text-[#1464cc]">{item.nameLink}</span>
+                  <span className="hover:text-[#1464cc]">{item.nameLink}</span>
                 </Link>
               );
             })}
           </div>
         </div>
 
-        <div className="courses cursor-pointer pl-2 rounded-sm py-0.5 gap-4 xs:gap-2 flex flex-col">
+        <div className="courses xs:gap-2 flex cursor-pointer flex-col gap-4 rounded-sm py-0.5 pl-2">
           <span className="font-semibold hover:text-[#1464cc]">Báo giá</span>
-          <div className="flex flex-col gap-4 xs:gap-2">
+          <div className="xs:gap-2 flex flex-col gap-4">
             {LinkPricesHeader.map((item, index) => {
               return (
                 <Link href={`/products/prices`} key={index}>
@@ -125,12 +125,12 @@ export default function OptionProduct() {
           </div>
         </div>
       </div>
-      <div className="bg-gradient-to-r from-blue-900 from-0% via-cyan-800 via-58% to-sky-800 to-100% flex justify-center rounded-md xs:mt-2">
+      <div className="xs:mt-2 flex justify-center rounded-md bg-gradient-to-r from-blue-900 from-0% via-cyan-800 via-58% to-sky-800 to-100%">
         <Link
           href={"/all-products"}
-          className="w-full flex justify-center hover:bg-[#1513be] py-3 rounded-md hover:transition-colors duration-200 ease-out "
+          className="flex w-full justify-center rounded-md py-3 duration-200 ease-out hover:bg-[#1513be] hover:transition-colors"
         >
-          <div className="courses cursor-pointer rounded-sm text-white text-xl">
+          <div className="courses cursor-pointer rounded-sm text-xl text-white">
             Tất cả sản phẩm
           </div>
         </Link>

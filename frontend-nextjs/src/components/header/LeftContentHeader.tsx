@@ -49,14 +49,14 @@ export default function LeftContentHeader() {
       }
       router.push(link);
     },
-    [_id, router, setOpenSheet]
+    [_id, router, setOpenSheet],
   );
   return (
-    <div className="content-left w-full flex justify-between items-center h-full">
+    <div className="content-left flex h-full w-full items-center justify-between">
       <div className="flex items-center gap-3">
         <div
           onClick={() => setIsOpenMenu(!isOpenMenu)}
-          className={`text-xl font-light lg:hidden rounded-full hover:bg-[#eee] p-2 cursor-pointer active:bg-[#eee] ${
+          className={`cursor-pointer rounded-full p-2 text-xl font-light hover:bg-[#eee] active:bg-[#eee] lg:hidden ${
             isOpenMenu ? "pointer-events-none" : " "
           }`}
         >
@@ -70,22 +70,22 @@ export default function LeftContentHeader() {
 
       {isOpenMenu && (
         <div
-          className="fixed inset-0  lg:hidden"
+          className="fixed inset-0 lg:hidden"
           style={{ background: "rgba(88, 82, 85, 0.28)" }}
           onClick={() => setIsOpenMenu(false)}
         ></div>
       )}
 
       <div
-        className={`fixed inset-0 flex bg-white justify-between lg:hidden flex-col gap-2 w-[68%] z-20 p-5 transition-all duration-200 ease-linear ${
-          isOpenMenu ? "translate-x-0" : " -translate-x-full"
+        className={`fixed inset-0 z-20 flex w-[68%] flex-col justify-between gap-2 bg-white p-5 transition-all duration-200 ease-linear lg:hidden ${
+          isOpenMenu ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div>
           <div className="flex items-center gap-3 pb-5">
             <div
               onClick={() => setIsOpenMenu(!isOpenMenu)}
-              className={`p-2 font-light rounded-full hover:bg-[#eee] active:bg-[#eee] cursor-pointer text-xl `}
+              className={`cursor-pointer rounded-full p-2 text-xl font-light hover:bg-[#eee] active:bg-[#eee]`}
             >
               <CiMenuBurger />
             </div>
@@ -106,9 +106,9 @@ export default function LeftContentHeader() {
             <Link
               href=""
               onClick={(e) => handleRedirect(e, "/khoa-hoc")}
-              className="cursor-pointer hover:bg-[#eee] active:bg-[#eee] rounded"
+              className="cursor-pointer rounded hover:bg-[#eee] active:bg-[#eee]"
             >
-              <span className=" flex items-center  w-full gap-3  p-2 hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
+              <span className="flex w-full items-center gap-3 p-2 hover:text-[#1464cc] focus:text-[#1464cc] active:text-[#5ea0f5]">
                 <LuClipboardPen /> Khóa học của tôi
               </span>
             </Link>
@@ -129,10 +129,10 @@ export default function LeftContentHeader() {
               </span>
             </Link> */}
             <div
-              className="cursor-pointer hover:bg-[#eee] active:bg-[#eee] rounded sm:hidden"
+              className="cursor-pointer rounded hover:bg-[#eee] active:bg-[#eee] sm:hidden"
               onClick={() => setOpenSearch(true)}
             >
-              <span className="flex items-center w-full gap-3 p-2  hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
+              <span className="flex w-full items-center gap-3 p-2 hover:text-[#1464cc] focus:text-[#1464cc] active:text-[#5ea0f5]">
                 <IoIosSearch /> Tìm kiếm
               </span>
             </div>
@@ -141,12 +141,12 @@ export default function LeftContentHeader() {
               onClick={(e) =>
                 handleRedirect(
                   e,
-                  `/danh-sach-bai-thi-cua-sinh-vien?studentId=${user._id}`
+                  `/danh-sach-bai-thi-cua-sinh-vien?studentId=${user._id}`,
                 )
               }
-              className="cursor-pointer hover:bg-[#eee] active:bg-[#eee] rounded"
+              className="cursor-pointer rounded hover:bg-[#eee] active:bg-[#eee]"
             >
-              <span className=" flex items-center w-full gap-3 p-2  hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
+              <span className="flex w-full items-center gap-3 p-2 hover:text-[#1464cc] focus:text-[#1464cc] active:text-[#5ea0f5]">
                 <IoBookmarksOutline /> Xem điểm
               </span>
             </Link>
@@ -155,12 +155,12 @@ export default function LeftContentHeader() {
               onClick={(e) =>
                 handleRedirect(
                   e,
-                  `/danh-sach-bai-thi-cua-sinh-vien?studentId=${user._id}`
+                  `/danh-sach-bai-thi-cua-sinh-vien?studentId=${user._id}`,
                 )
               }
-              className="cursor-pointer hover:bg-[#eee] active:bg-[#eee] rounded"
+              className="cursor-pointer rounded hover:bg-[#eee] active:bg-[#eee]"
             >
-              <span className=" flex items-center w-full gap-3 p-2  hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
+              <span className="flex w-full items-center gap-3 p-2 hover:text-[#1464cc] focus:text-[#1464cc] active:text-[#5ea0f5]">
                 <BsRobot /> Chatbot AI
               </span>
             </Link>
@@ -173,25 +173,25 @@ export default function LeftContentHeader() {
             <span className="font-semibold"> OPENLAB</span> , cấm sao chép dưới
             mọi hình thức.
           </span>
-          <span className="flex flex-col items-center text-center text-sm font-normal sm:justify-center ">
+          <span className="flex flex-col items-center text-center text-sm font-normal sm:justify-center">
             <span className="inline-flex items-center gap-1">
               <LuCopyright />
-              <span className="text-sm sm:text-base font-normal mr-1">
+              <span className="mr-1 text-sm font-normal sm:text-base">
                 2025 Bản quyền thuộc về
               </span>
             </span>
-            <span className="text-sm lg:text-base font-semibold ">OPENLAB</span>
+            <span className="text-sm font-semibold lg:text-base">OPENLAB</span>
           </span>
         </div>
       </div>
 
-      <div className="hidden lg:flex items-center flex-1  justify-around  text-xl">
+      <div className="hidden flex-1 items-center justify-around text-xl lg:flex">
         <Link
           href=""
           className="cursor-pointer"
           onClick={(e) => handleRedirect(e, "/khoa-hoc")}
         >
-          <span className=" font-medium hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
+          <span className="font-medium hover:text-[#1464cc] focus:text-[#1464cc] active:text-[#5ea0f5]">
             Khoá học Steam
           </span>
         </Link>
@@ -200,7 +200,7 @@ export default function LeftContentHeader() {
           className="cursor-pointer"
           onClick={(e) => handleRedirect(e, "/du-an-steam")}
         >
-          <span className="font-medium hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
+          <span className="font-medium hover:text-[#1464cc] focus:text-[#1464cc] active:text-[#5ea0f5]">
             Dự án Steam
           </span>
         </Link>
@@ -209,8 +209,8 @@ export default function LeftContentHeader() {
           className="cursor-pointer"
           onClick={(e) => handleRedirect(e, "/khoa-hoc")}
         >
-          <span className=" font-medium hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
-           Học bổng Steam
+          <span className="font-medium hover:text-[#1464cc] focus:text-[#1464cc] active:text-[#5ea0f5]">
+            Học bổng Steam
           </span>
         </Link>
         <Link
@@ -219,11 +219,11 @@ export default function LeftContentHeader() {
           onClick={(e) =>
             handleRedirect(
               e,
-              `/danh-sach-bai-thi-cua-sinh-vien?studentId=${user._id}`
+              `/danh-sach-bai-thi-cua-sinh-vien?studentId=${user._id}`,
             )
           }
         >
-          <span className="font-medium hover:text-[#1464cc] active:text-[#5ea0f5] focus:text-[#1464cc]">
+          <span className="font-medium hover:text-[#1464cc] focus:text-[#1464cc] active:text-[#5ea0f5]">
             Kết quả
           </span>
         </Link>
@@ -243,22 +243,22 @@ export default function LeftContentHeader() {
       </div>
 
       <div
-        className="text-xl p-2  hover:bg-[#eee] active:bg-[#eee] rounded-full hidden sm:hidden lg:hidden"
+        className="hidden rounded-full p-2 text-xl hover:bg-[#eee] active:bg-[#eee] sm:hidden lg:hidden"
         onClick={() => setOpenSearch(true)}
       >
         <IoIosSearch />
       </div>
       {isOpenSearch && (
-        <div className="absolute inset-0 bg-white flex items-center px-5 justify-between z-20">
+        <div className="absolute inset-0 z-20 flex items-center justify-between bg-white px-5">
           <div className="text-xl" onClick={() => setOpenSearch(false)}>
             <FaArrowLeft />
           </div>
-          <div className="xl:flex items-center justify-center ">
+          <div className="items-center justify-center xl:flex">
             <InputSearchCourse />
           </div>
         </div>
       )}
-      <div className=" sm:flex items-center justify-center hidden lg:flex">
+      <div className="hidden items-center justify-center sm:flex lg:flex">
         <InputSearchCourse />
       </div>
     </div>
