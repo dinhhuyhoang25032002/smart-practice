@@ -10,7 +10,7 @@ import {
 import InviteMemberForm from "./form/InviteMember";
 import { MemberInfor } from "@/types/CustomType";
 import { ROLE_STEAM_PROJECT } from "@/constant/constant";
-
+import Link from "next/link";
 type SectionSteamMemberListProps = {
   members?: Array<MemberInfor>;
 };
@@ -23,12 +23,12 @@ export default function SectionSteamMemberList({
   members,
 }: SectionSteamMemberListProps) {
   return (
-    <div className="bg-white rounded w-full flex flex-col gap-5 justify-center items-center p-10">
-      <div className="flex items-center justify-center w-full flex-col gap-3">
+    <div className="flex w-full flex-col items-center justify-center gap-5 rounded bg-white p-10">
+      <div className="flex w-full flex-col items-center justify-center gap-3">
         <span className="text-xl font-semibold">
           Danh sách thành viên trong dự án
         </span>
-        <div className="w-full flex justify-end">
+        <div className="flex w-full justify-end">
           <InviteMemberForm />
         </div>
       </div>
@@ -53,7 +53,11 @@ export default function SectionSteamMemberList({
             members.map((member) => (
               <TableRow key={member.memberId._id}>
                 <TableCell className="font-medium">
-                  {member.memberId.fullname}
+                  <Link
+                    href={`/du-an-steam/bao-cao-thanh-tich/${member.memberId._id}`}
+                  >
+                    {member.memberId.fullname}
+                  </Link>
                 </TableCell>
                 <TableCell className="text-center">
                   {member.teamNumber}

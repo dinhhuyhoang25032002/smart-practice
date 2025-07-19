@@ -1,4 +1,5 @@
 "use client";
+import FormSendResult from "@/components/course/section/FormSendResult";
 import React, { useRef, useState } from "react";
 
 const task = {
@@ -53,146 +54,158 @@ export default function Page() {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #e0e7ff 0%, #fff 100%)',
-      padding: '40px 0',
-    }}>
-      <div style={{
-        maxWidth: 600,
-        margin: '0 auto',
-        padding: 32,
-        background: '#fff',
-        borderRadius: 18,
-        boxShadow: '0 4px 24px #b6b6e633',
-        position: 'relative',
-      }}>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-white py-10">
+      <div className="relative mx-auto max-w-2xl space-y-10 rounded-2xl bg-white p-8 shadow-lg">
         {/* Tiêu đề và deadline */}
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
-          <span style={{ marginRight: 12, display: 'flex', alignItems: 'center' }}>
+        <div className="mb-2 flex w-full items-center justify-center">
+          <span className="mr-3 flex items-center">
             {/* icon nhiệm vụ */}
-            <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#6366f1"/><path d="M8 12.5l2.5 2.5 5-5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" fill="#6366f1" />
+              <path
+                d="M8 12.5l2.5 2.5 5-5"
+                stroke="#fff"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </span>
-          <h1 style={{ fontSize: 28, fontWeight: 800, color: '#3730a3', margin: 0 }}>{task.title}</h1>
+          <h1 className="m-0 text-center text-3xl font-extrabold text-indigo-800">
+            {task.title}
+          </h1>
         </div>
-        <div style={{ color: '#6366f1', fontWeight: 600, marginBottom: 18, display: 'flex', alignItems: 'center' }}>
-          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" style={{marginRight: 6}}><path d="M12 8v4l3 1" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><circle cx="12" cy="12" r="10" stroke="#6366f1" strokeWidth="2"/></svg>
-          Deadline: <span style={{marginLeft: 4}}>{task.deadline}</span>
+        <div className="mb-4 flex items-center font-semibold text-indigo-600">
+          <svg
+            width="20"
+            height="20"
+            fill="none"
+            viewBox="0 0 24 24"
+            className="mr-1.5"
+          >
+            <path
+              d="M12 8v4l3 1"
+              stroke="#6366f1"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <circle cx="12" cy="12" r="10" stroke="#6366f1" strokeWidth="2" />
+          </svg>
+          Deadline: <span className="ml-1">{task.deadline}</span>
         </div>
         {/* Mô tả nhiệm vụ */}
-        <div style={{ marginBottom: 28, background: '#f1f5f9', borderRadius: 8, padding: 16, color: '#334155', fontSize: 16, whiteSpace: 'pre-line' }}>
-          {task.description}
+        <div className="rounded-lg bg-slate-100 p-4">
+          <span className="font-semibold text-indigo-600">Mô tả nhiệm vụ</span>
+          <p className="text-slate-700">{task.description}</p>
+        </div>
+        <div className="mb-7 rounded-lg bg-slate-100 p-4 text-base whitespace-pre-line text-slate-700">
+          <div className="font-semibold text-indigo-600">Yêu cầu nhiệm vụ</div>
+          <div className="text-slate-700">{task.description}</div>
         </div>
 
         {/* Khu vực nộp bài */}
-        <section style={{ marginBottom: 36 }}>
-          <h2 style={{ fontSize: 20, marginBottom: 12, color: '#3730a3', fontWeight: 700, display: 'flex', alignItems: 'center' }}>
-            <svg width="22" height="22" fill="none" viewBox="0 0 24 24" style={{marginRight: 6}}><path d="M12 16V4m0 0l-4 4m4-4l4 4" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><rect x="4" y="16" width="16" height="4" rx="2" fill="#6366f1" opacity=".1"/></svg>
-            Nộp bài
-          </h2>
-          <label
-            htmlFor="file-upload"
-            style={{
-              display: 'block',
-              border: '2px dashed #a5b4fc',
-              borderRadius: 10,
-              padding: '28px 0',
-              textAlign: 'center',
-              background: '#f8fafc',
-              color: '#6366f1',
-              fontWeight: 500,
-              cursor: 'pointer',
-              marginBottom: 10,
-              transition: 'border 0.2s',
-            }}
-            onMouseOver={e => (e.currentTarget.style.border = '2px solid #6366f1')}
-            onMouseOut={e => (e.currentTarget.style.border = '2px dashed #a5b4fc')}
-          >
-            <svg width="36" height="36" fill="none" viewBox="0 0 24 24" style={{marginBottom: 8}}><path d="M12 16V4m0 0l-4 4m4-4l4 4" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><rect x="4" y="16" width="16" height="4" rx="2" fill="#6366f1" opacity=".1"/></svg>
-            Kéo thả hoặc bấm để chọn file/ảnh
-            <input
-              id="file-upload"
-              type="file"
-              multiple
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              style={{ display: 'none' }}
-            />
-          </label>
-          {selectedFiles.length > 0 && (
-            <ul style={{ paddingLeft: 20, marginBottom: 10 }}>
-              {selectedFiles.map((file, idx) => (
-                <li key={idx} style={{ color: '#334155', fontSize: 15 }}>{file.name}</li>
-              ))}
-            </ul>
-          )}
-          <button
-            onClick={handleUpload}
-            disabled={selectedFiles.length === 0}
-            style={{
-              padding: '10px 32px',
-              background: selectedFiles.length === 0 ? '#a5b4fc' : '#6366f1',
-              color: '#fff',
-              border: 'none',
-              borderRadius: 6,
-              fontWeight: 700,
-              fontSize: 16,
-              cursor: selectedFiles.length === 0 ? 'not-allowed' : 'pointer',
-              boxShadow: selectedFiles.length === 0 ? 'none' : '0 2px 8px #6366f133',
-              transition: 'background 0.2s',
-            }}
-          >
-            <span style={{display:'flex',alignItems:'center',gap:6}}>
-              <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              Gửi bài
-            </span>
-          </button>
-        </section>
+        <FormSendResult />
 
         {/* Lịch sử nộp bài */}
         <section>
-          <h2 style={{ fontSize: 20, marginBottom: 12, color: '#3730a3', fontWeight: 700, display: 'flex', alignItems: 'center' }}>
-            <svg width="22" height="22" fill="none" viewBox="0 0 24 24" style={{marginRight: 6}}><circle cx="12" cy="12" r="10" stroke="#6366f1" strokeWidth="2"/><path d="M8 12.5l2.5 2.5 5-5" stroke="#6366f1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          <h2 className="mb-3 flex items-center text-xl font-bold text-indigo-800">
+            <svg
+              width="22"
+              height="22"
+              fill="none"
+              viewBox="0 0 24 24"
+              className="mr-1.5"
+            >
+              <circle cx="12" cy="12" r="10" stroke="#6366f1" strokeWidth="2" />
+              <path
+                d="M8 12.5l2.5 2.5 5-5"
+                stroke="#6366f1"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
             Lịch sử nộp bài
           </h2>
-          <ul style={{ listStyle: 'none', padding: 0 }}>
+          <ul className="list-none p-0">
             {submissions.map((sub, idx) => (
               <li
                 key={idx}
-                style={{
-                  border: '1.5px solid #e0e7ff',
-                  borderRadius: 10,
-                  marginBottom: 16,
-                  padding: 16,
-                  background: '#f8fafc',
-                  boxShadow: '0 2px 8px #e0e7ff33',
-                  position: 'relative',
-                }}
+                className="relative mb-4 rounded-lg border border-indigo-200 bg-slate-50 p-4 shadow-lg shadow-indigo-200/20"
               >
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: 6 }}>
-                  <span style={{ marginRight: 8 }}>
-                    {sub.status === 'Đã chấm' ? (
-                      <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#22c55e"/><path d="M8 12.5l2.5 2.5 5-5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <div className="mb-1.5 flex items-center justify-between">
+                  <span className="mr-2 flex items-center gap-1">
+                    {sub.status === "Đã chấm" ? (
+                      <svg
+                        width="20"
+                        height="20"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle cx="12" cy="12" r="10" fill="#22c55e" />
+                        <path
+                          d="M8 12.5l2.5 2.5 5-5"
+                          stroke="#fff"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
                     ) : (
-                      <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#fbbf24"/><path d="M12 8v4l3 1" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      <svg
+                        width="20"
+                        height="20"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle cx="12" cy="12" r="10" fill="#fbbf24" />
+                        <path
+                          d="M12 8v4l3 1"
+                          stroke="#fff"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
                     )}
+                    <b
+                      className={
+                        sub.status === "Đã chấm"
+                          ? "text-green-600"
+                          : "text-amber-500"
+                      }
+                    >
+                      {sub.status}
+                    </b>
                   </span>
-                  <b style={{ color: sub.status === 'Đã chấm' ? '#22c55e' : '#f59e42' }}>{sub.status}</b>
+
                   {sub.score !== null && (
-                    <span style={{ marginLeft: 10, color: '#6366f1', fontWeight: 600 }}>
-                      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" style={{marginRight:2,verticalAlign:'middle'}}><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="#facc15"/></svg>
+                    <span className="ml-2.5 flex items-center gap-1 font-semibold text-indigo-600">
+                      <svg
+                        width="18"
+                        height="18"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        className="mr-0.5 align-middle"
+                      >
+                        <path
+                          d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"
+                          fill="#facc15"
+                        />
+                      </svg>
                       Điểm: {sub.score}
                     </span>
                   )}
                 </div>
-                <div style={{ color: '#334155', fontSize: 15, marginBottom: 4 }}>
+                <div className="mb-1 text-sm text-slate-700">
                   <b>Thời gian:</b> {sub.time}
                 </div>
-                <div style={{ color: '#334155', fontSize: 15, marginBottom: 4 }}>
-                  <b>File đã nộp:</b> {sub.files.join(', ')}
+                <div className="mb-1 text-sm text-slate-700">
+                  <b>File đã nộp:</b> {sub.files.join(", ")}
                 </div>
                 {sub.comment && (
-                  <div style={{ marginTop: 8, color: '#6366f1', background: '#eef2ff', borderRadius: 6, padding: '8px 12px', fontStyle: 'italic' }}>
+                  <div className="mt-2 rounded-md bg-indigo-50 p-2 text-indigo-600 italic">
                     <b>Nhận xét:</b> {sub.comment}
                   </div>
                 )}
