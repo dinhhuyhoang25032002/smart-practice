@@ -24,13 +24,14 @@ import {
 } from "@/components/ui/command";
 import { useRouter } from "next/navigation";
 import { useUserContext } from "@/store/context/AuthContext";
-import { toastNotiSuccess } from "@/components/custom/ToastNotification";
+import { toast } from "sonner";
+
 export default function TooltipAvatar() {
   const [isOpenProfile, setOpenProfile] = useState(false);
   const router = useRouter();
   const { setUser } = useUserContext();
   const handleLogoutPage = async (
-    e: MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>
+    e: MouseEvent<HTMLAnchorElement, globalThis.MouseEvent>,
   ) => {
     e.preventDefault();
     await handleLogout();
@@ -43,12 +44,13 @@ export default function TooltipAvatar() {
       dateOfBirth: "",
       accessToken: "",
       courses: [],
+      projects: [],
     };
     localStorage.removeItem("isAuth");
     localStorage.removeItem("s");
     setUser(resetUser);
     router.push(`/`);
-    toastNotiSuccess("Bạn đã đăng xuất khỏi hệ thống!");
+    toast.success("Bạn đã đăng xuất khỏi hệ thống!");
   };
   return (
     <TooltipProvider delayDuration={100}>
@@ -58,11 +60,11 @@ export default function TooltipAvatar() {
           className=""
           onClick={() => setOpenProfile(!isOpenProfile)}
         >
-          <div className="flex justify-center items-center gap-2 cursor-pointer ">
+          <div className="flex cursor-pointer items-center justify-center gap-2">
             <RxAvatar className="cursor-pointer text-2xl" />
           </div>
         </TooltipTrigger>
-        <TooltipContent className="px-0 py-0 bg-white ">
+        <TooltipContent className="bg-white px-0 py-0">
           <Command>
             <CommandInput placeholder="Type a command or search..." />
             <CommandList>
@@ -70,7 +72,7 @@ export default function TooltipAvatar() {
               <CommandSeparator />
               <CommandGroup heading="Settings">
                 <CommandItem className="flex items-center gap-2">
-                  <FaAddressCard className="cursor-pointer " />
+                  <FaAddressCard className="cursor-pointer" />
                   Thông tin cá nhân
                 </CommandItem>
 

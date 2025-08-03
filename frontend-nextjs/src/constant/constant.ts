@@ -58,20 +58,12 @@ export enum Themes {
   LIGHT = "light",
 }
 
-export const ModeUpload = [
-  {
-    value: "COURSE",
-    name: "Khóa học",
-  },
-  {
-    value: "LESSON",
-    name: "Bài học",
-  },
-  {
-    value: "DEVICE",
-    name: "Thiết bị",
-  },
-];
+export enum UpdateMode {
+  COURSE = "COURSE",
+  LESSON = "LESSON",
+  TASK = "TASK",
+  RESULT = "RESULT",
+}
 
 export enum ROLE_STEAM_PROJECT {
   LEADER = "LEADER",
@@ -80,8 +72,20 @@ export enum ROLE_STEAM_PROJECT {
 }
 
 export enum STATUS_TASK {
+  TO_START = "TO_START",
   TO_DO = "TO_DO",
   IN_PROGRESS = "IN_PROGRESS",
   COMPLETED = "COMPLETED",
   CANCELLED = "CANCELLED",
+}
+
+export const StatusComment = {
+  GOOD: "GOOD",
+  AVERAGE: "AVERAGE",
+  BAD: "BAD",
+};
+
+export enum TYPE_NOTIFICATIOIN {
+  IMPORTANT = "IMPORTANT",
+  NORMAL = "NORMAL",
 }

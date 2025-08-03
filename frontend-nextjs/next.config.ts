@@ -15,18 +15,18 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  async rewrites() {
-    return [
-      {
-        source: "/api/arduino/:path*",
-        destination: "http://localhost:3001/v1/api/arduino/:path*",
-      },
-      {
-        source: "/v1/api/arduino/:path*",
-        destination: "http://localhost:3001/v1/api/arduino/:path*",
-      },
-    ];
-  },
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: "/api/arduino/:path*",
+  //       destination: "http://localhost:3001/v1/api/arduino/:path*",
+  //     },
+  //     {
+  //       source: "/v1/api/arduino/:path*",
+  //       destination: "http://localhost:3001/v1/api/arduino/:path*",
+  //     },
+  //   ];
+  // },
 };
 
 export default nextConfig;

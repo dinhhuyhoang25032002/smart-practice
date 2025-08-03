@@ -24,11 +24,9 @@ import { useSearchParams } from "next/navigation";
 import { decodeUrl } from "@/utils/encryption-url";
 // import { useAuthStore } from "@/store/auth/AuthStore";
 import { useState } from "react";
-import {
-  toastNotiFail,
-  toastNotiSuccess,
-} from "@/components/custom/ToastNotification";
+
 import { useUserContext } from "@/store/context/AuthContext";
+import { toast } from "sonner";
 
 export default function LoginForm() {
   // const { setUser, setIsAuth } = useAuthStore();
@@ -49,16 +47,20 @@ export default function LoginForm() {
     const queryUrl = query?.get("back_to");
     console.log(res);
     if (res && res.status === 403) {
-      toastNotiFail(res.message, "Hãy nhập đúng mật khẩu");
+      toast.error(res.message, {
+        description: "Hãy nhập đúng tên tài khoản",
+      });
       return;
     }
     if (res && res.status === 400) {
-      toastNotiFail(res.message, "Hãy nhập đúng tên tài khoản");
+      toast.error(res.message, {
+        description: "Hãy nhập đúng mật khẩu",
+      });
       return;
     }
 
     const validateJwt: { sub: string; role: string } = jwtDecode(
-      res.accessToken
+      res.accessToken,
     );
     const user = {
       _id: validateJwt.sub,
@@ -74,7 +76,9 @@ export default function LoginForm() {
     } else {
       form.reset();
       setOpenSheet(false);
-      toastNotiSuccess("Đăng nhập thành công!");
+      toast.success("Đăng nhập thành công!", {
+        description: "Chào mừng bạn đến với SmartLAB",
+      });
     }
   }
   const handleLoginWithGoogle = async () => {
@@ -83,13 +87,13 @@ export default function LoginForm() {
 
   return (
     <Form {...form}>
-      <section className="space-y-4 w-full bg-white h-fit px-5 py-4 rounded-md">
+      <section className="h-fit w-full space-y-4 rounded-md bg-white px-5 py-4">
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-4 h-fit py-4 "
+          className="h-fit space-y-4 py-4"
         >
           <div className="flex flex-col text-center">
-            <span className=" text-xl font-semibold">Đăng nhập</span>
+            <span className="text-xl font-semibold">Đăng nhập</span>
             <span className="">Hoàn thiện thông tin để tiếp tục</span>
           </div>
           <FormField
@@ -121,12 +125,12 @@ export default function LoginForm() {
                     />
                     {isShowPassword === true ? (
                       <AiOutlineEye
-                        className=" absolute top-1/2 right-2  transform  -translate-y-1/2 cursor-pointer"
+                        className="absolute top-1/2 right-2 -translate-y-1/2 transform cursor-pointer"
                         onClick={() => setShowPassword(!isShowPassword)}
                       />
                     ) : (
                       <AiOutlineEyeInvisible
-                        className="absolute top-1/2 right-2  transform  -translate-y-1/2 cursor-pointer"
+                        className="absolute top-1/2 right-2 -translate-y-1/2 transform cursor-pointer"
                         onClick={() => setShowPassword(!isShowPassword)}
                       />
                     )}
@@ -136,34 +140,32 @@ export default function LoginForm() {
               </FormItem>
             )}
           />
-          <div className=" flex justify-end items-center  w-full">
-            <span className="text-xs font-medium text-end  ">
-              Quên mật khẩu
-            </span>
+          <div className="flex w-full items-center justify-end">
+            <span className="text-end text-xs font-medium">Quên mật khẩu</span>
           </div>
           <Button
             type="submit"
-            className="bg-blue-700 w-full active:opacity-60"
+            className="w-full bg-blue-700 active:opacity-60"
           >
             Đăng nhập
           </Button>
         </form>
         <aside className="space-y-4">
-          <div className=" text-center  w-full">
+          <div className="w-full text-center">
             <span className="">Đăng nhập bằng</span>
-            <div className="flex text-3xl xl:px-12 pt-4 justify-around">
-              <FaFacebook className="text-[#1877f2] text-4xl cursor-pointer" />
+            <div className="flex justify-around pt-4 text-3xl xl:px-12">
+              <FaFacebook className="cursor-pointer text-4xl text-[#1877f2]" />
 
               <FcGoogle
-                className="text-4xl cursor-pointer"
+                className="cursor-pointer text-4xl"
                 onClick={handleLoginWithGoogle}
               />
-              <FaGithub className="text-4xl cursor-pointer" />
+              <FaGithub className="cursor-pointer text-4xl" />
             </div>
           </div>
-          <div className="text-sm font-medium w-full text-center">
+          <div className="w-full text-center text-sm font-medium">
             <span>Bạn chưa có tài khoản?</span>
-            <span className="font-semibold ">Đăng kí ngay</span>
+            <span className="font-semibold">Đăng kí ngay</span>
           </div>
         </aside>
       </section>

@@ -1,8 +1,5 @@
 "use client";
-import {
-  toastNotiFail,
-  toastNotiSuccess,
-} from "@/components/custom/ToastNotification";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -21,6 +18,7 @@ import { useForm } from "react-hook-form";
 import { Headers } from "@/constant/constant";
 import { CourseInfor } from "@/types/CustomType";
 import { ArrowRightIcon } from "lucide-react";
+import { toast } from "sonner";
 
 type ActiveCourseProps = {
   setOpen: Dispatch<SetStateAction<boolean>>;
@@ -49,11 +47,11 @@ export default function ActiveCourse({
       });
 
       if (res && res.status === 200) {
-        toastNotiFail(res.message);
+        toast.error(res.message);
         return;
       }
       if (res && res.status === 201) {
-        toastNotiSuccess(res.message);
+        toast.success(res.message);
         setOpen(false);
         const data = await fetchPrivateData(`course?userId=${_id}`);
         setCourseActive(data);
@@ -61,7 +59,7 @@ export default function ActiveCourse({
       }
     } catch (err) {
       console.log(err);
-      toastNotiFail("Có lỗi xảy ra khi kích hoạt khóa học!");
+      toast.error("Có lỗi xảy ra khi kích hoạt khóa học!");
     }
   };
 

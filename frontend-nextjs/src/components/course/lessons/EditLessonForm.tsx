@@ -479,7 +479,9 @@ export default function EditLessonFormContent({
               </div>
             </form>
           </Form>
-          <UploadFile />
+          <UploadFile endpoint={""} extraFields={{
+            lessonId: lessonId,
+          }} />
         </div>
       ) : (
         <div className=" text-lg font-medium h-[200px] flex items-center justify-center">

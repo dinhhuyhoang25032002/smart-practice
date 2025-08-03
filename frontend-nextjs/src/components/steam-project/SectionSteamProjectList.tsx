@@ -19,53 +19,53 @@ export default function SectionSteamProjectList({
   data,
 }: SectionSteamProjectListProps) {
   return (
-    <div className="w-full bg-red-50 px-10 rounded ">
+    <div className="w-full rounded bg-red-50 px-10">
       <Table className="table-auto">
-        <TableCaption className="caption-top text-xl font-semibold mb-4 text-black">
-          Những dự án đã khởi tạo.
+        <TableCaption className="mb-4 caption-top text-xl font-semibold text-black">
+          Những dự án đã tham gia.
         </TableCaption>
         <TableHeader>
           <TableRow className="text-lg font-semibold">
             <TableHead className="">Tên dự án</TableHead>
-            <TableHead>Trạng thái</TableHead>
-            <TableHead>Ngày khởi tạo</TableHead>
-            <TableHead>Ngày kết thúc</TableHead>
+            <TableHead className="text-center">Người tạo</TableHead>
+            <TableHead className="text-center">Ngày khởi tạo</TableHead>
+            <TableHead className="text-center">Ngày kết thúc</TableHead>
             <TableHead className="text-center">Số thành viên</TableHead>
-            <TableHead className="text-center">Tiến độ</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data?.map((item) => (
-            <TableRow key={item._id}>
-              <TableCell className="font-medium">
-                <Link href={`/du-an-steam/du-an-1?q=${item._id}`}>
-                  {item.name}
-                </Link>
-              </TableCell>
-              <TableCell>Chưa hoàn thành</TableCell>
-              <TableCell className="">
-                {format(new Date(item.startDate), "dd/MM/yyyy")}
-              </TableCell>
-              <TableCell>
-                {format(new Date(item.endDate), "dd/MM/yyyy")}
-              </TableCell>
-              <TableCell className="text-center">
-                {item.listMember.length}
-              </TableCell>
-              <TableCell className=" flex flex-col justify-center items-center">
-                <span className="inline-block ">
-                  {14} / {24} bài đã nộp.
-                </span>
-                <div className="flex items-center gap-2 w-full justify-center">
-                  <Progress
-                    className=" w-[60%] h-2 rounded-full  "
-                    value={Math.round((14 / 24) * 100)}
-                  />
-                  <span> {Math.round((14 / 24) * 100)}%</span>
-                </div>
+          {data?.length !== 0 ? (
+            data?.map((item) => (
+              <TableRow key={item._id}>
+                <TableCell className="font-medium">
+                  <Link href={`/du-an-steam/du-an-1?q=${item._id}`}>
+                    {item.name}
+                  </Link>
+                </TableCell>
+                <TableCell className="text-center">
+                  {item.leader.fullname}
+                </TableCell>
+                <TableCell className="text-center">
+                  {format(new Date(item.startDate), "dd/MM/yyyy")}
+                </TableCell>
+                <TableCell className="text-center">
+                  {format(new Date(item.endDate), "dd/MM/yyyy")}
+                </TableCell>
+                <TableCell className="text-center">
+                  {item.listMember.length}
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell
+                colSpan={5}
+                className="h-30 text-center text-base text-gray-900"
+              >
+                Không có dự án nào.
               </TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
     </div>

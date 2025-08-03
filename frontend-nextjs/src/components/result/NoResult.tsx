@@ -1,7 +1,9 @@
-import React from 'react'
+import React from "react";
 
 export default function NoResult() {
   return (
-    <div className='w-full h-[200px] bg-green-500 flex justify-center items-center uppercase rounded-sm text-white text-xl text-center px-5'>Bài làm hiện tại của bạn chưa được giảng viên đánh giá</div>
-  )
+    <div className="flex h-[180px] w-full items-center justify-center rounded-sm px-5 text-center text-xl uppercase">
+      Bài làm hiện tại của bạn chưa được giảng viên đánh giá.
+    </div>
+  );
 }

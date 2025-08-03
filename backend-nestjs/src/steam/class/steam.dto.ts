@@ -1,4 +1,4 @@
-import { PartialType } from '@nestjs/swagger';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsDate,
@@ -76,4 +76,26 @@ export class PartialInviteSteamMemberDto extends PartialType(
   @IsMongoId({ message: 'projectId must be a valid MongoDB ObjectId' })
   @IsNotEmpty()
   notificationId: string;
+}
+
+export class SubmitTaskDto {
+  @IsMongoId({ message: '_id must be a valid MongoDB ObjectId' })
+  @IsNotEmpty()
+  _id: string;
+
+  @IsDate()
+  @IsNotEmpty()
+  @Type(() => Date)
+  submitTime: Date;
+
+  @IsString()
+  @IsNotEmpty()
+  name: string;
+
+  @IsString()
+  @IsNotEmpty()
+  fileName: string;
+
+  @ApiProperty({ type: 'string', format: 'binary' })
+  file: any; //file
 }

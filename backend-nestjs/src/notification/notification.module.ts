@@ -7,11 +7,16 @@ import {
   NOTIFICATION_MODEL,
   NotificationSchema,
 } from 'src/schema/notification.schema';
+import { TASK_MODEL, TaskSchema } from 'src/schema/task.schema';
 @Global()
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: NOTIFICATION_MODEL, schema: NotificationSchema },
+      {
+        name: TASK_MODEL,
+        schema: TaskSchema,
+      },
     ]),
   ], // Add your notification schema here if needed
   controllers: [NotificationController],

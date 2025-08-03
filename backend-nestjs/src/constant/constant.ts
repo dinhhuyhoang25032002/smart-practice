@@ -41,11 +41,24 @@ export const staticFolders = [
 export enum UpdateMode {
   COURSE = 'COURSE',
   LESSON = 'LESSON',
+  TASK = 'TASK',
+  RESULT = 'RESULT',
 }
 
 export enum STATUS_TASK {
+  TO_START = 'TO_START',
   TO_DO = 'TO_DO',
   IN_PROGRESS = 'IN_PROGRESS',
   COMPLETED = 'COMPLETED',
   CANCELLED = 'CANCELLED',
+}
+export const StatusComment = {
+  GOOD: 'GOOD',
+  AVERAGE: 'AVERAGE',
+  BAD: 'BAD',
+};
+
+export enum TYPE_NOTIFICATIOIN {
+  IMPORTANT = 'IMPORTANT',
+  NORMAL = 'NORMAL',
 }

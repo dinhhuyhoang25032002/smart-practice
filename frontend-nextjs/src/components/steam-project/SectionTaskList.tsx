@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Table,
   TableBody,
@@ -25,34 +25,60 @@ import { useSWRPrivate } from "@/hooks/useSWRCustom";
 import { useSearchParams } from "next/navigation";
 import { MemberInfor, SteamTaskInfo } from "@/types/CustomType";
 import { format } from "date-fns";
-import { MdAssignmentAdd } from "react-icons/md";
 import { Headers, STATUS_TASK } from "@/constant/constant";
 import { fetchPrivateData } from "@/utils/fetcher/fetch-api";
 import { KeyedMutator } from "swr";
-import { ResSteamProjectDetail } from "@/app/(container)/du-an-steam/[slug]/page";
+import {
+  ResSteamProjectDetail,
+  ResSteamTask,
+} from "@/app/(container)/du-an-steam/[slug]/page";
 import slugify from "slugify";
-export type ResSteamTask = {
-  status: number;
-  message: string;
-  data: Array<SteamTaskInfo>;
-};
+import { useUserContext } from "@/store/context/AuthContext";
+import { toast } from "sonner";
+
 type SectionTaskListProps = {
   members?: Array<MemberInfor>;
+  leader?: {
+    _id: string;
+    fullname: string;
+  };
+  mutateTasks: KeyedMutator<ResSteamTask>;
+  tasksData: ResSteamTask | undefined;
 };
 const MapStatus = {
-  [STATUS_TASK.TO_DO]: "Chưa bắt đầu",
-  [STATUS_TASK.IN_PROGRESS]: "Đang thực hiện",
+  [STATUS_TASK.TO_START]: "Chưa bắt đầu",
+  [STATUS_TASK.TO_DO]: "Đang thực hiện",
+  [STATUS_TASK.IN_PROGRESS]: "Chờ đánh giá",
   [STATUS_TASK.COMPLETED]: "Đã hoàn thành",
   [STATUS_TASK.CANCELLED]: "Đã hủy",
 };
-export default function SectionTaskList({ members }: SectionTaskListProps) {
+export default function SectionTaskList({
+  members,
+  leader,
+  
+  mutateTasks,
+  tasksData,
+}: SectionTaskListProps) {
+  const [sort, setSort] = useState<boolean>(false);
+  const { user } = useUserContext();
   const projectId = useSearchParams().get("q");
-  const { data, isLoading, mutate } = useSWRPrivate<ResSteamTask>(
-    `steam/get-steam-tasks?projectId=${projectId}`,
-  );
-  if (isLoading) return <div>Loading...</div>;
+  const [taskList, setTaskList] = useState<SteamTaskInfo[]>([]);
+
+  useEffect(() => {
+    if (tasksData?.data) {
+      const tasks = sort ? [...tasksData.data].reverse() : tasksData.data;
+      setTaskList(tasks);
+    }
+  }, [tasksData, sort]);
+  const handleGetTaskListSorted = () => {
+    setSort(!sort);
+    if (tasksData && tasksData?.data.length > 0) {
+      setTaskList(sort ? [...tasksData.data].reverse() : tasksData.data);
+    }
+  };
+
   const handleOnSubmit = async (value: string, taskId?: string) => {
-    if (!value) return;
+    if (!value || value === "noMember") return;
     try {
       const response = await fetchPrivateData(`steam/assign-steam-task`, {
         method: "POST",
@@ -65,14 +91,17 @@ export default function SectionTaskList({ members }: SectionTaskListProps) {
       });
 
       if (response.status === 200) {
-        mutate();
+        mutateTasks();
+        // mutateListUser();
+        toast.success("Đã phân công nhiệm vụ thành công.");
       } else {
-        console.error(response.message);
+        toast.error("Đã xảy ra lỗi khi phân công nhiệm vụ.");
       }
     } catch (error) {
       console.error("Error assigning task:", error);
     }
   };
+
   return (
     <div className="flex w-full flex-col items-center justify-center gap-5 rounded bg-white p-10">
       <span className="text-xl font-semibold">Danh sách nhiệm vụ</span>
@@ -80,10 +109,13 @@ export default function SectionTaskList({ members }: SectionTaskListProps) {
         <Button className="rounded border border-gray-500 bg-white text-black hover:bg-[#041ec4] hover:text-white">
           <CiFilter /> Bộ lọc
         </Button>
-        <Button className="rounded border border-gray-500 bg-white text-black hover:bg-[#041ec4] hover:text-white">
+        <Button
+          className="rounded border border-gray-500 bg-white text-black hover:bg-[#041ec4] hover:text-white"
+          onClick={handleGetTaskListSorted}
+        >
           <IoCode className="rotate-z-90" /> Xem
         </Button>
-        <CreateSteamTask mutate={mutate} />
+        {user._id === leader?._id && <CreateSteamTask mutate={mutateTasks} />}
       </div>
       <div className="w-full">
         <Table className="table-auto">
@@ -96,28 +128,33 @@ export default function SectionTaskList({ members }: SectionTaskListProps) {
               <TableHead className="text-center">Trạng thái</TableHead>
               <TableHead>Ngày tạo mới</TableHead>
               <TableHead>Người đảm nhiệm</TableHead>
-              <TableHead>Thời gian phân công</TableHead>
-              <TableHead>Thời gian hoàn thành</TableHead>
+              <TableHead className="text-center">Thời gian phân công</TableHead>
+              <TableHead className="text-center">
+                Thời gian hoàn thành
+              </TableHead>
               <TableHead className="text-center">Thời hạn</TableHead>
-              <TableHead className="text-center">Phân công</TableHead>
+              {user._id === leader?._id && (
+                <TableHead className="text-center">Phân công</TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data?.data.length !== 0 ? (
-              data?.data.map((item) => (
-                <TableRow
-                  // className={index + 1 > 10 ? "bg-green-100 " : "bg-amber-100"}
-                  key={item._id}
-                >
+            {taskList.length !== 0 ? (
+              taskList.map((item) => (
+                <TableRow key={item._id}>
                   <TableCell>
                     <Link
-                      href={`/du-an-steam/nhiem-vu/${slugify(item.name, { lower: true, locale: "vi" })}`}
+                      href={`/du-an-steam/nhiem-vu/${slugify(item.name, { lower: true, locale: "vi" })}?q=${item._id}`}
                     >
                       {item.name}
                     </Link>
                   </TableCell>
-                  <TableCell className="text-center">
-                    {MapStatus[item.status]}
+                  <TableCell className="flex items-center justify-center">
+                    <span
+                      className={`flex h-9 w-fit items-center justify-center rounded-full px-3 text-amber-900 ${item.status !== STATUS_TASK.COMPLETED ? "bg-amber-200" : "bg-green-200"}`}
+                    >
+                      {MapStatus[item.status]}
+                    </span>
                   </TableCell>
                   <TableCell>{format(item.createdAt, "dd/MM/yyyy")}</TableCell>
                   {item.implementer ? (
@@ -126,55 +163,70 @@ export default function SectionTaskList({ members }: SectionTaskListProps) {
                     <TableCell>Chưa có thông tin</TableCell>
                   )}
                   {item.startTime ? (
-                    <TableCell>
+                    <TableCell className="text-center">
                       {format(item.startTime, "dd/MM/yyyy")}
                     </TableCell>
                   ) : (
-                    <TableCell>Chưa có thông tin</TableCell>
+                    <TableCell className="text-center">
+                      Chưa có thông tin
+                    </TableCell>
                   )}
-                  {item.submitTime ? (
-                    <TableCell>{item.submitTime}</TableCell>
+                  {item.completeTime ? (
+                    <TableCell className="text-center">
+                      {format(item.completeTime, "dd/MM/yyyy")}
+                    </TableCell>
                   ) : (
-                    <TableCell>Chưa có thông tin</TableCell>
+                    <TableCell className="text-center">
+                      Chưa có thông tin
+                    </TableCell>
                   )}
                   <TableCell className="text-center">
                     {format(item.deadline, "dd/MM/yyyy")}
                   </TableCell>
-                  <TableCell className="flex items-center justify-center">
-                    {/* <MdAssignmentAdd /> */}
-                    {item.implementer?._id ? (
-                      <span>Đã phân công </span>
-                    ) : (
-                      <Select
-                        onValueChange={(value: string) =>
-                          handleOnSubmit(value, item._id)
-                        }
-                      >
-                        <SelectTrigger className="">
-                          <SelectValue placeholder="Chọn thành viên" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {members?.map((member) => (
-                            <SelectItem
-                              key={member.memberId._id}
-                              value={member.memberId._id}
-                            >
-                              {member.memberId.fullname}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-                  </TableCell>
+                  {user._id === leader?._id && (
+                    <TableCell className="flex items-center justify-center">
+                      {/* <MdAssignmentAdd /> */}
+                      {item.implementer?._id &&
+                      item.status !== STATUS_TASK.TO_START ? (
+                        <span>Đã phân công </span>
+                      ) : (
+                        <Select
+                          onValueChange={(value: string) =>
+                            handleOnSubmit(value, item._id)
+                          }
+                        >
+                          <SelectTrigger className="">
+                            <SelectValue placeholder="Chọn thành viên" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {members && members?.length > 0 ? (
+                              members?.map((member) => (
+                                <SelectItem
+                                  key={member.memberId._id}
+                                  value={member.memberId._id}
+                                >
+                                  {member.memberId.fullname}
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <SelectItem value={"noMember"}>
+                                Không có thành viên.
+                              </SelectItem>
+                            )}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    </TableCell>
+                  )}
                 </TableRow>
               ))
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={7}
+                  colSpan={8}
                   className="h-[200px] text-center font-semibold text-gray-700"
                 >
-                  Không có nhiệm vụ nào.
+                  Không có nhiệm vụ nào được tạo.
                 </TableCell>
               </TableRow>
             )}

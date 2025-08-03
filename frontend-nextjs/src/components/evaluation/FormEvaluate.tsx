@@ -15,8 +15,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useUserContext } from "@/store/context/AuthContext";
 import { fetchPrivateData } from "@/utils/fetcher/fetch-api";
-import { toastNotiSuccess } from "@/components/custom/ToastNotification";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
+import { toast } from "sonner";
 
 type FormEvaluateProps = {
   nameStudent: string | undefined;
@@ -53,25 +53,19 @@ export default function FormEvaluate({
       }),
     });
     if (res.status === 201 || res.status === 200) {
-      toastNotiSuccess("Đã gửi đánh giá thành công");
+      toast.success("Đã gửi đánh giá thành công");
       form.reset();
     } else {
-      toastNotiSuccess(
-        "Gửi đánh giá thất bại",
-        "Xem lại thông tin đã nhập",
-        "bottom-right"
-      );
+      toast.error("Gửi đánh giá thất bại", {
+        description: "Xem lại thông tin đã nhập",
+      });
     }
   }
   return (
-    <div
-      className={`w-full p-5 rounded-md shadow-2xl ${
-        isEvaluated ? "border-[#1fc930] border" : ""
-      } `}
-    >
+    <div className={`w-full`}>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-          <span className="block  text-center uppercase font-semibold text-xl">
+          <span className="block text-center text-xl font-semibold uppercase">
             Phiếu đánh giá sinh viên
           </span>
           <div>
@@ -111,12 +105,12 @@ export default function FormEvaluate({
           />
 
           <div
-            className={`w-full flex  items-center ${
+            className={`flex w-full items-center ${
               isEvaluated ? "justify-between" : "justify-end"
             }`}
           >
             {isEvaluated && (
-              <span className="flex gap-2 items-center">
+              <span className="flex items-center gap-2">
                 Đã đánh giá{" "}
                 <IoMdCheckmarkCircleOutline className="text-[#1d9929]" />
               </span>

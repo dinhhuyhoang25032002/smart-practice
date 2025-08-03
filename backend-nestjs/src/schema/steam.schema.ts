@@ -8,12 +8,6 @@ export class MemberItem extends Document {
   @Prop({ type: Number, required: true })
   teamNumber: number;
 
-  @Prop({ type: Number, default: 0 })
-  totalTasks: number;
-
-  @Prop({ type: Number, default: 0 })
-  completedTasks: number;
-
   @Prop({ required: true })
   role: string;
 }

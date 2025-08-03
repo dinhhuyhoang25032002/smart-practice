@@ -27,9 +27,11 @@ import { NotificationModule } from './notification/notification.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { createKeyv } from '@keyv/redis';
 import { JwtSocketStrategy } from './auth/strategy/accessSocket.strategy';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     CacheModule.registerAsync({
       isGlobal: true,
       useFactory: async () => {
@@ -49,7 +51,7 @@ import { JwtSocketStrategy } from './auth/strategy/accessSocket.strategy';
     }),
     MailerModule.forRootAsync({
       imports: [ConfigModule],
-      
+
       useFactory: async (configService: ConfigService) => ({
         transport: {
           service: 'gmail',

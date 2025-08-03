@@ -1,7 +1,7 @@
 import { ApiProperty, PartialType } from "@nestjs/swagger";
 import { IsNotEmpty, IsString } from "class-validator";
 
-export class UploadsDto {
+export class ImageUploadsDto {
 
     @IsString()
     @IsNotEmpty()
@@ -16,4 +16,4 @@ export class UploadsDto {
     @ApiProperty({ type: 'string', format: 'binary' })
     image: any;//file
 }
-export class PartialTypeUploads extends PartialType(UploadsDto) { } 
+export class PartialTypeUploads extends PartialType(ImageUploadsDto) { } 

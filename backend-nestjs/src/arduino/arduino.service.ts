@@ -11,7 +11,7 @@ import * as fsSync from 'fs';
 import * as path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import { CompileCodeDto } from './class/CompileCodeDto.dto';
-import { SerialPort } from 'serialport';
+// import { SerialPort } from 'serialport';
 
 @Injectable()
 export class ArduinoService {
@@ -46,7 +46,7 @@ export class ArduinoService {
   private readonly BUILDS_DIR = path.join(process.cwd(), 'builds');
   
   // Serial Monitor connections
-  private serialConnections: Map<string, SerialPort> = new Map();
+  // private serialConnections: Map<string, SerialPort> = new Map();
   private serialData: Map<string, string[]> = new Map();
   
   constructor() {

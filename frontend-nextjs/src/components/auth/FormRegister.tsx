@@ -16,10 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Dispatch, SetStateAction, useState } from "react";
-import {
-  toastNotiFail,
-  toastNotiSuccess,
-} from "@/components/custom/ToastNotification";
+import { toast } from "sonner";
 
 type RegisterFormProps = {
   setTab: Dispatch<SetStateAction<string>>;
@@ -36,22 +33,22 @@ export default function RegisterForm({ setTab }: RegisterFormProps) {
     },
   });
   async function onSubmit(values: RegisterBodyType) {
-    
     const res = await handleSignUp(
       values.fullname,
       values.email,
       values.password,
-      values.confirmPassword
+      values.confirmPassword,
     );
     if (res && res.status === 400) {
-      toastNotiFail(res.message, "Hãy thay đổi địa chỉ email khác");
+      toast.error(res.message, {
+        description: "Hãy thay đổi địa chỉ email khác",
+      });
       return;
     }
 
-    toastNotiSuccess(
-      res.message,
-      "Hãy đăng nhập để trải nghiệm những dịch vụ tuyệt vời"
-    );
+    toast.success(res.message, {
+      description: "Hãy đăng nhập để trải nghiệm những dịch vụ tuyệt vời",
+    });
     setTab("login");
   }
 
@@ -59,10 +56,10 @@ export default function RegisterForm({ setTab }: RegisterFormProps) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4  bg-white h-fit px-5 py-4 rounded-md"
+        className="h-fit space-y-4 rounded-md bg-white px-5 py-4"
       >
         <div className="flex flex-col text-center">
-          <span className=" text-xl font-semibold">Đăng kí</span>
+          <span className="text-xl font-semibold">Đăng kí</span>
           <span className="">Hoàn thiện thông tin để tiếp tục</span>
         </div>
         <FormField
@@ -106,12 +103,12 @@ export default function RegisterForm({ setTab }: RegisterFormProps) {
                   />
                   {isShowPassword === true ? (
                     <AiOutlineEye
-                      className=" absolute top-1/2 right-2  transform  -translate-y-1/2 cursor-pointer"
+                      className="absolute top-1/2 right-2 -translate-y-1/2 transform cursor-pointer"
                       onClick={() => setShowPassword(!isShowPassword)}
                     />
                   ) : (
                     <AiOutlineEyeInvisible
-                      className="absolute top-1/2 right-2  transform  -translate-y-1/2 cursor-pointer"
+                      className="absolute top-1/2 right-2 -translate-y-1/2 transform cursor-pointer"
                       onClick={() => setShowPassword(!isShowPassword)}
                     />
                   )}
@@ -136,12 +133,12 @@ export default function RegisterForm({ setTab }: RegisterFormProps) {
                   />
                   {isShowPassword === true ? (
                     <AiOutlineEye
-                      className=" absolute top-1/2 right-2  transform  -translate-y-1/2 cursor-pointer"
+                      className="absolute top-1/2 right-2 -translate-y-1/2 transform cursor-pointer"
                       onClick={() => setShowPassword(!isShowPassword)}
                     />
                   ) : (
                     <AiOutlineEyeInvisible
-                      className="absolute top-1/2 right-2  transform  -translate-y-1/2 cursor-pointer"
+                      className="absolute top-1/2 right-2 -translate-y-1/2 transform cursor-pointer"
                       onClick={() => setShowPassword(!isShowPassword)}
                     />
                   )}
@@ -151,12 +148,12 @@ export default function RegisterForm({ setTab }: RegisterFormProps) {
             </FormItem>
           )}
         />
-        <Button type="submit" className="bg-blue-700 w-full">
+        <Button type="submit" className="w-full bg-blue-700">
           Đăng kí
         </Button>
-        <div className="text-sm font-medium w-full text-center">
+        <div className="w-full text-center text-sm font-medium">
           <span>Quay lại đăng nhập?</span>
-          <span className="font-semibold ">Đăng nhập ngay</span>
+          <span className="font-semibold">Đăng nhập ngay</span>
         </div>
       </form>
     </Form>

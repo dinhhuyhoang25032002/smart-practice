@@ -37,14 +37,18 @@ export class SteamController {
     @Query('projectId') projectId: string,
   ) {
     const { sub } = req.user as UserJWT;
+
     return this.steamService.handleGetSteamTasks(sub, projectId);
   }
 
+  @Get('task-detail')
+  async getDetailTask(@Query('q') q: string) {
+    return this.steamService.handleGetDetailTask(q);
+  }
   @Get(':id')
   async getSteamProjectDetail(@Param('id') id: string) {
     return this.steamService.handleGetSteamProjectDetail(id);
   }
-
   @Post('create-steam-project')
   async createSteamProject(
     @Body() body: CreateSteamProjectDto,
@@ -87,5 +91,14 @@ export class SteamController {
   ) {
     const { sub } = req.user as UserJWT;
     return this.steamService.handleAssignSteamTask(sub, body);
+  }
+
+  @Post('change-status-task')
+  async changeStatusTask(
+    @Body() body: { taskId: string; status: string; fileId: string },
+    @Req() req: Request,
+  ) {
+    const { sub } = req.user as UserJWT;
+    return this.steamService.handleChangeStatusTask(sub, body);
   }
 }

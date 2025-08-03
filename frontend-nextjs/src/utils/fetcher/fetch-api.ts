@@ -1,6 +1,7 @@
-import { toastNotiFail } from "@/components/custom/ToastNotification";
+import { handleGetIsAuth } from "@/store/localStorage";
 import { UserProps } from "@/types/CustomType";
 import { jwtDecode } from "jwt-decode";
+import { toast } from "sonner";
 
 export const fetchPublicData = async (url: string, options?: RequestInit) => {
   try {
@@ -35,7 +36,7 @@ export const fetchPublicData = async (url: string, options?: RequestInit) => {
 const handleFetchApi = async (
   url: string,
   accessToken: string,
-  options?: RequestInit
+  options?: RequestInit,
 ) => {
   try {
     const res = await fetch(url, {
@@ -55,7 +56,7 @@ const handleFetchApi = async (
     return await res.json();
   } catch (error) {
     console.log(
-      `Fetch error:  ${error instanceof Error ? error : "Unknown error"}`
+      `Fetch error:  ${error instanceof Error ? error : "Unknown error"}`,
     );
     //   throw new Error(`Fetch error:  ${error instanceof Error ? error : "Unknown error"}`);
   }
@@ -101,8 +102,8 @@ export const handleRefreshToken = async () => {
 
       localStorage.removeItem("isAuth");
       localStorage.removeItem("s");
-   //   window.location.href = "/";
-      toastNotiFail("Unauthorized: Please log in again.");
+      //   window.location.href = "/";
+      toast.error("Unauthorized: Please log in again.");
       return;
     }
 
@@ -119,7 +120,11 @@ export const handleRefreshToken = async () => {
 };
 
 export const fetchPrivateData = async (url: string, options?: RequestInit) => {
-  console.log(url);
+  const isAuth = handleGetIsAuth();
+  if (!isAuth) {
+    toast.error("Vui lòng đăng nhập để tiếp tục");
+    return;
+  }
   const s: string | null = localStorage.getItem("s");
   const userInfo: UserProps = s ? JSON.parse(s) : "";
   const { act } = userInfo;
@@ -128,8 +133,7 @@ export const fetchPrivateData = async (url: string, options?: RequestInit) => {
     ? `${baseUrl}${url}`
     : `${baseUrl}/${url}`;
 
-
-  if (isTokenExpired(act)||!act) {
+  if (isTokenExpired(act) || !act) {
     console.log("Token expired, refreshing token...");
     const newAccessToken = await handleRefreshToken();
     return await handleFetchApi(fullUrl, newAccessToken.accessToken, options);

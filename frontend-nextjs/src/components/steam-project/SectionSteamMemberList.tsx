@@ -11,6 +11,7 @@ import InviteMemberForm from "./form/InviteMember";
 import { MemberInfor } from "@/types/CustomType";
 import { ROLE_STEAM_PROJECT } from "@/constant/constant";
 import Link from "next/link";
+import { format } from "date-fns";
 type SectionSteamMemberListProps = {
   members?: Array<MemberInfor>;
 };
@@ -41,9 +42,11 @@ export default function SectionSteamMemberList({
             <TableHead className="">Họ và tên</TableHead>
             <TableHead className="text-center">Nhóm</TableHead>
             <TableHead className="text-center">Vai trò</TableHead>
-            <TableHead className="text-center">Số nhiệm vụ đảm nhận</TableHead>
             <TableHead className="text-center">
-              Số nhiệm vụ đã hoàn thành
+              Nhiệm vụ đang thực hiện
+            </TableHead>
+            <TableHead className="text-center">
+              Nhiệm vụ đã hoàn thành
             </TableHead>
             <TableHead className="text-center">Ngày tham gia</TableHead>
           </TableRow>
@@ -66,20 +69,23 @@ export default function SectionSteamMemberList({
                   {modelMap[member.role]}
                 </TableCell>
                 <TableCell className="text-center">
-                  {member.totalTasks}
+                  {member.inProgressTasksCount}
                 </TableCell>
                 <TableCell className="text-center">
-                  {member.completedTasks}
+                  {member.completedTasksCount}
                 </TableCell>
                 <TableCell className="text-center">
-                  {new Date(member.createdAt).toLocaleDateString("vi-VN")}
+                  {format(member.createdAt, "dd/MM/yyyy")}
                 </TableCell>
               </TableRow>
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={6} className="text-center">
-                Chưa có thành viên nào trong dự án.
+              <TableCell
+                colSpan={6}
+                className="h-[150px] text-center font-semibold text-gray-700"
+              >
+                Không có thành viên nào trong dự án.
               </TableCell>
             </TableRow>
           )}

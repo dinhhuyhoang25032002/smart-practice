@@ -1,10 +1,10 @@
-import { toastNotiFail } from "@/components/custom/ToastNotification";
 import { Headers } from "@/constant/constant";
 import { ChatResponse, IoTResponse, UploadResponse } from "@/types/CustomType";
+import { toast } from "sonner";
 
 export const sendNormalQuestionToAi = async (
   message: string,
-  sessionId?: string
+  sessionId?: string,
 ): Promise<ChatResponse | undefined> => {
   const body = {
     human_input: message,
@@ -22,13 +22,13 @@ export const sendNormalQuestionToAi = async (
     return res;
   } catch (error) {
     console.log(error);
-    toastNotiFail("Có lỗi khi gọi api sendNormalQuestionToAi");
+    toast.error("Có lỗi khi gọi api sendNormalQuestionToAi");
   }
 };
 
 export const sendIoTQuestionToAi = async (
   message: string,
-  sessionId?: string
+  sessionId?: string,
 ): Promise<IoTResponse | undefined> => {
   const body = {
     question: message,
@@ -45,12 +45,12 @@ export const sendIoTQuestionToAi = async (
     return res;
   } catch (error) {
     console.log(error);
-    toastNotiFail("Có lỗi khi gọi api sendIoTQuestionToAi");
+    toast.error("Có lỗi khi gọi api sendIoTQuestionToAi");
   }
 };
 
 export const uploadDocument = async (
-  file: File
+  file: File,
 ): Promise<UploadResponse | undefined> => {
   const formData = new FormData();
   formData.append("file", file);
@@ -64,7 +64,7 @@ export const uploadDocument = async (
     return res;
   } catch (error) {
     console.log(error);
-    toastNotiFail("Có lỗi khi gọi api uploadDocument");
+    toast.error("Có lỗi khi gọi api uploadDocument");
   }
 };
 
@@ -80,6 +80,6 @@ export const deleteDocument = async (fileId: number) => {
     });
   } catch (error) {
     console.log(error);
-    toastNotiFail("Có lỗi khi gọi api uploadDocument");
+    toast.error("Có lỗi khi gọi api uploadDocument");
   }
 };

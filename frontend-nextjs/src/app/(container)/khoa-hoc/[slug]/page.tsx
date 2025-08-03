@@ -5,7 +5,7 @@ import Image from "next/image";
 import { MdMenuOpen } from "react-icons/md";
 import { useSWRPrivate } from "@/hooks/useSWRCustom";
 import { useSearchParams } from "next/navigation";
-import FormSendResult from "@/components/course/section/FormSendResult";
+
 import { use, useRef } from "react";
 import moment from "moment-timezone";
 import type {
@@ -27,9 +27,10 @@ import NotFound from "@/app/not-found";
 import CommingSoon from "@/components/custom/CommingSoon";
 import { Button } from "@/components/ui/button";
 import { fetchPrivateData } from "@/utils/fetcher/fetch-api";
-import { Headers } from "@/constant/constant";
+import { Headers, UpdateMode } from "@/constant/constant";
 import { useUserContext } from "@/store/context/AuthContext";
 import { ArrowRightIcon } from "lucide-react";
+import UploadFile from "@/components/custom/UploadFile";
 
 export default function CourseContent({
   params,
@@ -53,7 +54,7 @@ export default function CourseContent({
     {},
     {
       revalidateIfStale: true,
-    }
+    },
   );
 
   const {
@@ -74,14 +75,14 @@ export default function CourseContent({
     (item, index) => ({
       ...item,
       index: index + 1,
-    })
+    }),
   );
 
   const contentCourseArray: ContentLessonMerge[] = contentCourse.map(
     (item, index) => ({
       ...item,
       _id: indexItem[index]._id,
-    })
+    }),
   );
   if (isLoadingLesson || isLoadingCourse) return <Loading />;
   if (dataLesson && "status" in dataLesson && dataLesson.status === 403) {
@@ -93,7 +94,7 @@ export default function CourseContent({
   const handleSubmitTime = async (
     sectionId: string,
     index: number,
-    isNext?: boolean
+    isNext?: boolean,
   ) => {
     if (isNext) {
       setMappingContent(sectionId);
@@ -197,19 +198,19 @@ export default function CourseContent({
   return (
     <MainLayout authPage={true}>
       <div
-        className={`flex w-full relative h-screen items-start ${
-          isOpenMenu ? "justify-end " : ""
+        className={`relative flex h-screen w-full items-start ${
+          isOpenMenu ? "justify-end" : ""
         }`}
       >
         <div
-          className={`w-[75%] sm:w-[70%] h-screen z-20 bg-white overflow-y-auto transition-all ease-out duration-200 ${
+          className={`z-20 h-screen w-[75%] overflow-y-auto bg-white transition-all duration-200 ease-out sm:w-[70%] ${
             isOpenMenu
-              ? "translate-x-0 fixed inset-0 xl:w-[21%] xl:opacity-100"
-              : "-translate-x-full pointer-events-none xl:opacity-0 "
+              ? "fixed inset-0 translate-x-0 xl:w-[21%] xl:opacity-100"
+              : "pointer-events-none -translate-x-full xl:opacity-0"
           }`}
         >
           <nav className="flex flex-col">
-            <div className="mb-5 flex flex-col gap-5 ">
+            <div className="mb-5 flex flex-col gap-5">
               <Image
                 src={
                   "https://raw.githubusercontent.com/dinhhuyhoang25032002/openlab-image-public/refs/heads/master/sales.jpg"
@@ -217,7 +218,7 @@ export default function CourseContent({
                 alt="Image-5G"
                 width={600}
                 height={600}
-                className="border-2 w-full h-[190px] object-contain object-center px-3"
+                className="h-[190px] w-full border-2 object-contain object-center px-3"
                 priority
               />
 
@@ -225,28 +226,28 @@ export default function CourseContent({
                 (item) => (
                   <span
                     key={item._id}
-                    className="uppercase font-semibold text-sm text-blue-700 xs:text-center pl-3  "
+                    className="xs:text-center pl-3 text-sm font-semibold text-blue-700 uppercase"
                   >
                     Bài {item.index} {item.name}
                   </span>
-                )
+                ),
               )}
             </div>
 
             <ul>
-              <li className="py-2 hover:bg-[#eee] active:bg-[#eee] cursor-pointer rounded-sm pl-3 font-normal text-sm flex items-center gap-1 ">
+              <li className="flex cursor-pointer items-center gap-1 rounded-sm py-2 pl-3 text-sm font-normal hover:bg-[#eee] active:bg-[#eee]">
                 <BsCameraVideo /> Mục lục
               </li>
               {indexItem?.map((item) => {
                 return (
                   <li
                     key={item._id}
-                    className="py-2 hover:bg-[#eee] active:bg-[#eee] rounded-sm pl-3 "
+                    className="rounded-sm py-2 pl-3 hover:bg-[#eee] active:bg-[#eee]"
                   >
                     <Link
                       href={`#${item._id}`}
                       onClick={() => handleSubmitIndex(item._id)}
-                      className="flex items-center gap-1 font-normal text-sm "
+                      className="flex items-center gap-1 text-sm font-normal"
                     >
                       <BsCameraVideo />
                       {item.nameItem}
@@ -261,47 +262,47 @@ export default function CourseContent({
                   return (
                     <li
                       key={index}
-                      className="text-justify p-2 w-full rounded-sm hover:bg-[#eee] active:bg-[#eee]"
+                      className="w-full rounded-sm p-2 text-justify hover:bg-[#eee] active:bg-[#eee]"
                     >
                       <Link
                         href={`/khoa-hoc/khoa-hoc-thuc-hanh-esp8266?id=${item._id}`}
                       >
-                        <span className="uppercase font-semibold text-sm  block   ">
+                        <span className="block text-sm font-semibold uppercase">
                           Bài {item.index} {item.name}
                         </span>
                       </Link>
                     </li>
                   );
-                }
+                },
               )}
             </ul>
           </nav>
         </div>
         <div
           onClick={() => setOpenMenu(false)}
-          className={`xl:hidden w-full bg-gray-400 h-screen fixed inset-0 z-10 opacity-70 ${
+          className={`fixed inset-0 z-10 h-screen w-full bg-gray-400 opacity-70 xl:hidden ${
             isOpenMenu ? "block" : "hidden"
           }`}
         ></div>
 
         <div
-          className={`flex flex-col justify-start transition-all ease-out duration-200 items-center h-full  ${
+          className={`flex h-full flex-col items-center justify-start transition-all duration-200 ease-out ${
             isOpenMenu
-              ? "xl:w-[79%] w-full "
-              : "w-full z-10 absolute right-0 top-0"
+              ? "w-full xl:w-[79%]"
+              : "absolute top-0 right-0 z-10 w-full"
           }`}
         >
-          <div className=" flex w-full xs:p-3 px-5 py-3 bg-[#eee] justify-between items-center flex-row-reverse xl:flex-row">
+          <div className="xs:p-3 flex w-full flex-row-reverse items-center justify-between bg-[#eee] px-5 py-3 xl:flex-row">
             <Button
               onClick={() => setOpenMenu(!isOpenMenu)}
               aria-label="Open Menu"
-              className="px-3 py-2 hover:bg-gray-500 active:bg-gray-500 rounded hover:text-white active:text-white"
+              className="rounded px-3 py-2 hover:bg-gray-500 hover:text-white active:bg-gray-500 active:text-white"
             >
-              <MdMenuOpen className="text-2xl " />
+              <MdMenuOpen className="text-2xl" />
             </Button>
             <Link
               href={"/"}
-              className="uppercase px-4 font-semibold hover:text-blue-400 active:text-blue-400"
+              className="px-4 font-semibold uppercase hover:text-blue-400 active:text-blue-400"
             >
               Home
             </Link>
@@ -310,16 +311,16 @@ export default function CourseContent({
             </div>
           </div>
 
-          <div className="w-full px-5 flex flex-col items-center justify-start sm:px-8 flex-1">
+          <div className="flex w-full flex-1 flex-col items-center justify-start px-5 sm:px-8">
             {contentCourse && contentCourse.length !== 0 && (
-              <div className="w-full flex flex-col items-center justify-center h-full ">
-                <div className="pt-8 w-full xs:space-y-5">
+              <div className="flex h-full w-full flex-col items-center justify-center">
+                <div className="xs:space-y-5 w-full pt-8">
                   {MapArrayLesson?.filter(
-                    (item) => item.name === nameLesson
+                    (item) => item.name === nameLesson,
                   )?.map((item) => (
                     <span
                       key={item._id}
-                      className="font-semibold block uppercase text-lg w-full text-center "
+                      className="block w-full text-center text-lg font-semibold uppercase"
                     >
                       Bài {item.index}: {item.name}
                     </span>
@@ -328,11 +329,11 @@ export default function CourseContent({
                   <ul>
                     {indexItem?.map((item) => {
                       return (
-                        <li key={item._id} className="  ">
+                        <li key={item._id} className=" ">
                           <Link
                             href={`#${item._id}`}
                             onClick={() => handleSubmitIndex(item._id)}
-                            className="flex items-center gap-1 text-base font-semibold p-3 hover:bg-[#eee] active:bg-[#eee] rounded-sm "
+                            className="flex items-center gap-1 rounded-sm p-3 text-base font-semibold hover:bg-[#eee] active:bg-[#eee]"
                           >
                             <BsCameraVideo /> {item.nameItem}
                           </Link>
@@ -349,7 +350,7 @@ export default function CourseContent({
                       <div
                         key={item._id}
                         id={`${item._id}`}
-                        className="w-full flex flex-col justify-center items-center"
+                        className="flex w-full flex-col items-center justify-center"
                       >
                         <SectionLesson
                           header={indexItem[index]}
@@ -370,12 +371,12 @@ export default function CourseContent({
                             effect={"expandIcon"}
                             icon={ArrowRightIcon}
                             iconPlacement="right"
-                            className="w-1/2 my-5"
+                            className="my-5 w-1/2"
                             onClick={() =>
                               handleSubmitTime(
                                 indexItem[index + 1]._id,
                                 index,
-                                true
+                                true,
                               )
                             }
                           >
@@ -391,7 +392,7 @@ export default function CourseContent({
                   <div className="my-auto">
                     <Button
                       onClick={() => handleSubmitTime(indexItem[0]._id, 0)}
-                      className="active:opacity-60 "
+                      className="active:opacity-60"
                     >
                       Getting startted!
                     </Button>
@@ -400,11 +401,11 @@ export default function CourseContent({
               </div>
             )}
             {idMappingContent === indexItem[indexItem.length - 1]?._id && (
-              <div className="w-full flex flex-col space-y-5 pb-5">
+              <div className="flex w-full flex-col space-y-5 pb-5">
                 <hr className="w-full border-2 border-red-600" />
                 <span className="text-2xl font-semibold">Báo cáo kết quả</span>
-                <div className="flex justify-center items-center w-full ">
-                  <div className="w-full bg-[#eeeeee] p-5 xl:px-10 rounded-md xl:w-2/3 space-y-5 ">
+                <div className="flex w-full items-center justify-center">
+                  <div className="w-full space-y-5 rounded-md bg-[#eeeeee] p-5 xl:w-2/3 xl:px-10">
                     <div className="flex flex-col">
                       <span>Tên bài học: {nameLesson}</span>
                       <span>Tên sinh viên: {user.fullname}</span>
@@ -416,7 +417,14 @@ export default function CourseContent({
                           .format("[Ngày] D [tháng] M [năm] YYYY")}
                       </span>
                     </div>
-                    <FormSendResult />
+                    <UploadFile
+                      endpoint={"uploads/result"}
+                      extraFields={{
+                        _id: id,
+                        mode: UpdateMode.RESULT,
+                        name: nameLesson,
+                      }}
+                    />
                   </div>
                 </div>
               </div>

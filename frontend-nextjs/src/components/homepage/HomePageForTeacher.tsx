@@ -9,10 +9,10 @@ export default function HomePageForTeacher() {
   const { data } = useSWRPrivate<Array<UserPropsContext>>(`user/all-user`);
 
   return (
-    <div className=" flex justify-center items-center flex-col gap-10 p-5 lg:p-10">
-      <div className="w-full flex justify-center items-center flex-col">
-        <table className="table-auto border-separate border-2 border-gray-400 w-full hidden xl:table">
-          <caption className="caption-top uppercase text-2xl font-semibold mb-10">
+    <div className="flex flex-col items-center justify-center gap-10 p-5 lg:p-10">
+      <div className="flex w-full flex-col items-center justify-center">
+        <table className="hidden w-full table-auto border-separate border-2 border-gray-400 xl:table">
+          <caption className="mb-10 caption-top text-2xl font-semibold uppercase">
             Danh sách sinh viên
           </caption>
           <thead>
@@ -36,15 +36,15 @@ export default function HomePageForTeacher() {
                 <td className="border border-gray-300 text-center">
                   {item.address}
                 </td>
-                <td className="border border-gray-300 text-center cursor-pointer ">
+                <td className="cursor-pointer border border-gray-300 text-center">
                   <Link
-                    className="mx-auto flex justify-center items-center"
+                    className="mx-auto flex items-center justify-center"
                     href={`/danh-sach-bai-thi-cua-sinh-vien?studentId=${item._id}`}
                   >
                     <FaPenNib />
                   </Link>
                 </td>
-                <td className="border border-gray-300 cursor-pointer text-center">
+                <td className="cursor-pointer border border-gray-300 text-center">
                   <Link
                     className="mx-auto"
                     href={`/thong-so-hoc-tap?studentId=${item._id}`}
@@ -56,9 +56,9 @@ export default function HomePageForTeacher() {
             ))}
           </tbody>
         </table>
-        <div className="flex items-center justify-around  flex-wrap xl:hidden">
+        <div className="flex flex-wrap items-center justify-around xl:hidden">
           {data?.map((item) => (
-            <div key={item._id} className="w-full sm:w-[46%] mb-5 ">
+            <div key={item._id} className="mb-5 w-full sm:w-[46%]">
               <CardUserInfor
                 fullname={item.fullname}
                 email={item.email}

@@ -11,6 +11,8 @@ export type NotificationData = {
   // Thêm các thuộc tính khác nếu có
   projectId: string;
   notificationId: string;
+  link: string;
+  type: string;
   // Thêm các thuộc tính khác của notification nếu có
   teamNumber?: string; // Nếu có thể là undefined
   role: string;
@@ -76,15 +78,18 @@ export default function Notification() {
         onClick={() => setOpenNotification(!isOpenNotification)}
       >
         <PiBellRinging className="text-2xl" />
-        {/* <span className="absolute right-0 bottom-0 size-3 text-white p-1 flex justify-center items-center font-normal bg-red-500 rounded-full">
-          {notifications.length}
-        </span> */}
+        {notifications?.length > 0 && (
+          <span className="absolute right-1 bottom-2 flex size-3.5 items-center justify-center rounded-full bg-red-500 p-1.5 text-[12px] font-normal text-white">
+            {notifications.length}
+          </span>
+        )}
       </h3>
       {isOpenNotification && (
         <div className="absolute top-10 right-0 -bottom-9 flex min-h-64 w-[450px] items-start overflow-y-auto rounded border bg-white shadow">
           <NotificationContent
             notifications={notifications}
             setNotifications={setNotifications}
+            setOpenNotification={setOpenNotification}
           />
         </div>
       )}

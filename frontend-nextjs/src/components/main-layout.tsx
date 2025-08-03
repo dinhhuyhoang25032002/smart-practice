@@ -20,7 +20,7 @@ export default function MainLayout({
     const handleScroll = () => {
       const scrolled = document.documentElement.scrollTop;
 
-      if (scrolled > 100) {
+      if (scrolled > 50) {
         setShowButton(true);
       } else {
         setShowButton(false);
@@ -33,7 +33,7 @@ export default function MainLayout({
   }, []);
 
   return (
-    <div className={`w-screen max-w-full `}>
+    <div className={`w-screen max-w-full`}>
       {!authPage && !coursePage && (
         <div className="">
           <NavContact

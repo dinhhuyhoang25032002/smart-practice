@@ -207,7 +207,7 @@ export type Result = {
   };
   isEvaluated: boolean;
   lessonId: string;
-  content: string;
+  url: string;
   createdAt: string;
 };
 
@@ -265,22 +265,22 @@ export type UploadResponse = {
   file_id: number;
 };
 export type MemberInfor = {
-  completedTasks: number;
+  completedTasksCount: number;
   memberId: { _id: string; fullname: string };
   role: ROLE_STEAM_PROJECT;
-  teamNumber: string;
-  totalTasks: number;
   createdAt: string;
+  teamNumber: string;
+  inProgressTasksCount: number;
 };
 export type SteamProjectInfo = {
   _id?: string;
   name: string;
-  leader:
-    | {
-        _id: string;
-        fullname: string;
-      }
-    | undefined;
+  leader: {
+    _id: string;
+    fullname: string;
+  };
+  totalProjectTasks: number;
+  completedProjectTasks: number;
   listMember: Array<MemberInfor>;
   description: string;
   startDate: string;
@@ -297,9 +297,41 @@ export type SteamTaskInfo = {
   startTime: string;
   description: string;
   status: STATUS_TASK;
-  submitTime?: string;
+  completeTime?: string;
   implementer?: {
     _id: string;
     fullname: string;
   } | null;
+};
+
+export type TaskDetail = {
+  _id: string;
+  name: string;
+  startDate: string;
+  deadline: string;
+  status: STATUS_TASK;
+  creator: {
+    _id: string;
+    fullname: string;
+  };
+  projectId: {
+    _id: string;
+    name: string;
+  };
+  slug: string;
+  startTime: string;
+  completeTime?: string;
+  description: string;
+  implementer: {
+    _id: string;
+    fullname: string;
+  };
+  file: {
+    _id: string;
+    url: string;
+    name: string;
+    submitTime: string;
+    comment: string;
+    status: string;
+  }[];
 };

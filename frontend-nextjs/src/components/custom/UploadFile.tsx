@@ -5,21 +5,12 @@ import { ArrowRightIcon, ZoomIn, ZoomOut, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IoMdClose } from "react-icons/io";
 import { fetchPrivateData } from "@/utils/fetcher/fetch-api";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { HttpStatus, ModeUpload } from "@/constant/constant";
-import {
-  toastNotiFail,
-  toastNotiSuccess,
-} from "@/components/custom/ToastNotification";
+
+import { HttpStatus } from "@/constant/constant";
 
 import Image from "next/image";
-import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { KeyedMutator } from "swr";
 
 export type ImgInfo = {
   name: string;
@@ -27,15 +18,26 @@ export type ImgInfo = {
   size: number;
   src: string | ArrayBuffer | null;
 };
+interface UniversalUploadProps {
+  endpoint: string; // endpoint để upload
+  extraFields?: Record<string, any>; // các trường bổ sung
+  title?: string;
+  mutate?: KeyedMutator<any>;
+}
 
-export default function UploadFile() {
+export default function UploadFile({
+  endpoint,
+  extraFields,
+  mutate,
+  title,
+}: UniversalUploadProps) {
   const [imgInfor, setImgInfo] = useState<ImgInfo>();
   const [file, setFile] = useState<File>();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string>();
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
-  const [isMode, setMode] = useState(ModeUpload[0].value);
+
   const [isName, setName] = useState("");
   const [url, setUrl] = useState("");
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
@@ -85,32 +87,35 @@ export default function UploadFile() {
     e.preventDefault();
 
     if (!file) {
-      toastNotiFail("Vui lòng chọn tệp tin trước khi gửi!");
+      toast.error("Vui lòng chọn tệp tin trước khi gửi!");
       return;
     }
-    if (!isName) {
-      toastNotiFail("Vui lòng nhập tên mục cần cập nhật trước khi gửi!");
-      return;
-    }
-    if (!isMode) {
-      toastNotiFail("Vui lòng chọn loại sản phẩm cần cập nhật trước khi gửi!");
-      return;
-    }
+    // if (!isName) {
+    //   toastNotiFail("Vui lòng nhập tên mục cần cập nhật trước khi gửi!");
+    //   return;
+    // }
+    // if (!isMode) {
+    //   toastNotiFail("Vui lòng chọn loại sản phẩm cần cập nhật trước khi gửi!");
+    //   return;
+    // }
     try {
       setIsSubmitting(true);
       const formData = new FormData();
-      formData.append("mode", isMode);
-      formData.append("name", isName);
-      formData.append("image", file);
-      //   formData.append("lessonId", id);
+      let fields: Record<string, any> = {};
+      if (typeof extraFields === "object" && extraFields) fields = extraFields;
+      Object.entries(fields).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) formData.append(key, value);
+      });
+      formData.append("file", file);
 
-      const res = await fetchPrivateData("uploads", {
+      const res = await fetchPrivateData(endpoint, {
         body: formData,
         method: "POST",
       });
 
-      if (res.status === HttpStatus.CREATED) {
-        toastNotiSuccess(res.message);
+      if (res?.status === HttpStatus.OK) {
+        toast.success(res.message);
+        mutate?.();
         setUrl(res.url);
         setFile(undefined);
         setImgInfo(undefined);
@@ -118,10 +123,10 @@ export default function UploadFile() {
         return;
       }
 
-      toastNotiFail(res.message);
+      toast.error(res?.message);
     } catch (err) {
       console.error(err);
-      toastNotiFail("Có lỗi xảy ra khi gửi bài tập!");
+      toast.error("Có lỗi xảy ra khi gửi bài tập!");
     } finally {
       setIsSubmitting(false);
     }
@@ -142,16 +147,16 @@ export default function UploadFile() {
 
     if (file.type.startsWith("image/")) {
       return (
-        <div className="relative w-full h-48 rounded-lg overflow-hidden border border-gray-200 group">
+        <div className="group relative h-48 w-full overflow-hidden rounded-lg border border-gray-200">
           <Image
             src={previewUrl}
             alt="Preview"
             fill
-            className="object-contain cursor-pointer transition-transform duration-200"
+            className="cursor-pointer object-contain transition-transform duration-200"
             style={{ transform: `scale(${zoomLevel})` }}
             onClick={() => setIsPreviewOpen(true)}
           />
-          <div className="absolute bottom-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="absolute right-2 bottom-2 flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
             <Button
               type="button"
               size="sm"
@@ -183,10 +188,10 @@ export default function UploadFile() {
 
     if (file.type === "application/pdf") {
       return (
-        <div className="w-full h-48 rounded-lg overflow-hidden border border-gray-200">
+        <div className="h-48 w-full overflow-hidden rounded-lg border border-gray-200">
           <iframe
             src={previewUrl}
-            className="w-full h-full"
+            className="h-full w-full"
             title="PDF Preview"
           />
         </div>
@@ -194,72 +199,43 @@ export default function UploadFile() {
     }
 
     return (
-      <div className="w-full h-48 rounded-lg border border-gray-200 flex items-center justify-center bg-gray-50">
+      <div className="flex h-48 w-full items-center justify-center rounded-lg border border-gray-200 bg-gray-50">
         <p className="text-gray-500">Không thể xem trước file này</p>
       </div>
     );
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="mx-auto w-full max-w-2xl">
       <form
         onSubmit={onSubmit}
-        className="flex flex-col w-full bg-white items-center justify-center space-y-6 p-6 rounded-lg shadow-lg"
+        className="flex w-full flex-col items-center justify-center space-y-6 rounded-lg bg-white p-6 shadow-lg"
       >
-        <div className="text-center space-y-2">
-          <h2 className="text-2xl font-semibold text-gray-800">
-            Tải file hoặc ảnh.
-          </h2>
+        <div className="space-y-2 text-center">
+          <h2 className="text-2xl font-semibold text-gray-800">{title}</h2>
           <p className="text-sm text-gray-600">
             Tải lên hình ảnh của nội dung bài học để cập nhật.
           </p>
         </div>
-        <div className=" w-full  flex flex-col gap-3 items-end p-3">
-          <Select
-            onValueChange={(value) => setMode(value)}
-            defaultValue={ModeUpload[0].value}
-          >
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Chọn mục cần thêm" />
-            </SelectTrigger>
-            <SelectContent>
-              {ModeUpload.map((item, index) => (
-                <SelectItem value={item.value} key={index}>
-                  {item.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Input
-            placeholder="Nhập tên khóa học hoặc tên bài học"
-            onChange={(e) => setName(e.target.value)}
-          />
-          {url && (
-            <Input
-              placeholder="Nhập tên khóa học hoặc tên bài học"
-              defaultValue={url}
-            />
-          )}
-        </div>
+      
         <div
           {...getRootProps()}
-          className={`w-full h-40 flex flex-col justify-center items-center rounded-lg border-2 border-dashed transition-colors cursor-pointer
-            ${
-              isDragActive
-                ? "border-blue-500 bg-blue-50"
-                : "border-gray-300 hover:border-blue-400 hover:bg-gray-50"
-            }`}
+          className={`flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed transition-colors ${
+            isDragActive
+              ? "border-blue-500 bg-blue-50"
+              : "border-gray-300 hover:border-blue-400 hover:bg-gray-50"
+          }`}
         >
           <input className="hidden" {...getInputProps()} />
-          <IoCloudUploadOutline className="text-4xl text-gray-400 mb-2" />
+          <IoCloudUploadOutline className="mb-2 text-4xl text-gray-400" />
           {isDragActive ? (
-            <p className="text-blue-500 font-medium">Thả tập tin tại đây...</p>
+            <p className="font-medium text-blue-500">Thả tập tin tại đây...</p>
           ) : (
             <div className="text-center">
-              <p className="text-gray-600 font-medium">
+              <p className="font-medium text-gray-600">
                 Kéo thả hoặc nhấp để tải lên
               </p>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="mt-1 text-sm text-gray-500">
                 Hỗ trợ: PDF, DOC, DOCX, JPG, PNG (Tối đa 5MB)
               </p>
             </div>
@@ -270,11 +246,11 @@ export default function UploadFile() {
           <div className="w-full space-y-4">
             {renderPreview()}
 
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 relative">
+            <div className="relative rounded-lg border border-gray-200 bg-gray-50 p-4">
               <Button
                 onClick={handleDeleteImg}
                 type="button"
-                className="absolute top-2 right-2 w-8 h-8 bg-white hover:bg-gray-100 rounded-full shadow-sm"
+                className="absolute top-2 right-2 h-8 w-8 rounded-full bg-white shadow-sm hover:bg-gray-100"
               >
                 <IoMdClose className="text-gray-600" />
               </Button>
@@ -282,7 +258,7 @@ export default function UploadFile() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="font-medium text-gray-700">Tên tệp:</span>
-                  <span className="text-gray-600 truncate max-w-[70%]">
+                  <span className="max-w-[70%] truncate text-gray-600">
                     {imgInfor.name}
                   </span>
                 </div>
@@ -302,26 +278,26 @@ export default function UploadFile() {
         <Button
           type="submit"
           disabled={isSubmitting || !file}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 transition-colors"
+          className="w-full bg-blue-600 py-2.5 font-medium text-white transition-colors hover:bg-blue-700"
         >
           <span className="flex items-center justify-center gap-2">
             {isSubmitting ? "Đang tải..." : "Tải lên"}
-            <ArrowRightIcon className="w-4 h-4" />
+            <ArrowRightIcon className="h-4 w-4" />
           </span>
         </Button>
       </form>
 
       {/* Fullscreen Preview Modal */}
       {isPreviewOpen && previewUrl && file?.type.startsWith("image/") && (
-        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-          <div className="relative w-full h-full max-w-5xl max-h-[90vh]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+          <div className="relative h-full max-h-[90vh] w-full max-w-5xl">
             <Button
               onClick={handleClosePreview}
-              className="absolute top-4 right-4 z-10 bg-white hover:bg-gray-100 rounded-full shadow-lg"
+              className="absolute top-4 right-4 z-10 rounded-full bg-white shadow-lg hover:bg-gray-100"
             >
               <X className="h-6 w-6 text-gray-600" />
             </Button>
-            <div className="absolute bottom-4 right-4 z-10 flex gap-2">
+            <div className="absolute right-4 bottom-4 z-10 flex gap-2">
               <Button
                 onClick={handleZoomIn}
                 variant="secondary"
@@ -337,7 +313,7 @@ export default function UploadFile() {
                 <ZoomOut className="h-5 w-5" />
               </Button>
             </div>
-            <div className="w-full h-full flex items-center justify-center">
+            <div className="flex h-full w-full items-center justify-center">
               <Image
                 src={previewUrl}
                 alt="Full Preview"
