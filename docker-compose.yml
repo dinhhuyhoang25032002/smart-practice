@@ -3,7 +3,7 @@ services:
     build: ./frontend-nextjs
     container_name: nextjs_app
     ports:
-      - "3101:3000"
+      - "3000:3000"
     restart: unless-stopped
     depends_on:
       - nestjs

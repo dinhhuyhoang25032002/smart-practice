@@ -88,7 +88,11 @@ export default function CourseContent({
   if (dataLesson && "status" in dataLesson && dataLesson.status === 403) {
     return <ForbiddenResourceError />;
   }
-  if (dataLesson && dataLesson?.content.length === 0) return <CommingSoon />;
+  if (
+    (dataLesson && !dataLesson.content) ||
+    (dataLesson && dataLesson?.content?.length === 0)
+  )
+    return <CommingSoon />;
   if (errorLesson || errorCourse) return <NotFound />;
 
   const handleSubmitTime = async (
@@ -366,7 +370,7 @@ export default function CourseContent({
                           dataPlus={item.dataPlus}
                         />
                         {idMappingContent !==
-                          indexItem[indexItem.length - 1]._id && (
+                          indexItem[indexItem?.length - 1]._id && (
                           <Button
                             effect={"expandIcon"}
                             icon={ArrowRightIcon}
@@ -400,7 +404,7 @@ export default function CourseContent({
                 )}
               </div>
             )}
-            {idMappingContent === indexItem[indexItem.length - 1]?._id && (
+            {idMappingContent === indexItem[indexItem?.length - 1]?._id && (
               <div className="flex w-full flex-col space-y-5 pb-5">
                 <hr className="w-full border-2 border-red-600" />
                 <span className="text-2xl font-semibold">Báo cáo kết quả</span>

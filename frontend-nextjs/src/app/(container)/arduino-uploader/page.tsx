@@ -3,10 +3,10 @@
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Upload, Monitor, Code, Settings, TestTube } from "lucide-react";
-import ArduinoUploader from "@/components/arduino/ArduinoUploader";
-import SerialMonitor from "@/components/arduino/SerialMonitor";
-import SerialTest from "@/components/arduino/SerialTest";
+import { Upload, Monitor, Code, TestTube } from "lucide-react";
+// import ArduinoUploader from "@/components/arduino/ArduinoUploader";
+// import SerialMonitor from "@/components/arduino/SerialMonitor";
+// import SerialTest from "@/components/arduino/SerialTest";
  
 export default function ArduinoUploaderPage() {
   return (
@@ -45,7 +45,7 @@ export default function ArduinoUploaderPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <ArduinoUploader />
+                {/* <ArduinoUploader /> */}
               </CardContent>
             </Card>
           </TabsContent>
@@ -62,7 +62,7 @@ export default function ArduinoUploaderPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <SerialMonitor />
+                {/* <SerialMonitor /> */}
               </CardContent>
             </Card>
           </TabsContent>
@@ -79,7 +79,7 @@ export default function ArduinoUploaderPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <SerialTest />
+                {/* <SerialTest /> */}
               </CardContent>
             </Card>
           </TabsContent>

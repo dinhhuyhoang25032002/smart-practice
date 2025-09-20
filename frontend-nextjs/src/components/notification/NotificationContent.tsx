@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { NotificationData } from "./Notification";
-import { Button } from "../ui/button";
+
 import { toast } from "sonner";
 import { HttpStatus, Headers, TYPE_NOTIFICATIOIN } from "@/constant/constant";
 import { fetchPrivateData } from "@/utils/fetcher/fetch-api";

@@ -28,10 +28,8 @@ import Loading from "@/app/loading";
 import { v4 as uuidv4 } from "uuid";
 import { fetchPrivateData } from "@/utils/fetcher/fetch-api";
 import { Headers, HttpStatus } from "@/constant/constant";
-import {
-  toastNotiFail,
-  toastNotiSuccess,
-} from "@/components/custom/ToastNotification";
+import { toast } from "sonner";
+
 type EditLessonFormContentProps = {
   lessonId: string;
   nameCourse: string | undefined;
@@ -96,14 +94,14 @@ export default function EditLessonFormContent({
         headers: Headers,
       });
       if (res && res.status === HttpStatus.OK) {
-        toastNotiSuccess(res.message);
+        toast.success(res.message);
         return;
       }
       if (res && res.status === HttpStatus.NOT_FOUND) {
-        toastNotiFail(res.message);
+        toast.error(res.message);
         return;
       }
-      toastNotiFail("Cập nhật khóa học thất bại");
+      toast.error("Cập nhật khóa học thất bại");
     } catch (error) {
       console.log(error);
     }

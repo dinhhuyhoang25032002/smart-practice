@@ -1,10 +1,11 @@
-import React, { useRef, useCallback, useState } from "react";
+"use client";
 import html2canvas from "html2canvas-pro";
 import { jsPDF } from "jspdf";
 import { SteamProjectInfo, SteamTaskInfo } from "@/types/CustomType";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
 import { useUserContext } from "@/store/context/AuthContext";
+import { useRef, useState } from "react";
 
 interface ProjectReportPDFProps {
   projectData: SteamProjectInfo;
@@ -95,7 +96,7 @@ const ProjectReportPDF: React.FC<ProjectReportPDFProps> = ({
       const pdf = new jsPDF();
       const margin = 15;
       const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
+      //const pageHeight = pdf.internal.pageSize.getHeight();
 
       // Helper function để render section lên PDF
       const renderSectionToPDF = async (

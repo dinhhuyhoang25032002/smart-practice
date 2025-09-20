@@ -1,23 +1,45 @@
 FROM node:20-alpine AS base
+
+# Cài đặt pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+# ---------- Stage: deps ----------
 FROM base AS deps
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci
 
+# Copy đúng các file cần thiết để cache tốt
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+
+# ---------- Stage: builder ----------
 FROM base AS builder
 WORKDIR /app
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm run build
 
+RUN pnpm build
+
+# ---------- Stage: production ----------
 FROM base AS production
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci  --omit=dev
-COPY --from=builder /app/.next/static ./.next/static
+
+# Cài lại pnpm trong production
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+# Copy file để install lại dependencies
+COPY package.json pnpm-lock.yaml ./
+
+# Cài deps production
+RUN pnpm install --frozen-lockfile --prod
+
+# Copy các file build từ builder
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/next.config.ts ./next.config.ts
+COPY --from=builder /app/.next/standalone/server.js ./server.js
 COPY .env.production.local ./
-EXPOSE 3000
-CMD ["node", "server.js","--port=3101"]
+
+EXPOSE 3101
+
+CMD ["node", "server.js"]

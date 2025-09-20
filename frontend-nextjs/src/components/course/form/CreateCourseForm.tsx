@@ -17,16 +17,14 @@ import { Button } from "@/components/ui/button";
 import { ImgInfo } from "@/components/course/section/FormSendResult";
 import { useDropzone } from "react-dropzone";
 import Image from "next/image";
-import {
-  toastNotiFail,
-  toastNotiSuccess,
-} from "@/components/custom/ToastNotification";
+
 import { NumericFormat } from "react-number-format";
 import { IoMdClose } from "react-icons/io";
 import { IoCloudUploadOutline } from "react-icons/io5";
 
 import { fetchPrivateData } from "@/utils/fetcher/fetch-api";
 import { HttpStatus } from "@/constant/constant";
+import { toast } from "sonner";
 
 export default function CreateCourseForm() {
   const form = useForm<CreateACourseFormType>({
@@ -97,15 +95,15 @@ export default function CreateCourseForm() {
         body: formData,
       });
       if (response && response.status === HttpStatus.BADREQUEST) {
-        toastNotiFail(response.message);
+        toast.error(response.message);
         return;
       }
-      toastNotiSuccess(response.message);
+      toast.success(response.message);
       form.reset();
       setImgInfo(undefined);
     } catch (error) {
       console.log(error);
-      toastNotiFail("Có lỗi xảy ra khi tạo khóa học!");
+      toast.error("Có lỗi xảy ra khi tạo khóa học!");
     } finally {
       setIsSubmitting(false);
     }

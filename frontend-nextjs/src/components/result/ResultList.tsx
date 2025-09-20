@@ -26,7 +26,7 @@ export default function ResultList({ studentId }: ResultListProps) {
   );
   const router = useRouter();
   if (data?.data?.length === 0 || data?.status === 404)
-    return <NoDataAvailable />;
+    return <div className="">Không tìm thấy kết quả</div>;
   if (isLoading) return <Loading />;
   console.log(data);
 

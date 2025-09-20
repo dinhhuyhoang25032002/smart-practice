@@ -258,9 +258,9 @@ export default function LeftContentHeader() {
           </div>
         </div>
       )}
-      <div className="hidden items-center justify-center sm:flex lg:flex">
+      {/* <div className="hidden items-center justify-center sm:flex lg:flex">
         <InputSearchCourse />
-      </div>
+      </div> */}
     </div>
   );
 }

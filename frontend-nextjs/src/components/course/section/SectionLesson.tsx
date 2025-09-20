@@ -8,9 +8,7 @@ import { settings } from "@/configs/settingSlider";
 import { FaAngleLeft, FaAngleRight } from "react-icons/fa6";
 import { Suspense, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { langs } from "@uiw/codemirror-extensions-langs";
-import CodeMirror from "@uiw/react-codemirror";
-import { abcdef } from "@uiw/codemirror-themes-all";
+
 import CodeEditor from "../lessons/CodeEditor";
 type SectionLessonProps = ContentLesson & {
   header?: IndexItemProps;

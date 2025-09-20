@@ -1,6 +1,6 @@
 // src/context/SocketContext.tsx
 "use client";
-import { UserProps } from "@/types/CustomType";
+
 import React, {
   createContext,
   useContext,
@@ -28,7 +28,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const [socket, setSocket] = useState<Socket | undefined>(undefined);
 
   useEffect(() => {
-    const { _id, act } = handleGetUserInfor();
+    const { act } = handleGetUserInfor();
     console.log(act);
 
     if (act) {

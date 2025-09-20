@@ -5,12 +5,10 @@ import { ArrowRightIcon, ZoomIn, ZoomOut, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IoMdClose } from "react-icons/io";
 import { fetchPrivateData } from "@/utils/fetcher/fetch-api";
-import {
-  toastNotiFail,
-  toastNotiSuccess,
-} from "@/components/custom/ToastNotification";
+
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
+import { toast } from "sonner";
 
 export type ImgInfo = {
   name: string;
@@ -75,7 +73,7 @@ export default function FormSendResult() {
     e.preventDefault();
 
     if (!file || !id) {
-      toastNotiFail("Vui lòng chọn tệp tin trước khi gửi!");
+      toast.error("Vui lòng chọn tệp tin trước khi gửi!");
       return;
     }
 
@@ -91,17 +89,17 @@ export default function FormSendResult() {
       });
 
       if (res.status === 400 || res.status === 403) {
-        toastNotiFail(res.message);
+        toast.error(res.message);
         return;
       }
 
-      toastNotiSuccess(res.message);
+      toast.success(res.message);
       setFile(undefined);
       setImgInfo(undefined);
       setPreviewUrl(undefined);
     } catch (err) {
       console.error(err);
-      toastNotiFail("Có lỗi xảy ra khi gửi bài tập!");
+      toast.error("Có lỗi xảy ra khi gửi bài tập!");
     } finally {
       setIsSubmitting(false);
     }

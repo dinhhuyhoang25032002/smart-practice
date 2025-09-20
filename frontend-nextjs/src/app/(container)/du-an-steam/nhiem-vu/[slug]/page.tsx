@@ -15,7 +15,7 @@ import { useSWRPrivate } from "@/hooks/useSWRCustom";
 import { handleGetUserInfor } from "@/store/localStorage";
 import { TaskDetail } from "@/types/CustomType";
 import { useSearchParams } from "next/navigation";
-import React, { useMemo, useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
 import {
   Select,
@@ -72,21 +72,21 @@ export default function Page() {
     implementer,
     creator,
     startDate,
-    completeTime,
+    //completeTime,
     deadline,
     description,
     status,
     projectId,
     file,
-    startTime,
+    //startTime,
   } = taskDetail;
-  const handleChangeStatus = async (value: string, item: any) => {
+  const handleChangeStatus = async (value: string, _id: string) => {
     const res = await fetchPrivateData(`/steam/change-status-task`, {
       method: "POST",
       body: JSON.stringify({
         taskId,
         status: value,
-        fileId: item._id,
+        fileId: _id,
       }),
       headers: Headers,
     });
@@ -363,7 +363,7 @@ export default function Page() {
                       ) : (
                         <Select
                           onValueChange={(value) =>
-                            handleChangeStatus(value, item)
+                            handleChangeStatus(value, item._id)
                           }
                         >
                           <SelectTrigger className="">

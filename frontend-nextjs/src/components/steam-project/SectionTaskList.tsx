@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -20,18 +20,14 @@ import { Button } from "@/components/ui/button";
 import { IoCode } from "react-icons/io5";
 import Link from "next/link";
 import { CiFilter } from "react-icons/ci";
-import CreateSteamTask from "./form/CreateSteamTask";
-import { useSWRPrivate } from "@/hooks/useSWRCustom";
+import CreateSteamTask from "@/components/steam-project/form/CreateSteamTask";
 import { useSearchParams } from "next/navigation";
 import { MemberInfor, SteamTaskInfo } from "@/types/CustomType";
 import { format } from "date-fns";
 import { Headers, STATUS_TASK } from "@/constant/constant";
 import { fetchPrivateData } from "@/utils/fetcher/fetch-api";
 import { KeyedMutator } from "swr";
-import {
-  ResSteamProjectDetail,
-  ResSteamTask,
-} from "@/app/(container)/du-an-steam/[slug]/page";
+import { ResSteamTask } from "@/app/(container)/du-an-steam/[slug]/page";
 import slugify from "slugify";
 import { useUserContext } from "@/store/context/AuthContext";
 import { toast } from "sonner";

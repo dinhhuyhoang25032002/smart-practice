@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 export default function NoDataAvailable() {
   const router = useRouter();
   return (
-    <div className="flex h-screen w-full items-center justify-center bg-[#79c7d3]">
+    <div className="flex w-full items-center justify-center bg-[#79c7d3]">
       <div className="flex flex-col items-center justify-center">
         <div>
           <Image

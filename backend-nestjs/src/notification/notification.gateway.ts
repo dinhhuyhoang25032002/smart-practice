@@ -14,7 +14,7 @@ import { JwtService } from '@nestjs/jwt';
 import { NextFunction } from 'express';
 @WebSocketGateway({
   cors: {
-    origin: 'http://localhost:3101',
+    origin: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000',
     credentials: true,
   },
   namespace: 'notification',

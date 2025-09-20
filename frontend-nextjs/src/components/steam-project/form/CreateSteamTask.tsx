@@ -38,7 +38,8 @@ import { Headers, HttpStatus } from "@/constant/constant";
 import { toast } from "sonner";
 import { useState } from "react";
 import { KeyedMutator } from "swr";
-import { ResSteamTask } from "../SectionTaskList";
+import { ResSteamTask } from "@/app/(container)/du-an-steam/[slug]/page";
+
 type CreateSteamTaskProps = {
   mutate: KeyedMutator<ResSteamTask>;
 };

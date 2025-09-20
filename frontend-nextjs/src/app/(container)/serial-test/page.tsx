@@ -1,4 +1,4 @@
-import SerialTest from "@/components/arduino/SerialTest";
+// import SerialTest from "@/components/arduino/SerialTest";
 
 export default function SerialTestPage() {
   return (
@@ -8,7 +8,7 @@ export default function SerialTestPage() {
           <h1 className="text-3xl font-bold mb-2">Serial Monitor API Test</h1>
           <p className="text-gray-600">Kiểm tra API Serial Monitor</p>
         </div>
-        <SerialTest />
+        {/* <SerialTest /> */}
       </div>
     </div>
   );

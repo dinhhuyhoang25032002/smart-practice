@@ -18,19 +18,16 @@ const NavContact = ({ contentLeft }: NavContactProps) => {
   const [isOpenProfile, setOpenProfile] = useState(false);
 
   return (
-    <div
-      className="flex justify-between items-center px-6 py-1 bg-gradient-to-r from-[#080541] from-0% via-[#090979] via-58% to-[#06044a] to-100% text-white
-    "
-    >
-      <div className="flex xl:w-[20%] ">{contentLeft}</div>
-      <div className="flex gap-2 items-center xl:w-[15%] justify-center ">
+    <div className="flex items-center justify-between bg-gradient-to-r from-[#080541] from-0% via-[#090979] via-58% to-[#06044a] to-100% px-6 py-1 text-white">
+      <div className="flex xl:w-[20%]">{contentLeft}</div>
+      <div className="flex items-center justify-center gap-2 xl:w-[15%]">
         <TooltipProvider delayDuration={100}>
           <Tooltip open={isOpenProfile}>
             <TooltipTrigger
               className=""
               onClick={() => setOpenProfile(!isOpenProfile)}
             >
-              <div className="flag-container w-[46px] h-[46px] flex gap-2 justify-center items-center">
+              <div className="flag-container flex h-[46px] w-[46px] items-center justify-center gap-2">
                 <div>
                   <Image
                     alt="VN-Flag"
@@ -44,20 +41,20 @@ const NavContact = ({ contentLeft }: NavContactProps) => {
             </TooltipTrigger>
             <TooltipContent className="bg-white">
               <div className="container-option flex bg-white">
-                <div className="content-option flex flex-col text-black text-sm">
-                  <div className="cursor-pointer flex items-center  px-2 hover:bg-[#d2d3d4] gap-4 hover:text-white rounded-sm">
+                <div className="content-option flex flex-col text-sm text-black">
+                  <div className="flex cursor-pointer items-center gap-4 rounded-sm px-2 hover:bg-[#d2d3d4] hover:text-white">
                     <Image
                       alt="flag-en"
                       src={flagEN}
-                      className="object-cove cursor-pointer w-[40px] h-[40px]"
+                      className="object-cove h-[40px] w-[40px] cursor-pointer"
                     />
                     <span>English (US)</span>
                   </div>
-                  <div className="cursor-pointer flex items-center px-2 hover:bg-[#d2d3d4] gap-4 hover:text-white rounded-sm ">
+                  <div className="flex cursor-pointer items-center gap-4 rounded-sm px-2 hover:bg-[#d2d3d4] hover:text-white">
                     <Image
                       alt="flag-vn"
                       src={flagVN}
-                      className="object-cove cursor-pointer w-[40px] h-[40px]"
+                      className="object-cove h-[40px] w-[40px] cursor-pointer"
                     />
                     <span>Tiếng Việt</span>
                   </div>

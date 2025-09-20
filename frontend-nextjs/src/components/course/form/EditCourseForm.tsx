@@ -31,9 +31,9 @@ import AddLesson from "../lessons/AddLesson";
 import NotFound from "@/app/not-found";
 import _ from "lodash";
 import { fetchPrivateData } from "@/utils/fetcher/fetch-api";
-import { toastNotiFail } from "@/components/custom/ToastNotification";
 import { Headers, HttpStatus } from "@/constant/constant";
-import { toastNotiSuccess } from "@/components/custom/ToastNotification";
+import { toast } from "sonner";
+
 // import UploadFile from "@/components/custom/UploadFile";
 type EditCourseContentProps = {
   isEditing: boolean;
@@ -97,11 +97,11 @@ export default function EditCourseContent({
         },
       });
       if (res && res.status !== HttpStatus.OK) {
-        toastNotiFail(res.message);
+        toast.error(res.message);
         return;
       }
       await mutate();
-      toastNotiSuccess("Thêm bài học thành công");
+      toast.success("Thêm bài học thành công");
 
       console.log(res);
     },
@@ -120,17 +120,17 @@ export default function EditCourseContent({
       if (response && response.status === HttpStatus.OK) {
         await mutate(); // Cập nhật lại data
         setIsEditing(false);
-        toastNotiSuccess(response.message);
+        toast.success(response.message);
         return;
       }
       if (response && response.status === HttpStatus.NOT_FOUND) {
-        toastNotiFail(response.message);
+        toast.error(response.message);
         return;
       }
-      toastNotiFail("Cập nhật khóa học thất bại");
+      toast.error("Cập nhật khóa học thất bại");
     } catch (error) {
       console.error(error);
-      toastNotiFail("Cập nhật khóa học thất bại");
+      toast.error("Cập nhật khóa học thất bại");
     }
   };
   const handleOpenEditLesson = (lessonId: string) => {

@@ -12,7 +12,7 @@ import { useSWRPrivate } from "@/hooks/useSWRCustom";
 import { Course } from "@/app/(container)/khoa-hoc/danh-sach-tat-ca-khoa-hoc/page";
 
 import Loading from "@/app/loading";
-import { toastNotiFail } from "@/components/custom/ToastNotification";
+import { toast } from "sonner";
 
 type CourseDeleted = {
   status: number;
@@ -35,7 +35,7 @@ export default function DeletedCourse({
       mutate();
     } catch (error) {
       console.log(error);
-      toastNotiFail("Đã có lỗi xảy ra khi khôi phục lại khóa học");
+      toast.error("Đã có lỗi xảy ra khi khôi phục lại khóa học");
     }
   };
   if (isLoading) {

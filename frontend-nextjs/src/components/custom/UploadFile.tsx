@@ -38,8 +38,8 @@ export default function UploadFile({
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
 
-  const [isName, setName] = useState("");
-  const [url, setUrl] = useState("");
+  //const [isName, setName] = useState("");
+  //const [url, setUrl] = useState("");
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (!acceptedFiles.length) return;
     const file = acceptedFiles[0];
@@ -104,7 +104,17 @@ export default function UploadFile({
       let fields: Record<string, any> = {};
       if (typeof extraFields === "object" && extraFields) fields = extraFields;
       Object.entries(fields).forEach(([key, value]) => {
-        if (value !== undefined && value !== null) formData.append(key, value);
+        if (value !== undefined && value !== null) {
+          let appendValue: string | Blob;
+          if (value instanceof Date) {
+            appendValue = value.toISOString();
+          } else if (typeof value === "boolean" || typeof value === "number") {
+            appendValue = value.toString();
+          } else {
+            appendValue = value as string;
+          }
+          formData.append(key, appendValue);
+        }
       });
       formData.append("file", file);
 
@@ -116,7 +126,7 @@ export default function UploadFile({
       if (res?.status === HttpStatus.OK) {
         toast.success(res.message);
         mutate?.();
-        setUrl(res.url);
+        // setUrl(res.url);
         setFile(undefined);
         setImgInfo(undefined);
         setPreviewUrl(undefined);
@@ -217,7 +227,7 @@ export default function UploadFile({
             Tải lên hình ảnh của nội dung bài học để cập nhật.
           </p>
         </div>
-      
+
         <div
           {...getRootProps()}
           className={`flex h-40 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed transition-colors ${

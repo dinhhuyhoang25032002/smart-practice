@@ -8,7 +8,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Progress } from "@/components/ui/progress";
 import Link from "next/link";
 import { SteamProjectInfo } from "@/types/CustomType";
 import { format } from "date-fns";

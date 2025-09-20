@@ -30,11 +30,12 @@ import { LuFolderPlus } from "react-icons/lu";
 import { fetchPrivateData } from "@/utils/fetcher/fetch-api";
 
 import { useState } from "react";
-import { toastNotiSuccess } from "@/components/custom/ToastNotification";
+
 import { Button } from "@/components/ui/button";
 import CreateCourseForm from "@/components/course/form/CreateCourseForm";
 import DeletedCourse from "@/components/course/course-list/DeletedCourse";
 import slugify from "slugify";
+import { toast } from "sonner";
 
 export type Course = {
   _id: string;
@@ -65,7 +66,7 @@ export default function CreateACourse() {
     });
     if (res && res.status === HttpStatus.OK) {
       mutate();
-      toastNotiSuccess(res.message);
+      toast.success(res.message);
     }
   };
   const handleRestoreCourse = async (id: string) => {
@@ -73,7 +74,7 @@ export default function CreateACourse() {
       method: "PATCH",
     });
     if (res.status === HttpStatus.OK) {
-      toastNotiSuccess(res.message);
+      toast.success(res.message);
       mutate();
     }
   };
