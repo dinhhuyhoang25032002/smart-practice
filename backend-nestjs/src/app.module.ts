@@ -21,7 +21,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
 import { AttendanceModule } from './attendance/attendance.module';
 import { UpdatesModule } from './uploads/uploads.module';
-// import { ArduinoModule } from './arduino/arduino.module';
+import { ArduinoModule } from './arduino/arduino.module';
 import { SteamModule } from './steam/steam.module';
 import { NotificationModule } from './notification/notification.module';
 import { CacheModule } from '@nestjs/cache-manager';
@@ -110,7 +110,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     TimeviewModule,
     AttendanceModule,
     UpdatesModule,
-   // ArduinoModule,
+    ArduinoModule,
     SteamModule,
     NotificationModule,
   ],
